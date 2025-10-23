@@ -7,6 +7,7 @@ export default function UINavigator() {
     { href: "/", name: "Landing Page" },
     { href: "/super-admin", name: "Super Admin Dashboard" },
     { href: "/super-admin/users", name: "Super Admin User Management" },
+    { href: "/super-admin/institutes", name: "Super Admin Institute Management" },
   ];
 
   return (

@@ -27,13 +27,13 @@ export default function SuperAdminLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Institutes">
+              <SidebarMenuButton href="/super-admin/institutes" tooltip="Institutes">
                 <Building />
                 <span>Institutes</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/users" isActive tooltip="Users">
+              <SidebarMenuButton href="/super-admin/users" tooltip="Users">
                 <Users />
                 <span>Users</span>
               </SidebarMenuButton>

@@ -77,20 +77,20 @@ export function InstituteCard({ institute }: InstituteCardProps) {
         </div>
       </CardContent>
       <CardFooter className="border-t pt-4">
-        <div className="flex w-full justify-around">
-            <Button variant="ghost" size="sm" className="flex-col h-auto">
+        <div className="flex flex-wrap w-full justify-around gap-2">
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
                 <FileText className="h-4 w-4 mb-1" />
                 <span className="text-xs">Info</span>
             </Button>
-            <Button variant="ghost" size="sm" className="flex-col h-auto">
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
                 <Users className="h-4 w-4 mb-1" />
                 <span className="text-xs">Users</span>
             </Button>
-            <Button variant="ghost" size="sm" className="flex-col h-auto">
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
                 <BarChart className="h-4 w-4 mb-1" />
                 <span className="text-xs">Stats</span>
             </Button>
-             <Button variant="ghost" size="sm" className="flex-col h-auto">
+             <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
                 <Palette className="h-4 w-4 mb-1" />
                 <span className="text-xs">Branding</span>
             </Button>

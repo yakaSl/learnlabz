@@ -1,5 +1,5 @@
-import AiAssistant from "@/components/tutor/ai-assistant/ai-assistant";
+import AiAssistantPage from "@/components/tutor/ai-assistant/ai-assistant-page";
 
-export default function AiAssistantPage() {
-  return <AiAssistant />;
+export default function AiAssistant() {
+  return <AiAssistantPage />;
 }

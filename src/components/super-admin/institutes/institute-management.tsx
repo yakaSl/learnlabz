@@ -16,7 +16,7 @@ export default function InstituteManagement() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   return (
-    <div className="flex gap-8">
+    <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-1">
         <Card>
           <CardHeader>
@@ -25,7 +25,7 @@ export default function InstituteManagement() {
                 <CardTitle>Institute Management</CardTitle>
                 <CardDescription>Oversee all educational organizations on the platform.</CardDescription>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center flex-wrap gap-2">
                 <div className="relative">
                   <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input placeholder="Search institutes..." className="pl-8 h-9" />
@@ -68,13 +68,13 @@ export default function InstituteManagement() {
           </CardHeader>
           <CardContent>
             {view === 'grid' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {institutes.map((institute) => (
                   <InstituteCard key={institute.id} institute={institute} />
                 ))}
               </div>
             ) : (
-                <div className="border rounded-md">
+                <div className="border rounded-md hidden md:block">
                     <div className="flex items-center p-4 border-b bg-muted/50 text-sm font-medium text-muted-foreground">
                         <div className="w-1/3">Institute</div>
                         <div className="w-1/6">Tier</div>
@@ -88,10 +88,18 @@ export default function InstituteManagement() {
                     ))}
               </div>
             )}
+            {/* Mobile list view */}
+            {view === 'list' && (
+                 <div className="md:hidden space-y-4">
+                    {institutes.map((institute) => (
+                        <InstituteCard key={institute.id} institute={institute} />
+                    ))}
+                 </div>
+            )}
           </CardContent>
         </Card>
       </div>
-      <aside className="w-full max-w-sm hidden lg:block">
+      <aside className="w-full lg:w-auto lg:max-w-sm">
         <WhiteLabelQueue requests={whiteLabelRequests} />
       </aside>
     </div>

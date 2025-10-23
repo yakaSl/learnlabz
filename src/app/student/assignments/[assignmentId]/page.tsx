@@ -7,5 +7,6 @@ export default function AssignmentDetailPage({
 }: {
   params: { assignmentId: string };
 }) {
-  return <AssignmentView assignmentId={params.assignmentId} />;
+  const { assignmentId } = params;
+  return <AssignmentView assignmentId={assignmentId} />;
 }

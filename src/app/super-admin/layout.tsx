@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages } from "lucide-react";
+import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import UserNav from "@/components/super-admin/user-nav";
@@ -58,6 +58,18 @@ export default function SuperAdminLayout({
               <SidebarMenuButton href="/super-admin/localization" tooltip="Localization">
                 <Languages />
                 <span>Localization</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/super-admin/gamification" tooltip="Gamification">
+                <Trophy />
+                <span>Gamification</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/super-admin/audit-logs" tooltip="Audit Logs">
+                <ShieldCheck />
+                <span>Audit Logs</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

@@ -17,6 +17,8 @@ export default function UINavigator() {
     { href: "/super-admin/settings", name: "System Settings" },
     { href: "/super-admin/notifications", name: "Notification Center" },
     { href: "/super-admin/localization", name: "Localization" },
+    { href: "/super-admin/gamification", name: "Gamification" },
+    { href: "/super-admin/audit-logs", name: "Audit Logs" },
   ];
 
   return (

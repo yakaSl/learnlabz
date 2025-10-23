@@ -1,10 +1,11 @@
+
 "use client";
 
 import { Class } from "./data";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Users, Calendar } from "lucide-react";
+import { MoreVertical, Users, Calendar, Edit, Link2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -40,10 +41,13 @@ export function ClassCard({ classInfo }: ClassCardProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link href={`/tutor/classes/${classInfo.id}`}>View Details</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Edit Class</DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Request Edit
+                    </DropdownMenuItem>
                     <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

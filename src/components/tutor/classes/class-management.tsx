@@ -4,11 +4,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { PlusCircle, LayoutGrid, Calendar as CalendarIcon } from 'lucide-react';
+import { PlusCircle, LayoutGrid, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassCard } from './class-card';
 import { classes } from './data';
 import { ClassCalendarView } from './class-calendar-view';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function ClassManagement() {
   const [view, setView] = useState<'grid' | 'calendar'>('grid');
@@ -17,8 +18,8 @@ export default function ClassManagement() {
     <div className="flex flex-col gap-4 h-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Classes</h1>
-          <p className="text-muted-foreground">Manage your classes, schedules, and materials.</p>
+          <h1 className="text-2xl font-bold tracking-tight">My Assigned Classes</h1>
+          <p className="text-muted-foreground">Manage classes assigned to you by the institute.</p>
         </div>
         <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md bg-muted p-1">
@@ -29,12 +30,20 @@ export default function ClassManagement() {
                     <CalendarIcon className="h-4 w-4" />
                 </Button>
             </div>
-            <Button>
+            <Button disabled>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create New Class
             </Button>
         </div>
       </div>
+
+       <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>Institute Guidelines</AlertTitle>
+        <AlertDescription>
+          All class schedules and fees are managed by the institute admin. To request changes, please use the "Request Edit" option on a class and await approval.
+        </AlertDescription>
+      </Alert>
 
       {view === 'grid' ? (
         <Card>

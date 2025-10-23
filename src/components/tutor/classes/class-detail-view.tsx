@@ -13,6 +13,7 @@ import StudentsTab from './details/students';
 import AttendanceTab from './details/attendance';
 import MaterialsTab from './details/materials';
 import AssessmentsTab from './details/assessments';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface ClassDetailViewProps {
   classId: string;
@@ -38,12 +39,23 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
           <p className="text-muted-foreground">{classInfo.subject} - {classInfo.schedule}</p>
         </div>
         <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => setIsEditing(!isEditing)}>
-                <Edit className="h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
+                <Edit className="mr-2 h-4 w-4" />
+                {isEditing ? 'Cancel' : 'Request Edit'}
             </Button>
-            {isEditing && <Button onClick={() => setIsEditing(false)}>Save</Button>}
+            {isEditing && <Button onClick={() => setIsEditing(false)}>Submit for Approval</Button>}
         </div>
       </div>
+      
+      {isEditing && (
+          <Alert>
+              <Edit className="h-4 w-4" />
+              <AlertTitle>Edit Mode</AlertTitle>
+              <AlertDescription>
+                  You are in edit mode. Any changes you make will be submitted to the institute admin for approval.
+              </AlertDescription>
+          </Alert>
+      )}
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-5">

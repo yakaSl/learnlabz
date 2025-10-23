@@ -65,7 +65,7 @@ export default function SuperAdminLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Settings">
+              <SidebarMenuButton href="/super-admin/settings" tooltip="Settings">
                 <Settings />
                 <span>Settings</span>
               </SidebarMenuButton>

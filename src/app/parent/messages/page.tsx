@@ -1,15 +1,6 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import CommunicationHub from "@/components/parent/messages/communication-hub";
 
 export default function ParentMessagesPage() {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Messages</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p>Communication hub for parents coming soon.</p>
-            </CardContent>
-        </Card>
-    )
+    return <CommunicationHub />;
 }

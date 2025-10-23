@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Link from "next/link";
 
 
 interface StudentCardProps {
@@ -55,7 +56,9 @@ export function StudentCard({ student }: StudentCardProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>View Profile</DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/tutor/students/${student.id}`}>View Profile</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit Details</DropdownMenuItem>
                     <DropdownMenuItem className="text-destructive">Archive Student</DropdownMenuItem>
                 </DropdownMenuContent>
@@ -95,9 +98,14 @@ export function StudentCard({ student }: StudentCardProps) {
         </div>
       </CardContent>
       <CardFooter className="border-t pt-4">
-        <div className="flex w-full justify-end items-center gap-2">
-            <Button variant="outline" size="sm"><MessageSquare className="mr-2"/> Message</Button>
-            <Button variant="outline" size="sm"><Phone className="mr-2"/> Call Parent</Button>
+        <div className="flex w-full justify-between items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/tutor/students/${student.id}`}>View Profile</Link>
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm"><MessageSquare className="mr-2"/> Message</Button>
+              <Button variant="outline" size="sm"><Phone className="mr-2"/> Call Parent</Button>
+            </div>
         </div>
       </CardFooter>
     </Card>

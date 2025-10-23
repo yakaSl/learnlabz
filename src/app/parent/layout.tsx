@@ -1,6 +1,6 @@
 
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar, CalendarDays } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar, CalendarDays, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ParentUserNav from "@/components/parent/user-nav";
@@ -71,6 +71,14 @@ export default function ParentLayout({
                 <SidebarMenuButton tooltip="Messages">
                   <MessageSquare />
                   <span>Messages</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/parent/achievements" passHref>
+                <SidebarMenuButton tooltip="Achievements">
+                  <Trophy />
+                  <span>Achievements</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

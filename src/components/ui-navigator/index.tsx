@@ -70,6 +70,7 @@ export default function UINavigator() {
     { href: "/parent/schedule", name: "Schedule" },
     { href: "/parent/payments", name: "Payments" },
     { href: "/parent/messages", name: "Messages" },
+    { href: "/parent/achievements", name: "Achievements" },
     { href: "/parent/profile", name: "Profile" },
   ];
 

@@ -77,6 +77,7 @@ export default function UINavigator() {
   const tutorAssistantPages = [
     { href: "/tutor-assistant", name: "Assistant Dashboard" },
     { href: "/tutor-assistant/tasks", name: "Tasks" },
+    { href: "/tutor-assistant/attendance", name: "Attendance" },
     { href: "/tutor-assistant/settings", name: "Settings" },
   ];
 

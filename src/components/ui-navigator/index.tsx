@@ -24,6 +24,17 @@ export default function UINavigator() {
 
   const instituteAdminPages = [
     { href: "/institute-admin", name: "Dashboard" },
+    { href: "/institute-admin/tutors", name: "Tutor Management" },
+    { href: "/institute-admin/classes", name: "Class Management" },
+    { href: "/institute-admin/students", name: "Student Management" },
+    { href: "/institute-admin/billing", name: "Billing" },
+    { href: "/institute-admin/reports", name: "Reports" },
+    { href: "/institute-admin/communication", name: "Communication" },
+    { href: "/institute-admin/settings", name: "Settings" },
+  ];
+
+  const tutorPages = [
+    { href: "/tutor", name: "Tutor Dashboard" },
   ];
 
   return (
@@ -62,6 +73,19 @@ export default function UINavigator() {
           <h3 className="text-lg font-semibold mb-2">Institute Admin Role</h3>
           <div className="flex flex-wrap gap-4">
             {instituteAdminPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Independent Tutor Role</h3>
+          <div className="flex flex-wrap gap-4">
+            {tutorPages.map((page) => (
               <Button asChild variant="outline" key={page.href}>
                 <Link href={page.href}>{page.name}</Link>
               </Button>

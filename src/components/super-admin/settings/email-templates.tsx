@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import * as React from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Bold, Italic, Underline, List } from "lucide-react";
 
 export function EmailTemplates() {
+  const [content, setContent] = React.useState("<h1>Welcome to LearnLabz, {{user.name}}!</h1><p>We're excited to have you on board.</p>");
   return (
     <Card>
       <CardHeader>
@@ -40,13 +42,14 @@ export function EmailTemplates() {
                 <Textarea
                     id="email-editor"
                     className="min-h-[300px] rounded-t-none"
-                    defaultValue="<h1>Welcome to LearnLabz, {{user.name}}!</h1><p>We're excited to have you on board.</p>"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                 />
             </div>
         </div>
         <div className="space-y-4">
             <Label>Live Preview</Label>
-            <div className="rounded-md border min-h-[400px] p-4 bg-gray-100" dangerouslySetInnerHTML={{ __html: "<h1>Welcome to LearnLabz, John Doe!</h1><p>We're excited to have you on board.</p>" }}>
+            <div className="rounded-md border min-h-[400px] p-4 bg-gray-100" dangerouslySetInnerHTML={{ __html: content.replace("{{user.name}}", "John Doe") }}>
             </div>
             <p className="text-xs text-muted-foreground">
                 This is a rendered preview of your template. Use placeholders like `{{user.name}}` or `{{payout.amount}}`.

@@ -34,7 +34,7 @@ export function LogFilterPanel() {
                     id="date"
                     variant={"outline"}
                     className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full min-w-0 justify-start text-left font-normal h-auto",
                     !date && "text-muted-foreground"
                     )}
                 >

@@ -10,7 +10,7 @@ const data = [
   { name: 'Mar', users: 230 },
   { name: 'Apr', users: 260 },
   { name: 'May', users: 300 },
-  { name 'Jun', users: 290 },
+  { name: 'Jun', users: 290 },
 ]
 
 export function UserGrowthChart() {

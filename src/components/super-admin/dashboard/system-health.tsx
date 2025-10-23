@@ -1,8 +1,28 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import React from "react";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
+import { cn } from "@/lib/utils";
+
+// Custom Progress component that accepts indicatorClassName
+const CustomProgress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & { indicatorClassName?: string }
+>(({ className, value, indicatorClassName, ...props }, ref) => (
+  <ProgressPrimitive.Root
+    ref={ref}
+    className={cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary", className)}
+    {...props}
+  >
+    <ProgressPrimitive.Indicator
+      className={cn("h-full w-full flex-1 bg-primary transition-all", indicatorClassName)}
+      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    />
+  </ProgressPrimitive.Root>
+));
+CustomProgress.displayName = 'CustomProgress';
+
 
 export function SystemHealth() {
   const [health, setHealth] = React.useState({
@@ -42,46 +62,23 @@ export function SystemHealth() {
             <span className="text-sm font-medium">API Services</span>
             <span className="text-sm font-medium">{health.api}%</span>
           </div>
-          <Progress value={health.api} indicatorClassName={getStatusColor(health.api)} />
+          <CustomProgress value={health.api} indicatorClassName={getStatusColor(health.api)} />
         </div>
         <div>
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium">Database</span>
             <span className="text-sm font-medium">{health.db}%</span>
           </div>
-          <Progress value={health.db} indicatorClassName={getStatusColor(health.db)} />
+          <CustomProgress value={health.db} indicatorClassName={getStatusColor(health.db)} />
         </div>
         <div>
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium">Background Workers</span>
             <span className="text-sm font-medium">{health.workers}%</span>
           </div>
-          <Progress value={health.workers} indicatorClassName={getStatusColor(health.workers)} />
+          <CustomProgress value={health.workers} indicatorClassName={getStatusColor(health.workers)} />
         </div>
       </CardContent>
     </Card>
   );
 }
-
-// Add indicatorClassName to Progress component props
-declare module "@/components/ui/progress" {
-    interface ProgressProps {
-        indicatorClassName?: string;
-    }
-}
-React.forwardRef<
-  React.ElementRef<typeof import("@radix-ui/react-progress").Root>,
-  React.ComponentPropsWithoutRef<typeof import("@radix-ui/react-progress").Root> & { indicatorClassName?: string }
-// @ts-ignore
->(({ className, value, indicatorClassName, ...props }, ref) => (
-  <import("@radix-ui/react-progress").Root
-    ref={ref}
-    className={import("@/lib/utils").cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary", className)}
-    {...props}
-  >
-    <import("@radix-ui/react-progress").Indicator
-      className={import("@/lib/utils").cn("h-full w-full flex-1 bg-primary transition-all", indicatorClassName)}
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    />
-  </import("@radix-ui/react-progress").Root>
-));

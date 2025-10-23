@@ -7,7 +7,16 @@ import React from "react";
 export function PayoutCalendar() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
-  const payoutDates = [new Date(2024, 6, 25), new Date(2024, 7, 10)];
+  // Example payout dates. In a real app, these would come from an API.
+  const payoutDates = [
+    new Date(new Date().getFullYear(), new Date().getMonth(), 25),
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 10),
+  ];
+  
+  // Example past payout dates.
+  const pastPayoutDates = [
+     new Date(new Date().getFullYear(), new Date().getMonth() -1, 25),
+  ]
 
   return (
     <Card>
@@ -15,29 +24,33 @@ export function PayoutCalendar() {
         <CardTitle>Payout Schedule</CardTitle>
         <CardDescription>Upcoming automatic payout dates.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col items-center">
         <Calendar
           mode="single"
           selected={date}
           onSelect={setDate}
-          className="rounded-md"
+          className="rounded-md border"
           modifiers={{
             payout: payoutDates,
+            pastPayout: pastPayoutDates,
           }}
-          modifiersStyles={{
-            payout: {
-              border: "2px solid hsl(var(--primary))",
-              borderRadius: '9999px',
-            },
+          modifiersClassNames={{
+            today: "bg-accent text-accent-foreground rounded-full",
+            payout: "text-primary font-bold !bg-primary/10 rounded-full",
+            pastPayout: "text-muted-foreground !bg-muted/50 rounded-full"
           }}
         />
-        <div className="mt-4 text-sm">
+        <div className="mt-4 space-y-2 text-sm self-start">
             <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full border-2 border-primary" />
-                <span>Scheduled Payout</span>
+                <div className="h-4 w-4 rounded-full bg-primary/20 border-2 border-primary" />
+                <span>Upcoming Payout</span>
             </div>
-             <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-accent" />
+            <div className="flex items-center gap-2">
+                <div className="h-4 w-4 rounded-full bg-muted" />
+                <span>Past Payout</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="h-4 w-4 rounded-full bg-accent" />
                 <span>Today</span>
             </div>
         </div>

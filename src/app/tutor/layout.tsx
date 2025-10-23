@@ -1,6 +1,6 @@
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { LayoutDashboard, BookOpen, GraduationCap, DollarSign, Bot, Settings, Folder, Wallet } from "lucide-react";
+import { LayoutDashboard, BookOpen, GraduationCap, DollarSign, Bot, Settings, Folder, Wallet, Megaphone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import TutorUserNav from "@/components/tutor/user-nav";
@@ -62,6 +62,14 @@ export default function TutorLayout({
                 <SidebarMenuButton tooltip="Payments">
                   <Wallet />
                   <span>Payments</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <Link href="/tutor/communication" passHref>
+                <SidebarMenuButton tooltip="Communication">
+                  <Megaphone />
+                  <span>Communication</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, BookOpen, Bot, Trophy, User, BarChart2 } from "lucide-react";
+import { LayoutDashboard, BookOpen, Bot, Trophy, User, BarChart2, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import StudentUserNav from "@/components/student/user-nav";
@@ -37,6 +37,14 @@ export default function StudentLayout({
                 <SidebarMenuButton tooltip="My Classes">
                   <BookOpen />
                   <span>My Classes</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <Link href="/student/materials" passHref>
+                <SidebarMenuButton tooltip="Materials">
+                  <Folder />
+                  <span>Materials</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

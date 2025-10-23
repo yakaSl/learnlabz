@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export default function UINavigator() {
   const pages = [
-    { href: "/login", name: "Login Page" },
-    { href: "/signup", name: "Signup Page" },
+    { href: "/", name: "Landing Page" },
+    { href: "/super-admin", name: "Super Admin Dashboard" },
   ];
 
   return (
@@ -15,14 +15,12 @@ export default function UINavigator() {
       </CardHeader>
       <CardContent className="flex flex-col items-start gap-4">
         <p>Use these buttons to navigate to the full pages.</p>
-        <div className="flex gap-4">
-            {/* As we create pages, the links will be added here. For now, they are placeholders. */}
-            <Button asChild variant="outline">
-                <Link href="#">Login</Link>
+        <div className="flex flex-wrap gap-4">
+          {pages.map((page) => (
+            <Button asChild variant="outline" key={page.href}>
+              <Link href={page.href}>{page.name}</Link>
             </Button>
-            <Button asChild variant="outline">
-                <Link href="#">Sign Up</Link>
-            </Button>
+          ))}
         </div>
       </CardContent>
     </Card>

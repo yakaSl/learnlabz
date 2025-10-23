@@ -21,15 +21,15 @@ const tierColors: { [key in Institute['subscriptionTier']]: string } = {
 };
 
 const statusColors: { [key in Institute['status']]: string } = {
-    Active: "bg-green-500",
+    Active: "bg-success-foreground",
     Pending: "bg-yellow-500",
-    Suspended: "bg-red-500",
+    Suspended: "bg-destructive",
 }
 
 const getChurnRiskColor = (risk: number) => {
-    if (risk > 75) return 'text-red-500';
+    if (risk > 75) return 'text-destructive';
     if (risk > 25) return 'text-yellow-500';
-    return 'text-green-500';
+    return 'text-success-foreground';
 };
 
 export function InstituteCard({ institute }: InstituteCardProps) {

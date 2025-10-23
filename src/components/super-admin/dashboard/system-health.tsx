@@ -45,9 +45,9 @@ export function SystemHealth() {
   }, []);
 
   const getStatusColor = (value: number) => {
-    if (value > 95) return 'bg-green-500';
+    if (value > 95) return 'bg-success-foreground';
     if (value > 85) return 'bg-yellow-500';
-    return 'bg-red-500';
+    return 'bg-destructive';
   }
 
   return (

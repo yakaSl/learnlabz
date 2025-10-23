@@ -13,9 +13,9 @@ export default function SuperAdminLayout({
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <Image src="/logo/logo-icon.png" alt="LearnLabz Logo" width={32} height={32} />
-            <span className="text-lg font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">LearnLabz</span>
+          <div className="flex items-center gap-2" style={{ width: '160px' }}>
+            <Image src="/logo/logo.png" alt="LearnLabz Logo" width={160} height={32} className="group-data-[collapsible=icon]:hidden" />
+            <Image src="/logo/logo-icon.png" alt="LearnLabz Logo Icon" width={32} height={32} className="hidden group-data-[collapsible=icon]:block" />
           </div>
         </SidebarHeader>
         <SidebarContent>

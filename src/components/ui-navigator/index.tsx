@@ -74,6 +74,11 @@ export default function UINavigator() {
     { href: "/parent/profile", name: "Profile" },
   ];
 
+  const tutorAssistantPages = [
+    { href: "/tutor-assistant", name: "Assistant Dashboard" },
+    { href: "/tutor-assistant/tasks", name: "Tasks" },
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -136,6 +141,19 @@ export default function UINavigator() {
           <h3 className="text-lg font-semibold mb-2">Independent Tutor Role</h3>
           <div className="flex flex-wrap gap-4">
             {tutorPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Tutor Assistant Role</h3>
+          <div className="flex flex-wrap gap-4">
+            {tutorAssistantPages.map((page) => (
               <Button asChild variant="outline" key={page.href}>
                 <Link href={page.href}>{page.name}</Link>
               </Button>

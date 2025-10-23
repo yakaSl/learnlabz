@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { UserTable } from "@/components/super-admin/users/user-table";
 import { users, type User } from "@/components/super-admin/users/data";

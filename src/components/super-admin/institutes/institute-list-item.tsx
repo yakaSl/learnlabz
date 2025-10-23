@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Institute } from "./data";
@@ -48,7 +49,7 @@ export function InstituteListItem({ institute }: InstituteListItemProps) {
       <div className="w-1/6">
         <div className="flex items-center gap-2">
             <div className={cn("h-2 w-2 rounded-full", statusColors[institute.status].replace('text-','bg-'))} />
-            <span className={cn(statusColors[institute.status])}>{institute.status}</span>
+            <span className={cn("font-medium", statusColors[institute.status])}>{institute.status}</span>
         </div>
       </div>
       <div className="w-1/6 font-medium">{institute.activeUsers.toLocaleString()}</div>
@@ -58,7 +59,7 @@ export function InstituteListItem({ institute }: InstituteListItemProps) {
             <span className="text-sm font-medium">{institute.churnRisk}%</span>
         </div>
       </div>
-      <div className="w-auto flex justify-end">
+      <div className="w-[52px] flex justify-end">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">

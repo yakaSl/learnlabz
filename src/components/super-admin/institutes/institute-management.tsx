@@ -20,11 +20,11 @@ export default function InstituteManagement() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   return (
-    <Tabs defaultValue="institutes" className="flex-1">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+    <Tabs defaultValue="institutes" className="flex flex-col flex-1">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
         <div>
-          <CardTitle>Institute Management</CardTitle>
-          <CardDescription>Oversee all educational organizations on the platform.</CardDescription>
+          <h1 className="text-2xl font-bold tracking-tight">Institute Management</h1>
+          <p className="text-muted-foreground">Oversee all educational organizations on the platform.</p>
         </div>
         <div className="flex items-center gap-2">
             <Button onClick={() => setIsAddDialogOpen(true)}>
@@ -44,12 +44,12 @@ export default function InstituteManagement() {
             <div className="flex items-center flex-wrap gap-2">
               <div className="relative flex-1 min-w-[200px]">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search institutes..." className="pl-8 h-9" />
+                <Input placeholder="Search institutes..." className="pl-8" />
               </div>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9">
+                  <Button variant="outline">
                     <Filter className="mr-2 h-4 w-4" />
                     Filters
                   </Button>
@@ -61,7 +61,7 @@ export default function InstituteManagement() {
               </DropdownMenu>
 
               <Select defaultValue="name">
-                <SelectTrigger className="w-auto h-9">
+                <SelectTrigger className="w-auto">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -72,10 +72,10 @@ export default function InstituteManagement() {
               </Select>
 
               <div className="flex items-center gap-1 rounded-md bg-muted p-1 ml-auto">
-                <Button variant={view === 'grid' ? 'secondary' : 'ghost'} size="icon" className="h-7 w-7" onClick={() => setView('grid')}>
+                <Button variant={view === 'grid' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setView('grid')}>
                   <LayoutGrid className="h-4 w-4" />
                 </Button>
-                <Button variant={view === 'list' ? 'secondary' : 'ghost'} size="icon" className="h-7 w-7" onClick={() => setView('list')}>
+                <Button variant={view === 'list' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setView('list')}>
                   <List className="h-4 w-4" />
                 </Button>
               </div>
@@ -96,7 +96,7 @@ export default function InstituteManagement() {
                         <div className="w-1/6">Status</div>
                         <div className="w-1/6">Users</div>
                         <div className="w-1/6">Churn Risk</div>
-                        <div className="w-auto"></div>
+                        <div className="w-[52px]"></div>
                     </div>
                     {institutes.map((institute) => (
                         <InstituteListItem key={institute.id} institute={institute} />

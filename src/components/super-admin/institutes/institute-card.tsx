@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Institute } from "./data";
@@ -35,7 +36,7 @@ const getChurnRiskColor = (risk: number) => {
 export function InstituteCard({ institute }: InstituteCardProps) {
   return (
     <Card className="flex flex-col h-full">
-      <CardHeader className="flex flex-row items-start justify-between pb-2">
+      <CardHeader className="flex-row items-start justify-between pb-2">
         <div className="flex items-center gap-4">
           <Image src={institute.logo} alt={`${institute.name} logo`} width={48} height={48} className="rounded-lg" />
           <div>
@@ -77,7 +78,7 @@ export function InstituteCard({ institute }: InstituteCardProps) {
         </div>
       </CardContent>
       <CardFooter className="border-t pt-4">
-        <div className="flex flex-wrap w-full justify-around gap-2">
+        <div className="flex w-full justify-around gap-2">
             <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
                 <FileText className="h-4 w-4 mb-1" />
                 <span className="text-xs">Info</span>

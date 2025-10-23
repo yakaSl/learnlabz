@@ -7,6 +7,7 @@ import { IntegrationsSettings } from "./integrations-settings";
 import { SecuritySettings } from "./security-settings";
 import { FeatureFlags } from "./feature-flags";
 import { AiConfig } from "./ai-config";
+import { EmailTemplates } from "./email-templates";
 
 export default function SettingsPage() {
   return (
@@ -17,12 +18,13 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="general">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="features">Feature Flags</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="ai">AI Configuration</TabsTrigger>
+          <TabsTrigger value="email">Email</TabsTrigger>
         </TabsList>
         
         <div className="mt-4">
@@ -40,6 +42,9 @@ export default function SettingsPage() {
           </TabsContent>
           <TabsContent value="ai">
             <AiConfig />
+          </TabsContent>
+          <TabsContent value="email">
+            <EmailTemplates />
           </TabsContent>
         </div>
       </Tabs>

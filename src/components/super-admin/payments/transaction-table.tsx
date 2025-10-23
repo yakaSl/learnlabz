@@ -52,8 +52,8 @@ export function TransactionTable() {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 0, 20),
-    to: addDays(new Date(2024, 0, 20), 20),
+    from: new Date(2024, 6, 1),
+    to: new Date(2024, 6, 31),
   })
 
   const table = useReactTable({

@@ -1,6 +1,6 @@
 
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar, CalendarDays } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ParentUserNav from "@/components/parent/user-nav";
@@ -47,6 +47,14 @@ export default function ParentLayout({
                 <SidebarMenuButton tooltip="Attendance">
                   <Calendar />
                   <span>Attendance</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/parent/schedule" passHref>
+                <SidebarMenuButton tooltip="Schedule">
+                  <CalendarDays />
+                  <span>Schedule</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

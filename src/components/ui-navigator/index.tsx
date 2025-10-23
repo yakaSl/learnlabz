@@ -67,6 +67,7 @@ export default function UINavigator() {
     { href: "/parent", name: "Parent Dashboard" },
     { href: "/parent/performance", name: "Performance" },
     { href: "/parent/attendance", name: "Attendance" },
+    { href: "/parent/schedule", name: "Schedule" },
     { href: "/parent/payments", name: "Payments" },
     { href: "/parent/messages", name: "Messages" },
     { href: "/parent/profile", name: "Profile" },

@@ -29,8 +29,8 @@ export function RecentGrades() {
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="font-bold text-lg">{grade.grade}</span>
-                    <TrendingUp className={cn("h-5 w-5", grade.trend === 'up' ? "text-success-foreground" : "text-destructive hidden")} />
-                    <TrendingDown className={cn("h-5 w-5", grade.trend === 'down' ? "text-destructive" : "text-success-foreground hidden")} />
+                    {grade.trend === 'up' && <TrendingUp className="h-5 w-5 text-success-foreground" />}
+                    {grade.trend === 'down' && <TrendingDown className="h-5 w-5 text-destructive" />}
                 </div>
               </div>
             ))}

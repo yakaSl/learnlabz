@@ -25,68 +25,88 @@ export default function SuperAdminLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin" tooltip="Dashboard">
-                <LayoutDashboard />
-                <span>Dashboard</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin" passHref>
+                <SidebarMenuButton tooltip="Dashboard">
+                  <LayoutDashboard />
+                  <span>Dashboard</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/institutes" tooltip="Institutes">
-                <Building />
-                <span>Institutes</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/institutes" passHref>
+                <SidebarMenuButton tooltip="Institutes">
+                  <Building />
+                  <span>Institutes</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/users" tooltip="Users">
-                <Users />
-                <span>Users</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/users" passHref>
+                <SidebarMenuButton tooltip="Users">
+                  <Users />
+                  <span>Users</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/payments" tooltip="Payments">
-                <CreditCard />
-                <span>Payments</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/payments" passHref>
+                <SidebarMenuButton tooltip="Payments">
+                  <CreditCard />
+                  <span>Payments</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/analytics" tooltip="Analytics">
-                <BarChart3 />
-                <span>Analytics</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/analytics" passHref>
+                <SidebarMenuButton tooltip="Analytics">
+                  <BarChart3 />
+                  <span>Analytics</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/localization" tooltip="Localization">
-                <Languages />
-                <span>Localization</span>
-              </SidebarMenuButton>
+               <Link href="/super-admin/localization" passHref>
+                <SidebarMenuButton tooltip="Localization">
+                  <Languages />
+                  <span>Localization</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/gamification" tooltip="Gamification">
-                <Trophy />
-                <span>Gamification</span>
-              </SidebarMenuButton>
+               <Link href="/super-admin/gamification" passHref>
+                <SidebarMenuButton tooltip="Gamification">
+                  <Trophy />
+                  <span>Gamification</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/audit-logs" tooltip="Audit Logs">
-                <ShieldCheck />
-                <span>Audit Logs</span>
-              </SidebarMenuButton>
+               <Link href="/super-admin/audit-logs" passHref>
+                <SidebarMenuButton tooltip="Audit Logs">
+                  <ShieldCheck />
+                  <span>Audit Logs</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/notifications" tooltip="Notifications">
-                <Bell />
-                <span>Notifications</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/notifications" passHref>
+                <SidebarMenuButton tooltip="Notifications">
+                  <Bell />
+                  <span>Notifications</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin/settings" tooltip="Settings">
-                <Settings />
-                <span>Settings</span>
-              </SidebarMenuButton>
+              <Link href="/super-admin/settings" passHref>
+                <SidebarMenuButton tooltip="Settings">
+                  <Settings />
+                  <span>Settings</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

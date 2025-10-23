@@ -60,6 +60,7 @@ export default function UINavigator() {
     { href: "/student/profile", name: "My Profile" },
     { href: "/student/assignments/1", name: "View Assignment" },
     { href: "/student/payments", name: "Payments" },
+    { href: "/student/communication", name: "Communication Hub" },
   ];
 
   return (

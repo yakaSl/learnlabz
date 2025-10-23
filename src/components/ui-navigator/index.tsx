@@ -41,9 +41,20 @@ export default function UINavigator() {
     { href: "/tutor", name: "Tutor Dashboard" },
     { href: "/tutor/classes", name: "Class Management" },
     { href: "/tutor/students", name: "Student Management" },
+    { href: "/tutor/materials", name: "Materials" },
     { href: "/tutor/payments", name: "Payments" },
+    { href: "/tutor/communication", name: "Communication" },
+    { href: "/tutor/reports", name: "Reports" },
     { href: "/tutor/ai-assistant", name: "AI Assistant" },
     { href: "/tutor/settings", name: "Settings" },
+  ];
+
+  const studentPages = [
+    { href: "/student", name: "Student Dashboard" },
+    { href: "/student/classes", name: "My Classes" },
+    { href: "/student/ai-tutor", name: "AI Tutor" },
+    { href: "/student/achievements", name: "Achievements" },
+    { href: "/student/profile", name: "My Profile" },
   ];
 
   return (
@@ -108,6 +119,19 @@ export default function UINavigator() {
           <h3 className="text-lg font-semibold mb-2">Independent Tutor Role</h3>
           <div className="flex flex-wrap gap-4">
             {tutorPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Student Role</h3>
+          <div className="flex flex-wrap gap-4">
+            {studentPages.map((page) => (
               <Button asChild variant="outline" key={page.href}>
                 <Link href={page.href}>{page.name}</Link>
               </Button>

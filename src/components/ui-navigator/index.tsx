@@ -15,6 +15,8 @@ export default function UINavigator() {
     { href: "/super-admin/payments", name: "Payment Management" },
     { href: "/super-admin/analytics", name: "Analytics & Reports" },
     { href: "/super-admin/settings", name: "System Settings" },
+    { href: "/super-admin/notifications", name: "Notification Center" },
+    { href: "/super-admin/localization", name: "Localization" },
   ];
 
   return (

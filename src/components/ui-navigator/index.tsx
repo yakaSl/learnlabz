@@ -55,6 +55,7 @@ export default function UINavigator() {
     { href: "/student/ai-tutor", name: "AI Tutor" },
     { href: "/student/achievements", name: "Achievements" },
     { href: "/student/profile", name: "My Profile" },
+    { href: "/student/assignments/1", name: "View Assignment" },
   ];
 
   return (

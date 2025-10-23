@@ -4,13 +4,11 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { assignments as allAssignments } from '@/components/student/assignments/data';
 
-const assignments = [
-    { id: 1, title: 'Algebra Quiz 2', due: 'July 29, 2024', status: 'Graded', grade: 'A-' },
-    { id: 2, title: 'Physics Lab Report', due: 'August 5, 2024', status: 'Submitted', grade: null },
-    { id: 3, title: 'Writing Essay Draft', due: 'August 10, 2024', status: 'Pending', grade: null },
-    { id: 4, title: 'Calculus Homework', due: 'July 25, 2024', status: 'Overdue', grade: null },
-];
+const assignments = allAssignments.slice(0,4);
+
 
 export default function AssignmentsTab() {
 
@@ -41,7 +39,9 @@ export default function AssignmentsTab() {
                             <div className="flex items-center gap-4">
                                {item.grade && <p className="font-bold text-lg">{item.grade}</p>}
                                 <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
-                                <Button variant="outline" size="sm">View</Button>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={`/student/assignments/${item.id}`}>View</Link>
+                                </Button>
                             </div>
                         </div>
                     ))}

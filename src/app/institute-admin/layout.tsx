@@ -27,7 +27,7 @@ export default function InstituteAdminLayout({
           <SidebarMenu>
             <SidebarMenuItem>
               <Link href="/institute-admin" passHref>
-                <SidebarMenuButton tooltip="Dashboard" isActive>
+                <SidebarMenuButton tooltip="Dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
                 </SidebarMenuButton>

@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Bold, Italic, Underline, List } from "lucide-react";
 
 export function EmailTemplates() {
-  const [content, setContent] = React.useState("<h1>Welcome to LearnLabz, {{user.name}}!</h1><p>We're excited to have you on board.</p>");
+  const [content, setContent] = useState("<h1>Welcome to LearnLabz, {{user.name}}!</h1><p>We're excited to have you on board.</p>");
   return (
     <Card>
       <CardHeader>

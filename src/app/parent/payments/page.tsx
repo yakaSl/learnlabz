@@ -1,15 +1,6 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import PaymentManagement from "@/components/parent/payments/payment-management";
 
 export default function ParentPaymentsPage() {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Payment Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p>Consolidated payment and invoice management coming soon.</p>
-            </CardContent>
-        </Card>
-    )
+    return <PaymentManagement />;
 }

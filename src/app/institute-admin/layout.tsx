@@ -16,10 +16,10 @@ export default function InstituteAdminLayout({
         <SidebarHeader>
           <div className="flex items-center justify-center p-2 group-data-[collapsible=icon]:p-0">
             <div className="bg-white p-1 rounded-md group-data-[collapsible=icon]:hidden">
-                <Image src="https://picsum.photos/seed/bma-logo/140/28" alt="Institute Logo" width={140} height={28} />
+                <Image src="/logo/logo.png" alt="Institute Logo" width={140} height={28} />
             </div>
              <div className="hidden group-data-[collapsible=icon]:block p-1 bg-white rounded-lg">
-                <Image src="https://picsum.photos/seed/bma-logo/36/36" alt="Institute Logo Icon" width={36} height={36}  />
+                <Image src="/logo/logo.png" alt="Institute Logo Icon" width={36} height={36}  />
             </div>
           </div>
         </SidebarHeader>

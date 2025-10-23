@@ -14,8 +14,12 @@ export default function SuperAdminLayout({
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center justify-center p-2 group-data-[collapsible=icon]:p-0">
-            <Image src="/logo/logo.png" alt="LearnLabz Logo" width={120} height={24} className="bg-white p-1 rounded-md group-data-[collapsible=icon]:hidden" />
-            <Image src="/logo/logo.png" alt="LearnLabz Logo Icon" width={32} height={32} className="hidden group-data-[collapsible=icon]:block p-1 bg-white rounded-lg" />
+            <div className="bg-white p-1 rounded-md group-data-[collapsible=icon]:hidden">
+                <Image src="/logo/logo.png" alt="LearnLabz Logo" width={120} height={24} />
+            </div>
+             <div className="hidden group-data-[collapsible=icon]:block p-1 bg-white rounded-lg">
+                <Image src="/logo/logo.png" alt="LearnLabz Logo Icon" width={32} height={32}  />
+            </div>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -45,7 +49,7 @@ export default function SuperAdminLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Analytics">
+              <SidebarMenuButton href="/super-admin/analytics" tooltip="Analytics">
                 <BarChart3 />
                 <span>Analytics</span>
               </SidebarMenuButton>

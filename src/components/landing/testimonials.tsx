@@ -29,7 +29,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+    <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/20">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Trusted by Tutors Everywhere</h2>
@@ -42,7 +42,7 @@ export default function Testimonials() {
             <Card key={testimonial.id} className="h-full flex flex-col">
               <CardContent className="flex flex-1 flex-col justify-between p-6">
                 <div>
-                  <div className="flex text-primary mb-2">
+                  <div className="flex text-accent mb-2">
                     {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
                   </div>
                   <blockquote className="text-lg font-semibold leading-snug">

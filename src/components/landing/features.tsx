@@ -21,10 +21,10 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+    <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-secondary/20">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-          <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">Key Features</div>
+          <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm text-secondary-foreground">Key Features</div>
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Everything you need to succeed</h2>
           <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
             Focus on teaching, we'll handle the rest. Our platform is designed to be powerful yet simple.

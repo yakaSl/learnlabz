@@ -30,8 +30,8 @@ export default function Header() {
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background/80 backdrop-blur-sm border-b' : 'bg-transparent'}`}>
       <div className="container flex h-16 items-center px-4 md:px-6">
         <Link href="#" className="mr-6 flex items-center gap-2">
-          <BookOpen className="h-6 w-6 text-accent" />
-          <span className="font-bold text-lg text-accent-foreground/90">LearnLabz</span>
+          <BookOpen className="h-6 w-6 text-primary" />
+          <span className="font-bold text-lg text-foreground">LearnLabz</span>
         </Link>
         <nav className="hidden md:flex flex-1 items-center gap-6 text-sm font-medium">
           {navItems.map((item) => (
@@ -48,7 +48,7 @@ export default function Header() {
           <Button variant="ghost" asChild>
             <Link href="#">Login</Link>
           </Button>
-          <Button asChild>
+          <Button variant="accent" asChild>
             <Link href="#">Get Started</Link>
           </Button>
           <Sheet open={open} onOpenChange={setOpen}>
@@ -61,7 +61,7 @@ export default function Header() {
             <SheetContent side="right">
               <div className="grid gap-4 py-6">
                 <Link href="#" className="flex items-center gap-2 mb-4">
-                  <BookOpen className="h-6 w-6 text-accent" />
+                  <BookOpen className="h-6 w-6 text-primary" />
                   <span className="font-bold text-lg">LearnLabz</span>
                 </Link>
                 {navItems.map((item) => (

@@ -20,7 +20,7 @@ export default function Hero() {
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button asChild size="lg">
+              <Button asChild size="lg" variant="accent">
                 <Link href="#">Start Teaching Free</Link>
               </Button>
               <Button asChild variant="secondary" size="lg">

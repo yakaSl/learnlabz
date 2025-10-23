@@ -8,7 +8,7 @@ export default function Pricing() {
     <section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-          <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">Pricing</div>
+          <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm text-secondary-foreground">Pricing</div>
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Simple, Transparent Pricing</h2>
           <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
             No subscriptions. No hidden fees. Only pay when you earn.
@@ -45,7 +45,7 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button asChild className="w-full" size="lg">
+              <Button asChild className="w-full" size="lg" variant="accent">
                 <Link href="#">Get Started for Free</Link>
               </Button>
             </CardFooter>

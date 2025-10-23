@@ -5,7 +5,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="bg-accent text-accent-foreground">
+    <footer id="contact" className="bg-primary text-primary-foreground">
       <div className="container px-4 md:px-6 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
@@ -38,7 +38,7 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-        <div className="mt-6 border-t border-accent-foreground/20 pt-6 text-center text-sm text-accent-foreground/80">
+        <div className="mt-6 border-t border-primary-foreground/20 pt-6 text-center text-sm text-primary-foreground/80">
           © {currentYear} LearnLabz. All rights reserved.
         </div>
       </div>

@@ -63,6 +63,14 @@ export default function UINavigator() {
     { href: "/student/communication", name: "Communication Hub" },
   ];
 
+  const parentPages = [
+    { href: "/parent", name: "Parent Dashboard" },
+    { href: "/parent/performance", name: "Performance" },
+    { href: "/parent/payments", name: "Payments" },
+    { href: "/parent/messages", name: "Messages" },
+    { href: "/parent/profile", name: "Profile" },
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -138,6 +146,19 @@ export default function UINavigator() {
           <h3 className="text-lg font-semibold mb-2">Student Role</h3>
           <div className="flex flex-wrap gap-4">
             {studentPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Parent Role</h3>
+          <div className="flex flex-wrap gap-4">
+            {parentPages.map((page) => (
               <Button asChild variant="outline" key={page.href}>
                 <Link href={page.href}>{page.name}</Link>
               </Button>

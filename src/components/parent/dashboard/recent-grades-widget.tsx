@@ -1,0 +1,39 @@
+
+"use client";
+
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { TrendingUp, TrendingDown } from "lucide-react";
+
+const grades = [
+  { id: 1, assignment: 'Algebra Quiz 2', grade: 'A+', trend: 'up' },
+  { id: 2, assignment: 'Physics Lab Report', grade: 'B-', trend: 'down' },
+  { id: 3, assignment: 'Writing Essay Draft', grade: 'A-', trend: 'up' },
+];
+
+export function RecentGradesWidget() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Recent Grades</CardTitle>
+        <CardDescription>Latest assessment results.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+            {grades.map(grade => (
+              <div key={grade.id} className="flex items-center gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{grade.assignment}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg">{grade.grade}</span>
+                    {grade.trend === 'up' && <TrendingUp className="h-5 w-5 text-success-foreground" />}
+                    {grade.trend === 'down' && <TrendingDown className="h-5 w-5 text-destructive" />}
+                </div>
+              </div>
+            ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}

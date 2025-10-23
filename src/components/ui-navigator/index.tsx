@@ -52,6 +52,7 @@ export default function UINavigator() {
   const studentPages = [
     { href: "/student", name: "Student Dashboard" },
     { href: "/student/classes", name: "My Classes" },
+    { href: "/student/grades", name: "Grades & Performance" },
     { href: "/student/ai-tutor", name: "AI Tutor" },
     { href: "/student/achievements", name: "Achievements" },
     { href: "/student/profile", name: "My Profile" },

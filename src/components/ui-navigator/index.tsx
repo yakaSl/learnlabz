@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -19,6 +20,10 @@ export default function UINavigator() {
     { href: "/super-admin/localization", name: "Localization" },
     { href: "/super-admin/gamification", name: "Gamification" },
     { href: "/super-admin/audit-logs", name: "Audit Logs" },
+  ];
+
+  const instituteAdminPages = [
+    { href: "/institute-admin", name: "Dashboard" },
   ];
 
   return (
@@ -44,6 +49,19 @@ export default function UINavigator() {
           <h3 className="text-lg font-semibold mb-2">Super Admin Role</h3>
           <div className="flex flex-wrap gap-4">
             {superAdminPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Institute Admin Role</h3>
+          <div className="flex flex-wrap gap-4">
+            {instituteAdminPages.map((page) => (
               <Button asChild variant="outline" key={page.href}>
                 <Link href={page.href}>{page.name}</Link>
               </Button>

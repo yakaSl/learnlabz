@@ -9,6 +9,10 @@ export default function UINavigator() {
     { href: "/", name: "Landing Page" },
   ];
 
+  const devPages = [
+    { href: "/ui", name: "UI Components" },
+  ];
+
   const superAdminPages = [
     { href: "/super-admin", name: "Dashboard" },
     { href: "/super-admin/users", name: "User Management" },
@@ -35,6 +39,11 @@ export default function UINavigator() {
 
   const tutorPages = [
     { href: "/tutor", name: "Tutor Dashboard" },
+    { href: "/tutor/classes", name: "Class Management" },
+    { href: "/tutor/students", name: "Student Management" },
+    { href: "/tutor/payments", name: "Payments" },
+    { href: "/tutor/ai-assistant", name: "AI Assistant" },
+    { href: "/tutor/settings", name: "Settings" },
   ];
 
   return (
@@ -56,6 +65,19 @@ export default function UINavigator() {
 
         <Separator />
 
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Development Pages</h3>
+          <div className="flex flex-wrap gap-4">
+            {devPages.map((page) => (
+              <Button asChild variant="outline" key={page.href}>
+                <Link href={page.href}>{page.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+        
         <div>
           <h3 className="text-lg font-semibold mb-2">Super Admin Role</h3>
           <div className="flex flex-wrap gap-4">

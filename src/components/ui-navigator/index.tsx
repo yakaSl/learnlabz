@@ -6,6 +6,7 @@ export default function UINavigator() {
   const pages = [
     { href: "/", name: "Landing Page" },
     { href: "/super-admin", name: "Super Admin Dashboard" },
+    { href: "/super-admin/users", name: "Super Admin User Management" },
   ];
 
   return (

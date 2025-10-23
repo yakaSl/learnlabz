@@ -21,7 +21,7 @@ export default function SuperAdminLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/super-admin" isActive tooltip="Dashboard">
+              <SidebarMenuButton href="/super-admin" tooltip="Dashboard">
                 <LayoutDashboard />
                 <span>Dashboard</span>
               </SidebarMenuButton>
@@ -33,7 +33,7 @@ export default function SuperAdminLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Users">
+              <SidebarMenuButton href="/super-admin/users" isActive tooltip="Users">
                 <Users />
                 <span>Users</span>
               </SidebarMenuButton>

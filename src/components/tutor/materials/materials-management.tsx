@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from '@/components/ui/button';
 import { Folder, File, Upload, Search, MoreVertical, LayoutGrid, List } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 const fileSystem = {
   name: 'Root',
@@ -34,16 +35,18 @@ function FileItem({ item }: { item: any }) {
     const isFolder = item.type === 'folder';
     return (
         <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4 flex items-center gap-4">
-                {isFolder ? <Folder className="h-8 w-8 text-primary" /> : <File className="h-8 w-8 text-muted-foreground" />}
-                <div className="flex-1">
-                    <p className="font-semibold truncate">{item.name}</p>
-                    {item.size && <p className="text-sm text-muted-foreground">{item.size}</p>}
+            <CardHeader className="flex flex-row items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                    {isFolder ? <Folder className="h-6 w-6 text-primary" /> : <File className="h-6 w-6 text-muted-foreground" />}
+                    <div className="flex-1">
+                        <p className="font-semibold truncate">{item.name}</p>
+                        {item.size && <p className="text-sm text-muted-foreground">{item.size}</p>}
+                    </div>
                 </div>
                  <Button variant="ghost" size="icon" className="h-8 w-8">
                     <MoreVertical className="h-4 w-4" />
                 </Button>
-            </CardContent>
+            </CardHeader>
         </Card>
     );
 }

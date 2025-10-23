@@ -10,12 +10,14 @@ import { WhiteLabelQueue } from './white-label-queue';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
-import { Search, LayoutGrid, List, Filter } from 'lucide-react';
+import { Search, LayoutGrid, List, Filter, PlusCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AddInstituteDialog } from './add-institute-dialog';
 
 export default function InstituteManagement() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   return (
     <Tabs defaultValue="institutes" className="flex-1">
@@ -24,11 +26,18 @@ export default function InstituteManagement() {
           <CardTitle>Institute Management</CardTitle>
           <CardDescription>Oversee all educational organizations on the platform.</CardDescription>
         </div>
-        <TabsList>
-          <TabsTrigger value="institutes">All Institutes</TabsTrigger>
-          <TabsTrigger value="white-label">White-Label Queue</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center gap-2">
+            <Button onClick={() => setIsAddDialogOpen(true)}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                New Institute
+            </Button>
+            <TabsList>
+              <TabsTrigger value="institutes">All Institutes</TabsTrigger>
+              <TabsTrigger value="white-label">White-Label Queue</TabsTrigger>
+            </TabsList>
+        </div>
       </div>
+      <AddInstituteDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
       <TabsContent value="institutes">
         <Card>
           <CardHeader>

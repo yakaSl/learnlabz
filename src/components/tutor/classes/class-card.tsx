@@ -8,6 +8,7 @@ import { MoreVertical, Users, Calendar } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface ClassCardProps {
   classInfo: Class;
@@ -39,7 +40,9 @@ export function ClassCard({ classInfo }: ClassCardProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href={`/tutor/classes/${classInfo.id}`}>View Details</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit Class</DropdownMenuItem>
                     <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
                 </DropdownMenuContent>
@@ -68,7 +71,9 @@ export function ClassCard({ classInfo }: ClassCardProps) {
                 <div className={cn("h-2 w-2 rounded-full", statusColors[classInfo.status])} />
                 <span className="text-sm font-medium">{classInfo.status}</span>
             </div>
-            <Button variant="outline" size="sm">Manage</Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/tutor/classes/${classInfo.id}`}>Manage</Link>
+            </Button>
         </div>
       </CardFooter>
     </Card>

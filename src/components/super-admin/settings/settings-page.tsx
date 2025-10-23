@@ -16,33 +16,33 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">Manage platform-wide configurations and features.</p>
       </div>
 
-      <Tabs defaultValue="general" className="flex-1" orientation="vertical">
-        <TabsList className="w-48 h-full">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="features">Feature Flags</TabsTrigger>
-          <TabsTrigger value="integrations">Integrations</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="email">Email Templates</TabsTrigger>
-          <TabsTrigger value="ai">AI Configuration</TabsTrigger>
+      <Tabs defaultValue="general" orientation="vertical" className="flex flex-col md:flex-row gap-6 md:gap-8">
+        <TabsList className="w-full md:w-48 shrink-0 h-auto items-start">
+          <TabsTrigger value="general" className="w-full justify-start">General</TabsTrigger>
+          <TabsTrigger value="features" className="w-full justify-start">Feature Flags</TabsTrigger>
+          <TabsTrigger value="integrations" className="w-full justify-start">Integrations</TabsTrigger>
+          <TabsTrigger value="security" className="w-full justify-start">Security</TabsTrigger>
+          <TabsTrigger value="email" className="w-full justify-start">Email Templates</TabsTrigger>
+          <TabsTrigger value="ai" className="w-full justify-start">AI Configuration</TabsTrigger>
         </TabsList>
         
-        <div className="pl-4 w-full">
-          <TabsContent value="general">
+        <div className="w-full">
+          <TabsContent value="general" className="mt-0">
             <GeneralSettings />
           </TabsContent>
-          <TabsContent value="features">
+          <TabsContent value="features" className="mt-0">
             <FeatureFlags />
           </TabsContent>
-          <TabsContent value="integrations">
+          <TabsContent value="integrations" className="mt-0">
             <IntegrationsSettings />
           </TabsContent>
-          <TabsContent value="security">
+          <TabsContent value="security" className="mt-0">
             <SecuritySettings />
           </TabsContent>
-          <TabsContent value="email">
+          <TabsContent value="email" className="mt-0">
             <EmailTemplates />
           </TabsContent>
-          <TabsContent value="ai">
+          <TabsContent value="ai" className="mt-0">
             <AiConfig />
           </TabsContent>
         </div>
@@ -50,57 +50,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-// Override Tabs styles for vertical orientation
-const originalTabsList = TabsList;
-const originalTabsTrigger = TabsTrigger;
-const originalTabsContent = TabsContent;
-
-(Tabs as any).List = React.forwardRef<
-  React.ElementRef<typeof originalTabsList>,
-  React.ComponentPropsWithoutRef<typeof originalTabsList>
->(({ className, ...props }, ref) => {
-  const tabs = React.useContext(Tabs as any);
-  return tabs.orientation === 'vertical' ? (
-    <originalTabsList
-      ref={ref}
-      className="flex-col h-auto items-start justify-start rounded-md bg-muted p-1 text-muted-foreground"
-      {...props}
-    />
-  ) : (
-    <originalTabsList ref={ref} className={className} {...props} />
-  );
-});
-
-(Tabs as any).Trigger = React.forwardRef<
-    React.ElementRef<typeof originalTabsTrigger>,
-    React.ComponentPropsWithoutRef<typeof originalTabsTrigger>
->(({ className, ...props }, ref) => {
-    const tabs = React.useContext(Tabs as any);
-    return tabs.orientation === 'vertical' ? (
-        <originalTabsTrigger
-        ref={ref}
-        className="w-full justify-start data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-        {...props}
-        />
-    ) : (
-        <originalTabsTrigger ref={ref} className={className} {...props} />
-    );
-});
-
-
-(Tabs as any).Content = React.forwardRef<
-    React.ElementRef<typeof originalTabsContent>,
-    React.ComponentPropsWithoutRef<typeof originalTabsContent>
->(({ className, ...props }, ref) => {
-    const tabs = React.useContext(Tabs as any);
-    return tabs.orientation === 'vertical' ? (
-        <originalTabsContent
-        ref={ref}
-        className="mt-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        {...props}
-        />
-    ) : (
-        <originalTabsContent ref={ref} className={className} {...props} />
-    );
-});

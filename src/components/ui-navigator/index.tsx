@@ -8,6 +8,7 @@ export default function UINavigator() {
     { href: "/super-admin", name: "Super Admin Dashboard" },
     { href: "/super-admin/users", name: "Super Admin User Management" },
     { href: "/super-admin/institutes", name: "Super Admin Institute Management" },
+    { href: "/super-admin/payments", name: "Super Admin Payment Management" },
   ];
 
   return (

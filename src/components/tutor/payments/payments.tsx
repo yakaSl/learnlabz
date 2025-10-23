@@ -46,79 +46,76 @@ export default function Payments() {
             </Card>
         </div>
 
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle>Student Payment History</CardTitle>
-                    <CardDescription>A record of all payments received from students.</CardDescription>
-                </div>
-                <Button variant="outline" size="sm"><Download className="mr-2"/>Export</Button>
-            </CardHeader>
-            <CardContent>
-                <div className="border rounded-md">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Student</TableHead>
-                                <TableHead>Class</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Status</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {paymentHistory.map((payment) => (
-                                <TableRow key={payment.id}>
-                                    <TableCell>{payment.student}</TableCell>
-                                    <TableCell>{payment.class}</TableCell>
-                                    <TableCell>${payment.amount.toFixed(2)}</TableCell>
-                                    <TableCell>{payment.date}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={payment.status === 'Paid' ? 'default' : 'secondary'}>
-                                            {payment.status}
-                                        </Badge>
-                                    </TableCell>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Student Payment History</CardTitle>
+                        <CardDescription>Recent payments from students.</CardDescription>
+                    </div>
+                    <Button variant="outline" size="sm"><Download className="mr-2"/>Export</Button>
+                </CardHeader>
+                <CardContent>
+                    <div className="border rounded-md">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Student</TableHead>
+                                    <TableHead>Amount</TableHead>
+                                    <TableHead>Status</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-            </CardContent>
-        </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>Payout History</CardTitle>
-                <CardDescription>A record of all payouts to your bank account.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="border rounded-md">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                             {payoutHistory.map((payout) => (
-                                <TableRow key={payout.id}>
-                                    <TableCell>{payout.date}</TableCell>
-                                    <TableCell>${payout.amount.toFixed(2)}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={payout.status === 'Completed' ? 'default' : 'secondary'}>
-                                            {payout.status}
-                                        </Badge>
-                                    </TableCell>
+                            </TableHeader>
+                            <TableBody>
+                                {paymentHistory.map((payment) => (
+                                    <TableRow key={payment.id}>
+                                        <TableCell>{payment.student}</TableCell>
+                                        <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={payment.status === 'Paid' ? 'default' : 'secondary'}>
+                                                {payment.status}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>Payout History</CardTitle>
+                    <CardDescription>A record of all payouts to your bank account.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="border rounded-md">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Amount</TableHead>
+                                    <TableHead>Status</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-            </CardContent>
-        </Card>
-
+                            </TableHeader>
+                            <TableBody>
+                                {payoutHistory.map((payout) => (
+                                    <TableRow key={payout.id}>
+                                        <TableCell>{payout.date}</TableCell>
+                                        <TableCell>${payout.amount.toFixed(2)}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={payout.status === 'Completed' ? 'default' : 'secondary'}>
+                                                {payout.status}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     </div>
   );
 }

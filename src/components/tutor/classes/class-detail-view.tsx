@@ -61,6 +61,7 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview"><Users className="mr-2 h-4 w-4" />Overview</TabsTrigger>
           <TabsTrigger value="students"><Users className="mr-2 h-4 w-4" />Students</TabsTrigger>
+
           <TabsTrigger value="attendance"><Calendar className="mr-2 h-4 w-4" />Attendance</TabsTrigger>
           <TabsTrigger value="materials"><BookOpen className="mr-2 h-4 w-4" />Materials</TabsTrigger>
           <TabsTrigger value="assessments"><CheckSquare className="mr-2 h-4 w-4" />Assessments</TabsTrigger>

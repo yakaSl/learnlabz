@@ -31,8 +31,25 @@ const fileSystem = {
   ],
 };
 
-function FileItem({ item }: { item: any }) {
+function FileItem({ item, view }: { item: any, view: 'grid' | 'list' }) {
     const isFolder = item.type === 'folder';
+
+    if (view === 'list') {
+        return (
+            <div className="flex items-center p-2 border-b last:border-b-0 hover:bg-muted/50">
+                <div className="flex items-center gap-3 flex-1">
+                    {isFolder ? <Folder className="h-5 w-5 text-primary" /> : <File className="h-5 w-5 text-muted-foreground" />}
+                    <span className="font-medium">{item.name}</span>
+                </div>
+                <div className="w-24 text-sm text-muted-foreground">{item.size}</div>
+                <div className="w-32 text-muted-foreground text-sm">3 days ago</div>
+                 <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreVertical className="h-4 w-4" />
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between p-4">
@@ -84,12 +101,22 @@ export default function MaterialsManagement() {
             </CardHeader>
             <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">Path: /Algebra 101</p>
-                <div className={cn(
-                    "gap-4",
-                    view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'flex flex-col'
-                )}>
-                    {fileSystem.children.map(item => <FileItem key={item.name} item={item} />)}
-                </div>
+                 {view === 'list' && (
+                    <div className="border rounded-md">
+                        <div className="flex items-center p-2 border-b bg-muted/50 text-sm font-medium">
+                            <div className="flex-1">Name</div>
+                            <div className="w-24">Size</div>
+                            <div className="w-32">Last Modified</div>
+                            <div className="w-12"></div>
+                        </div>
+                        {fileSystem.children.map(item => <FileItem key={item.name} item={item} view={view} />)}
+                    </div>
+                )}
+                {view === 'grid' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                         {fileSystem.children.map(item => <FileItem key={item.name} item={item} view={view} />)}
+                    </div>
+                )}
             </CardContent>
         </Card>
     </div>

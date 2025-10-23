@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -51,7 +52,7 @@ export default function AiAssistantPage() {
                                     {messages.map((msg, index) => (
                                         <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
                                             {msg.role === 'ai' && (
-                                                <Avatar className="h-8 w-8 border">
+                                                <Avatar className="h-8 w-8 border bg-accent/20 text-accent">
                                                     <AvatarFallback><Sparkles className="h-4 w-4" /></AvatarFallback>
                                                 </Avatar>
                                             )}

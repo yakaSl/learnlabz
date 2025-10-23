@@ -70,7 +70,7 @@ export function LogFilterPanel() {
         </div>
         <div className="space-y-2">
           <Label>Severity</Label>
-          <div className="space-y-1">
+          <div className="grid grid-cols-2 gap-2">
             <div className="flex items-center space-x-2">
               <Checkbox id="sev-info" />
               <Label htmlFor="sev-info" className="font-normal">Info</Label>

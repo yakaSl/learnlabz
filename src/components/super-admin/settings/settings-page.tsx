@@ -5,7 +5,6 @@ import { GeneralSettings } from "./general-settings";
 import { IntegrationsSettings } from "./integrations-settings";
 import { SecuritySettings } from "./security-settings";
 import { FeatureFlags } from "./feature-flags";
-import { EmailTemplates } from "./email-templates";
 import { AiConfig } from "./ai-config";
 
 export default function SettingsPage() {
@@ -22,7 +21,6 @@ export default function SettingsPage() {
           <TabsTrigger value="features" className="w-full justify-start">Feature Flags</TabsTrigger>
           <TabsTrigger value="integrations" className="w-full justify-start">Integrations</TabsTrigger>
           <TabsTrigger value="security" className="w-full justify-start">Security</TabsTrigger>
-          <TabsTrigger value="email" className="w-full justify-start">Email Templates</TabsTrigger>
           <TabsTrigger value="ai" className="w-full justify-start">AI Configuration</TabsTrigger>
         </TabsList>
         
@@ -38,9 +36,6 @@ export default function SettingsPage() {
           </TabsContent>
           <TabsContent value="security" className="mt-0">
             <SecuritySettings />
-          </TabsContent>
-          <TabsContent value="email" className="mt-0">
-            <EmailTemplates />
           </TabsContent>
           <TabsContent value="ai" className="mt-0">
             <AiConfig />

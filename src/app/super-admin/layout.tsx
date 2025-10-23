@@ -15,10 +15,10 @@ export default function SuperAdminLayout({
         <SidebarHeader>
           <div className="flex items-center justify-center p-2 group-data-[collapsible=icon]:p-0">
             <div className="bg-white p-1 rounded-md group-data-[collapsible=icon]:hidden">
-                <Image src="/logo/logo.png" alt="LearnLabz Logo" width={120} height={24} />
+                <Image src="/logo/logo.png" alt="LearnLabz Logo" width={140} height={28} />
             </div>
              <div className="hidden group-data-[collapsible=icon]:block p-1 bg-white rounded-lg">
-                <Image src="/logo/logo.png" alt="LearnLabz Logo Icon" width={32} height={32}  />
+                <Image src="/logo/logo.png" alt="LearnLabz Logo Icon" width={36} height={36}  />
             </div>
           </div>
         </SidebarHeader>

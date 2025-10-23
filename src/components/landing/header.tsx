@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import React from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   const navItems = [
@@ -30,8 +31,7 @@ export default function Header() {
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background/80 backdrop-blur-sm border-b' : 'bg-transparent'}`}>
       <div className="container flex h-16 items-center px-4 md:px-6">
         <Link href="#" className="mr-6 flex items-center gap-2">
-          <BookOpen className="h-6 w-6 text-primary" />
-          <span className="font-bold text-lg text-foreground">LearnLabz</span>
+          <Image src="/logo/logo.png" alt="LearnLabz Logo" width={160} height={32} />
         </Link>
         <nav className="hidden md:flex flex-1 items-center gap-6 text-sm font-medium">
           {navItems.map((item) => (
@@ -61,8 +61,7 @@ export default function Header() {
             <SheetContent side="right">
               <div className="grid gap-4 py-6">
                 <Link href="#" className="flex items-center gap-2 mb-4">
-                  <BookOpen className="h-6 w-6 text-primary" />
-                  <span className="font-bold text-lg">LearnLabz</span>
+                  <Image src="/logo/logo.png" alt="LearnLabz Logo" width={160} height={32} />
                 </Link>
                 {navItems.map((item) => (
                   <Link

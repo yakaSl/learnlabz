@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Twitter, Linkedin, Facebook } from "lucide-react";
+import { Twitter, Linkedin, Facebook } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,8 +10,7 @@ export default function Footer() {
       <div className="container px-4 md:px-6 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6" />
-            <span className="text-xl font-bold">LearnLabz</span>
+            <Image src="/logo/logo.png" alt="LearnLabz Logo" width={160} height={32} />
           </div>
           <nav className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm font-medium">
             <Link href="#about" className="hover:underline underline-offset-4">

@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { type Student } from '../data';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 
 interface ApplyScholarshipDialogProps {
   isOpen: boolean;

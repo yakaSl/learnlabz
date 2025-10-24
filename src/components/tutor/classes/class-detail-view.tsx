@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { classes } from './data';
 import { notFound } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText } from 'lucide-react';
+import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText, PlusCircle } from 'lucide-react';
 import OverviewTab from './details/overview';
 import StudentsTab from './details/students';
 import AttendanceTab from './details/attendance';
@@ -14,6 +14,7 @@ import MaterialsTab from './details/materials';
 import AssessmentsTab from './details/assessments';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShareEnrollmentDialog } from './details/share-enrollment-dialog';
+import Link from 'next/link';
 
 interface ClassDetailViewProps {
   classId: string;

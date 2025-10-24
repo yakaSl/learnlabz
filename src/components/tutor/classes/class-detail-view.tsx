@@ -15,6 +15,7 @@ import AssessmentsTab from './details/assessments';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShareEnrollmentDialog } from './details/share-enrollment-dialog';
 import Link from 'next/link';
+import { useAppContext } from '@/hooks/use-context';
 
 interface ClassDetailViewProps {
   classId: string;
@@ -46,6 +47,8 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
   const classInfo = classes.find(c => c.id === classId);
   const [isEditing, setIsEditing] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const { selectedContext } = useAppContext();
+  const isPersonalContext = selectedContext.type === 'personal';
 
   if (!classInfo) {
     notFound();
@@ -69,11 +72,11 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
                 <Share2 className="mr-2 h-4 w-4" />
                 Share Enrollment
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
+            <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} disabled={!isPersonalContext}>
                 <Edit className="mr-2 h-4 w-4" />
-                {isEditing ? 'Cancel' : 'Request Edit'}
+                {isEditing ? 'Cancel' : (isPersonalContext ? 'Edit Class' : 'Request Edit')}
             </Button>
-            {isEditing && <Button onClick={() => setIsEditing(false)}>Submit for Approval</Button>}
+            {isEditing && <Button onClick={() => setIsEditing(false)}>{isPersonalContext ? 'Save Changes' : 'Submit for Approval'}</Button>}
         </div>
       </div>
       
@@ -89,7 +92,7 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
               <Edit className="h-4 w-4" />
               <AlertTitle>Edit Mode</AlertTitle>
               <AlertDescription>
-                  You are in edit mode. Any changes you make will be submitted to the institute admin for approval.
+                  {isPersonalContext ? 'You are editing your personal class details.' : 'You are in edit mode. Any changes you make will be submitted to the institute admin for approval.'}
               </AlertDescription>
           </Alert>
       )}

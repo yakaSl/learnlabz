@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -10,16 +9,22 @@ import { ClassCard } from './class-card';
 import { classes } from './data';
 import { ClassCalendarView } from './class-calendar-view';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useAppContext } from '@/hooks/use-context';
+import Link from 'next/link';
 
 export default function ClassManagement() {
   const [view, setView] = useState<'grid' | 'calendar'>('grid');
+  const { selectedContext } = useAppContext();
+  const isPersonalContext = selectedContext.type === 'personal';
 
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Assigned Classes</h1>
-          <p className="text-muted-foreground">Manage classes assigned to you by the institute.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{isPersonalContext ? 'My Personal Classes' : 'My Assigned Classes'}</h1>
+          <p className="text-muted-foreground">
+            {isPersonalContext ? 'Manage your own classes, students, and schedule.' : `Manage classes assigned to you by ${selectedContext.label}.`}
+          </p>
         </div>
         <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md bg-muted p-1">
@@ -30,20 +35,31 @@ export default function ClassManagement() {
                     <CalendarIcon className="h-4 w-4" />
                 </Button>
             </div>
-            <Button disabled>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create New Class
+            <Button disabled={!isPersonalContext} asChild={isPersonalContext}>
+              {isPersonalContext ? (
+                  <Link href="/tutor/classes/new">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Create New Class
+                  </Link>
+              ) : (
+                  <>
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Create New Class
+                  </>
+              )}
             </Button>
         </div>
       </div>
 
-       <Alert>
-        <Info className="h-4 w-4" />
-        <AlertTitle>Institute Guidelines</AlertTitle>
-        <AlertDescription>
-          All class schedules and fees are managed by the institute admin. To request changes, please use the "Request Edit" option on a class and await approval.
-        </AlertDescription>
-      </Alert>
+       {!isPersonalContext && (
+         <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Institute Guidelines</AlertTitle>
+          <AlertDescription>
+            All class schedules and fees are managed by the institute admin. To request changes, please use the "Request Edit" option on a class and await approval.
+          </AlertDescription>
+        </Alert>
+       )}
 
       {view === 'grid' ? (
         <Card>

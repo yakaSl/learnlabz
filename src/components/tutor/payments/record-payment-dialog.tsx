@@ -16,10 +16,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { students } from '../students/data';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 
 interface RecordPaymentDialogProps {
   open: boolean;
@@ -29,6 +30,8 @@ interface RecordPaymentDialogProps {
 export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogProps) {
   const [amount, setAmount] = React.useState('');
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [studentOpen, setStudentOpen] = React.useState(false);
+  const [studentValue, setStudentValue] = React.useState("");
   
   const platformFee = amount ? (parseFloat(amount) * 0.05).toFixed(2) : '0.00';
   const netPayout = amount ? (parseFloat(amount) * 0.95).toFixed(2) : '0.00';
@@ -45,16 +48,47 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
         <div className="grid gap-4 py-4">
             <div className="space-y-2">
                 <Label htmlFor="student">Student</Label>
-                <Select>
-                    <SelectTrigger id="student">
-                        <SelectValue placeholder="Select a student..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {students.map(student => (
-                            <SelectItem key={student.id} value={student.id}>{student.name}</SelectItem>
+                <Popover open={studentOpen} onOpenChange={setStudentOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={studentOpen}
+                      className="w-full justify-between"
+                    >
+                      {studentValue
+                        ? students.find((student) => student.name.toLowerCase() === studentValue)?.name
+                        : "Select a student..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search student..." />
+                      <CommandEmpty>No student found.</CommandEmpty>
+                      <CommandGroup>
+                        {students.map((student) => (
+                          <CommandItem
+                            key={student.id}
+                            value={student.name}
+                            onSelect={(currentValue) => {
+                              setStudentValue(currentValue === studentValue ? "" : currentValue)
+                              setStudentOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                studentValue === student.name.toLowerCase() ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {student.name}
+                          </CommandItem>
                         ))}
-                    </SelectContent>
-                </Select>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
             </div>
             <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">

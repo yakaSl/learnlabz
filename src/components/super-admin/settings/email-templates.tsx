@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -50,7 +50,7 @@ export function EmailTemplates() {
                     id="email-editor"
                     className="min-h-[300px] rounded-t-none"
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
                 />
             </div>
         </div>

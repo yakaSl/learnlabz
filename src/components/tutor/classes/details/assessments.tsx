@@ -8,9 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 const assessments = [
-    { id: 1, title: "Mid-Term Quiz", type: "MCQ", status: "Graded", average: "85%" },
-    { id: 2, title: "Homework 3", type: "Short Answer", status: "Pending", average: "N/A" },
-    { id: 3, title: "Final Project", type: "File Upload", status: "Draft", average: "N/A" },
+    { id: 1, title: "Mid-Term Quiz", type: "MCQ", status: "Graded", submissions: 12, average: "85%" },
+    { id: 2, title: "Homework 3", type: "Short Answer", status: "Pending", submissions: 10, average: "N/A" },
+    { id: 3, title: "Final Project", type: "File Upload", status: "Draft", submissions: 0, average: "N/A" },
 ]
 
 export default function AssessmentsTab({ classId }: { classId: string }) {
@@ -39,7 +39,7 @@ export default function AssessmentsTab({ classId }: { classId: string }) {
                                 <p className="font-semibold">{item.title}</p>
                                 <p className="text-sm text-muted-foreground">{item.type}</p>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                                 <BarChart className="h-4 w-4" />
                                 <span>Avg: {item.average}</span>
                             </div>
@@ -47,7 +47,11 @@ export default function AssessmentsTab({ classId }: { classId: string }) {
                                 <Badge variant={item.status === 'Graded' ? 'default' : 'secondary'}>{item.status}</Badge>
                             </div>
                             <div className="flex gap-2">
-                                <Button variant="outline" size="sm">Grade</Button>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={`/tutor/classes/${classId}/assessments/${item.id}/submissions/1`}>
+                                        Grade ({item.submissions})
+                                    </Link>
+                                </Button>
                                  <Button variant="ghost" size="icon" className="h-9 w-9">
                                     <MoreVertical className="h-4 w-4" />
                                 </Button>

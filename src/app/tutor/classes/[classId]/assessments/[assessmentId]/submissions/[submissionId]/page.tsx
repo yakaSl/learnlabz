@@ -1,6 +1,4 @@
 
-'use client';
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -14,13 +12,14 @@ export default function GradeSubmissionPage({
 }: {
   params: { classId: string; assessmentId: string; submissionId: string };
 }) {
+  const { classId } = React.use(params);
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
       <div className="flex items-center justify-between mb-4">
         <div>
            <Button variant="ghost" asChild>
-            <Link href={`/tutor/classes/${params.classId}`}>
+            <Link href={`/tutor/classes/${classId}`}>
               <ArrowLeft className="mr-2" />
               Back to Submissions
             </Link>

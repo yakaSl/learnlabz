@@ -4,6 +4,7 @@ import { LayoutDashboard, BookOpen, GraduationCap, Folder, Wallet, Megaphone, Bo
 import Image from "next/image";
 import Link from "next/link";
 import TutorUserNav from "@/components/tutor/user-nav";
+import { ContextSwitcher } from "@/components/tutor/context-switcher";
 
 export default function TutorLayout({
   children,
@@ -107,8 +108,8 @@ export default function TutorLayout({
       <SidebarInset>
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
           <SidebarTrigger className="md:hidden"/>
-          <div className="flex-1">
-             <h1 className="text-lg font-semibold">Tutor Dashboard</h1>
+          <div className="flex-1 flex items-center gap-4">
+             <ContextSwitcher />
           </div>
           <div className="flex items-center gap-4">
             <TutorUserNav />

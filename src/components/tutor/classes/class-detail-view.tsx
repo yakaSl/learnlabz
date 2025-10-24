@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { classes } from '../data';
+import { classes } from './data';
 import { notFound } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';

@@ -103,7 +103,7 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 
-export function StudentPaymentsTable({ data }: { data: Payment[] }) {
+export function StudentPaymentsTable({ columns, data }: { columns: ColumnDef<Payment>[]; data: Payment[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] =

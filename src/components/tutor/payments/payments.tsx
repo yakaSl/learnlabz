@@ -11,7 +11,7 @@ import { RecordPaymentDialog } from "./record-payment-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
 import { paymentHistory, payoutHistory } from "./data";
-import { StudentPaymentsTable } from "./student-payments-table";
+import { StudentPaymentsTable, columns } from "./student-payments-table";
 
 
 export default function Payments() {
@@ -73,7 +73,7 @@ export default function Payments() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              <StudentPaymentsTable data={paymentHistory} />
+              <StudentPaymentsTable columns={columns} data={paymentHistory} />
               
               <Card>
                   <CardHeader>

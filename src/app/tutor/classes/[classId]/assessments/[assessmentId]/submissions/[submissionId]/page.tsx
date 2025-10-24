@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { SubmissionViewer } from '@/components/tutor/classes/details/grading/submission-viewer';
-import { GradingPanel } from '@/components/tuber/classes/details/grading/grading-panel';
-import { submissionData } from '@/components/tuber/classes/details/grading/data';
+import { GradingPanel } from '@/components/tutor/classes/details/grading/grading-panel';
+import { submissionData } from '@/components/tutor/classes/details/grading/data';
 
 export default function GradeSubmissionPage({
   params,

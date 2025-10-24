@@ -7,34 +7,43 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Phone, Mail } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Phone, Mail, FileText } from 'lucide-react';
 import { StudentAttendanceView } from './attendance/student-attendance-view';
+import { useState } from 'react';
+import { GenerateReportDialog } from './generate-report-dialog';
 
 interface StudentProfileViewProps {
     studentId: string;
 }
 
 function ProfileHeader({ student }: { student: (typeof students)[0] }) {
+    const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+
     return (
-        <Card>
-            <CardContent className="p-6">
-                 <div className="flex flex-col md:flex-row items-start gap-6">
-                    <Avatar className="h-24 w-24">
-                        <AvatarImage src={student.avatar} alt={student.name} />
-                        <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-bold">{student.name}</h1>
-                        <p className="text-muted-foreground">{student.grade}</p>
-                         <div className="flex flex-wrap gap-2 mt-4">
-                            <Button variant="outline" size="sm"><Mail className="mr-2" /> Message Student</Button>
-                            <Button variant="outline" size="sm"><Phone className="mr-2" /> Call Parent</Button>
+        <>
+            <GenerateReportDialog isOpen={isReportDialogOpen} onOpenChange={setIsReportDialogOpen} />
+            <Card>
+                <CardContent className="p-6">
+                     <div className="flex flex-col md:flex-row items-start gap-6">
+                        <Avatar className="h-24 w-24">
+                            <AvatarImage src={student.avatar} alt={student.name} />
+                            <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                            <h1 className="text-2xl font-bold">{student.name}</h1>
+                            <p className="text-muted-foreground">{student.grade}</p>
+                             <div className="flex flex-wrap gap-2 mt-4">
+                                <Button variant="outline" size="sm"><Mail className="mr-2" /> Message Student</Button>
+                                <Button variant="outline" size="sm"><Phone className="mr-2" /> Call Parent</Button>
+                                <Button variant="outline" size="sm" onClick={() => setIsReportDialogOpen(true)}>
+                                    <FileText className="mr-2" /> Generate Report
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </>
     );
 }
 

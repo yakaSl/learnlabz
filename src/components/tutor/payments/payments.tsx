@@ -3,11 +3,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, PlusCircle } from "lucide-react";
+import { Download, PlusCircle, Banknote, AlertTriangle } from "lucide-react";
 import React from "react";
 import { RecordPaymentDialog } from "./record-payment-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Link from "next/link";
 
 const paymentHistory = [
   { id: 'pay_1', student: 'Alice Johnson', class: 'Algebra 101', amount: 50, date: '2024-07-20', status: 'Paid' },
@@ -16,12 +19,14 @@ const paymentHistory = [
 ];
 
 const payoutHistory = [
-    { id: 'payout_1', date: '2024-07-15', amount: 850.50, status: 'Completed' },
-    { id: 'payout_2', date: '2024-06-15', amount: 920.00, status: 'Completed' },
+    { id: 'payout_1', date: 'July 15, 2024', gross: 920.00, fees: 46.00, net: 874.00, status: 'Completed' },
+    { id: 'payout_2', date: 'July 8, 2024', gross: 850.50, fees: 42.53, net: 807.97, status: 'Completed' },
+    { id: 'payout_3', date: 'July 1, 2024', gross: 980.00, fees: 49.00, net: 931.00, status: 'Completed' },
 ]
 
 export default function Payments() {
   const [isRecordPaymentOpen, setIsRecordPaymentOpen] = React.useState(false);
+  const areBankDetailsMissing = true; // Mock state
 
   return (
     <>
@@ -31,6 +36,20 @@ export default function Payments() {
               <h1 className="text-2xl font-bold tracking-tight">Earnings & Payouts</h1>
               <p className="text-muted-foreground">Track your income, manage payouts, and view payment history.</p>
           </div>
+          
+          {areBankDetailsMissing && (
+            <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Action Required: Add Your Payout Details</AlertTitle>
+                <AlertDescription>
+                    We cannot process your payouts until you add your bank account information.
+                    <Button asChild variant="link" className="p-0 pl-2 h-auto text-destructive-foreground">
+                        <Link href="/tutor/settings">Update Settings Now</Link>
+                    </Button>
+                </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -63,7 +82,7 @@ export default function Payments() {
               </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                       <div>
@@ -106,30 +125,45 @@ export default function Payments() {
                       <CardDescription>A record of all payouts to your bank account.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <div className="border rounded-md">
-                          <Table>
-                              <TableHeader>
-                                  <TableRow>
-                                      <TableHead>Date</TableHead>
-                                      <TableHead>Amount</TableHead>
-                                      <TableHead>Status</TableHead>
-                                  </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                  {payoutHistory.map((payout) => (
-                                      <TableRow key={payout.id}>
-                                          <TableCell>{payout.date}</TableCell>
-                                          <TableCell>${payout.amount.toFixed(2)}</TableCell>
-                                          <TableCell>
-                                              <Badge variant={payout.status === 'Completed' ? 'default' : 'secondary'}>
-                                                  {payout.status}
-                                              </Badge>
-                                          </TableCell>
-                                      </TableRow>
-                                  ))}
-                              </TableBody>
-                          </Table>
-                      </div>
+                      <Accordion type="single" collapsible className="w-full">
+                          {payoutHistory.map((payout) => (
+                            <AccordionItem value={`item-${payout.id}`} key={payout.id}>
+                                <AccordionTrigger className="p-3">
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-4">
+                                            <Banknote className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <p className="font-semibold text-base">Net Payout: ${payout.net.toFixed(2)}</p>
+                                                <p className="text-sm text-muted-foreground">{payout.date}</p>
+                                            </div>
+                                        </div>
+                                         <Badge variant={payout.status === 'Completed' ? 'default' : 'secondary'}>
+                                            {payout.status}
+                                        </Badge>
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 bg-muted/50 border-t">
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Gross Income</span>
+                                            <span>${payout.gross.toFixed(2)}</span>
+                                        </div>
+                                         <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Platform Fees (5%)</span>
+                                            <span className="text-destructive">- ${payout.fees.toFixed(2)}</span>
+                                        </div>
+                                         <div className="flex justify-between font-bold border-t pt-2 mt-2">
+                                            <span>Net Payout</span>
+                                            <span>${payout.net.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                    <Button variant="outline" size="sm" className="mt-4 w-full">
+                                        <Download className="mr-2"/> Download Detailed Report
+                                    </Button>
+                                </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                      </Accordion>
                   </CardContent>
               </Card>
           </div>

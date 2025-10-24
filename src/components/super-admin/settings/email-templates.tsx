@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import * as React from "react";
 import {
   Card,
   CardContent,
@@ -50,7 +50,7 @@ export function EmailTemplates() {
                     id="email-editor"
                     className="min-h-[300px] rounded-t-none"
                     value={content}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+                    onChange={(e) => setContent(e.target.value)}
                 />
             </div>
         </div>
@@ -59,7 +59,7 @@ export function EmailTemplates() {
             <div className="rounded-md border min-h-[400px] p-4 bg-gray-100" dangerouslySetInnerHTML={{ __html: content.replace("{{user.name}}", "John Doe") }}>
             </div>
             <p className="text-xs text-muted-foreground">
-                This is a rendered preview of your template. Use placeholders like `{{'{{user.name}}'}}` or `{{'{{payout.amount}}'}}`.
+                This is a rendered preview of your template. Use placeholders like {'`{{user.name}}`'} or {'`{{payout.amount}}`'}.
             </p>
         </div>
       </CardContent>

@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Phone, Mail, FileText, LayoutDashboard, Calendar, BarChart, CheckSquare, Book, DollarSign } from 'lucide-react';
+import { Phone, Mail, FileText, LayoutDashboard, Calendar, BarChart2, CheckSquare, Book, DollarSign } from 'lucide-react';
 import { StudentAttendanceView } from './attendance/student-attendance-view';
 import { useState } from 'react';
 import { GenerateReportDialog } from './generate-report-dialog';

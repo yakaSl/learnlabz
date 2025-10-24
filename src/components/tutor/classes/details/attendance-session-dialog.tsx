@@ -133,7 +133,7 @@ export function AttendanceSessionDialog({ isOpen, onOpenChange }: { isOpen: bool
           
           {useQRCode ? 
             <div className="space-y-2">
-                <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted />
+                <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
                 {hasCameraPermission === false && (
                     <Alert variant="destructive">
                               <AlertTitle>Camera Access Required</AlertTitle>

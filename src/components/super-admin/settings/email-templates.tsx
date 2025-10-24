@@ -59,7 +59,7 @@ export function EmailTemplates() {
             <div className="rounded-md border min-h-[400px] p-4 bg-gray-100" dangerouslySetInnerHTML={{ __html: content.replace("{{user.name}}", "John Doe") }}>
             </div>
             <p className="text-xs text-muted-foreground">
-                This is a rendered preview of your template. Use placeholders like `{{user.name}}` or `{{payout.amount}}`.
+                This is a rendered preview of your template. Use placeholders like `{{'{{user.name}}'}}` or `{{'{{payout.amount}}'}}`.
             </p>
         </div>
       </CardContent>

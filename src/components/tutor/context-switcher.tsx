@@ -13,11 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, User, Building, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-type Context = {
-  label: string;
-  type: 'personal' | 'institute';
-};
+import { useAppContext, type Context } from '@/hooks/use-context';
 
 const contexts: Context[] = [
   { label: 'Personal Workspace', type: 'personal' },
@@ -25,9 +21,7 @@ const contexts: Context[] = [
 ];
 
 export function ContextSwitcher() {
-  const [selectedContext, setSelectedContext] = React.useState<Context>(
-    contexts[0]
-  );
+  const { selectedContext, setSelectedContext } = useAppContext();
 
   return (
     <DropdownMenu>

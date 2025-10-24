@@ -7,6 +7,8 @@ import Link from "next/link";
 export default function UINavigator() {
   const publicPages = [
     { href: "/", name: "Landing Page" },
+    { href: "/login", name: "Login" },
+    { href: "/register", name: "Register" },
   ];
 
   const devPages = [

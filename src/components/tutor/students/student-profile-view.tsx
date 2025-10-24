@@ -1,4 +1,3 @@
-
 "use client";
 
 import { notFound } from 'next/navigation';
@@ -12,6 +11,7 @@ import { StudentAttendanceView } from './attendance/student-attendance-view';
 import { useState } from 'react';
 import { GenerateReportDialog } from './generate-report-dialog';
 import { FinancialsTab } from './financials/financials-tab';
+import { OverviewTab } from './overview/overview-tab';
 
 interface StudentProfileViewProps {
     studentId: string;
@@ -78,7 +78,7 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
                     <TabsTrigger value="notes"><Book className="mr-2"/>Notes</TabsTrigger>
                 </TabsList>
                 <TabsContent value="overview" className="mt-4">
-                    <PlaceholderTab title="Overview" />
+                    <OverviewTab student={student} />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-4">
                     <StudentAttendanceView student={student} />

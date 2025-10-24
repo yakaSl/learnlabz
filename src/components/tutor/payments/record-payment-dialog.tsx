@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { Calendar as CalendarIcon, Check, ChevronsUpDown, QrCode } from 'lucide-react';
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { students } from '../students/data';
@@ -48,47 +48,52 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
         <div className="grid gap-4 py-4">
             <div className="space-y-2">
                 <Label htmlFor="student">Student</Label>
-                <Popover open={studentOpen} onOpenChange={setStudentOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={studentOpen}
-                      className="w-full justify-between"
-                    >
-                      {studentValue
-                        ? students.find((student) => student.name.toLowerCase() === studentValue)?.name
-                        : "Select a student..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <div className="flex gap-2">
+                    <Popover open={studentOpen} onOpenChange={setStudentOpen}>
+                    <PopoverTrigger asChild>
+                        <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={studentOpen}
+                        className="w-full justify-between"
+                        >
+                        {studentValue
+                            ? students.find((student) => student.name.toLowerCase() === studentValue)?.name
+                            : "Select a student..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                        <Command>
+                        <CommandInput placeholder="Search student..." />
+                        <CommandEmpty>No student found.</CommandEmpty>
+                        <CommandGroup>
+                            {students.map((student) => (
+                            <CommandItem
+                                key={student.id}
+                                value={student.name}
+                                onSelect={(currentValue) => {
+                                setStudentValue(currentValue === studentValue ? "" : currentValue)
+                                setStudentOpen(false)
+                                }}
+                            >
+                                <Check
+                                className={cn(
+                                    "mr-2 h-4 w-4",
+                                    studentValue === student.name.toLowerCase() ? "opacity-100" : "opacity-0"
+                                )}
+                                />
+                                {student.name}
+                            </CommandItem>
+                            ))}
+                        </CommandGroup>
+                        </Command>
+                    </PopoverContent>
+                    </Popover>
+                    <Button variant="outline" size="icon">
+                        <QrCode className="h-4 w-4" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search student..." />
-                      <CommandEmpty>No student found.</CommandEmpty>
-                      <CommandGroup>
-                        {students.map((student) => (
-                          <CommandItem
-                            key={student.id}
-                            value={student.name}
-                            onSelect={(currentValue) => {
-                              setStudentValue(currentValue === studentValue ? "" : currentValue)
-                              setStudentOpen(false)
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                studentValue === student.name.toLowerCase() ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            {student.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">

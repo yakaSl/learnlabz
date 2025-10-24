@@ -1,12 +1,6 @@
+
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
@@ -15,7 +9,15 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, PlusCircle, Banknote, AlertTriangle, User, FileText } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Download,
+  PlusCircle,
+  Banknote,
+  AlertTriangle,
+  User,
+  FileText,
+} from "lucide-react";
 import React from "react";
 import { RecordPaymentDialog } from "./record-payment-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -23,13 +25,15 @@ import Link from "next/link";
 import { paymentHistory, payoutHistory } from "./data";
 import { StudentPaymentsTable, columns } from "./student-payments-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAppContext } from "@/hooks/use-context";
+import { InstituteIncomeView } from "./institute-income-view";
 
-export default function Payments() {
+function PersonalPaymentsView() {
   const [isRecordPaymentOpen, setIsRecordPaymentOpen] = React.useState(false);
   const areBankDetailsMissing = true; // Mock state
-
+  
   return (
-    <>
+     <>
       <RecordPaymentDialog
         open={isRecordPaymentOpen}
         onOpenChange={setIsRecordPaymentOpen}
@@ -191,4 +195,14 @@ export default function Payments() {
       </div>
     </>
   );
+}
+
+export default function Payments() {
+    const { selectedContext } = useAppContext();
+
+    if (selectedContext.type === 'institute') {
+        return <InstituteIncomeView />;
+    }
+
+    return <PersonalPaymentsView />;
 }

@@ -7,10 +7,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Phone, Mail, FileText } from 'lucide-react';
+import { Phone, Mail, FileText, LayoutDashboard, Calendar, BarChart, CheckSquare, Book, DollarSign } from 'lucide-react';
 import { StudentAttendanceView } from './attendance/student-attendance-view';
 import { useState } from 'react';
 import { GenerateReportDialog } from './generate-report-dialog';
+import { FinancialsTab } from './financials/financials-tab';
 
 interface StudentProfileViewProps {
     studentId: string;
@@ -68,12 +69,13 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
         <div className="flex flex-col gap-4">
             <ProfileHeader student={student} />
             <Tabs defaultValue="overview">
-                <TabsList className="grid w-full grid-cols-5">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="attendance">Attendance</TabsTrigger>
-                    <TabsTrigger value="performance">Performance</TabsTrigger>
-                    <TabsTrigger value="assessments">Assessments</TabsTrigger>
-                    <TabsTrigger value="notes">Notes</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-6">
+                    <TabsTrigger value="overview"><LayoutDashboard className="mr-2"/>Overview</TabsTrigger>
+                    <TabsTrigger value="attendance"><Calendar className="mr-2"/>Attendance</TabsTrigger>
+                    <TabsTrigger value="performance"><BarChart2 className="mr-2"/>Performance</TabsTrigger>
+                    <TabsTrigger value="assessments"><CheckSquare className="mr-2"/>Assessments</TabsTrigger>
+                    <TabsTrigger value="financials"><DollarSign className="mr-2"/>Financials</TabsTrigger>
+                    <TabsTrigger value="notes"><Book className="mr-2"/>Notes</TabsTrigger>
                 </TabsList>
                 <TabsContent value="overview" className="mt-4">
                     <PlaceholderTab title="Overview" />
@@ -86,6 +88,9 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
                 </TabsContent>
                 <TabsContent value="assessments" className="mt-4">
                     <PlaceholderTab title="Assessments" />
+                </TabsContent>
+                 <TabsContent value="financials" className="mt-4">
+                    <FinancialsTab student={student} />
                 </TabsContent>
                 <TabsContent value="notes" className="mt-4">
                     <PlaceholderTab title="Notes" />

@@ -1,19 +1,18 @@
-
 "use client";
 
 import { useState } from 'react';
-import { classes } from './data';
+import { classes } from '../data';
 import { notFound } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Edit, Users, Calendar, BookOpen, CheckSquare, BarChart2 } from 'lucide-react';
+import { Edit, Users, Calendar, BookOpen, CheckSquare, BarChart2, Share2 } from 'lucide-react';
 import OverviewTab from './details/overview';
 import StudentsTab from './details/students';
 import AttendanceTab from './details/attendance';
 import MaterialsTab from './details/materials';
 import AssessmentsTab from './details/assessments';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ShareEnrollmentDialog } from './details/share-enrollment-dialog';
 
 interface ClassDetailViewProps {
   classId: string;
@@ -22,10 +21,13 @@ interface ClassDetailViewProps {
 export default function ClassDetailView({ classId }: ClassDetailViewProps) {
   const classInfo = classes.find(c => c.id === classId);
   const [isEditing, setIsEditing] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   if (!classInfo) {
     notFound();
   }
+  
+  const enrollmentLink = `https://learnlabz.app/enroll/${classInfo.id}`;
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,6 +41,10 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
           <p className="text-muted-foreground">{classInfo.subject} - {classInfo.schedule}</p>
         </div>
         <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setIsShareOpen(true)}>
+                <Share2 className="mr-2 h-4 w-4" />
+                Share Enrollment
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)}>
                 <Edit className="mr-2 h-4 w-4" />
                 {isEditing ? 'Cancel' : 'Request Edit'}
@@ -47,6 +53,13 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
         </div>
       </div>
       
+      <ShareEnrollmentDialog 
+        isOpen={isShareOpen} 
+        onOpenChange={setIsShareOpen} 
+        enrollmentLink={enrollmentLink}
+        className={classInfo.name}
+      />
+
       {isEditing && (
           <Alert>
               <Edit className="h-4 w-4" />

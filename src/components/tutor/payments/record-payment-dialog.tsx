@@ -23,6 +23,7 @@ import { students } from '../students/data';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import QRCode from "qrcode.react";
 
 interface RecordPaymentDialogProps {
   open: boolean;
@@ -44,7 +45,7 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
   const netPayout = amount ? (parseFloat(amount) * 0.95).toFixed(2) : '0.00';
 
   useEffect(() => {
-    if (showScanner) {
+    if (open && showScanner) {
       const getCameraPermission = async () => {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -64,14 +65,13 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
       };
       getCameraPermission();
     } else {
-        // Stop camera stream when scanner is hidden
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach(track => track.stop());
             videoRef.current.srcObject = null;
         }
     }
-  }, [showScanner, toast]);
+  }, [open, showScanner, toast]);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {

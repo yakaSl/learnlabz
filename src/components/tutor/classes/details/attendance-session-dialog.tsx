@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const statusColors: { [key: string]: 'default' | 'destructive' | 'secondary' } = {
     Present: 'default',
@@ -75,9 +77,43 @@ function QRCodeView({ enrollmentLink }: { enrollmentLink: string }) {
 
 export function AttendanceSessionDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (isOpen: boolean) => void }) {
   const [useQRCode, setUseQRCode] = useState(true);
+  const { toast } = useToast();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
   // This would come from the class data
   const enrollmentLink = "https://learnlabz.app/attend/aBcDeF123";
+
+  useEffect(() => {
+    if (isOpen && useQRCode) {
+        const getCameraPermission = async () => {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            setHasCameraPermission(true);
+    
+            if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+            }
+          } catch (error) {
+            console.error('Error accessing camera:', error);
+            setHasCameraPermission(false);
+            toast({
+              variant: 'destructive',
+              title: 'Camera Access Denied',
+              description: 'Please enable camera permissions in your browser settings to use this app.',
+            });
+          }
+        };
+    
+        getCameraPermission();
+    } else {
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+        }
+    }
+  }, [isOpen, useQRCode, toast]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -95,7 +131,20 @@ export function AttendanceSessionDialog({ isOpen, onOpenChange }: { isOpen: bool
             <Label htmlFor="qr-mode">QR Code</Label>
           </div>
           
-          {useQRCode ? <QRCodeView enrollmentLink={enrollmentLink} /> : <LiveStudentList studentList={students} />}
+          {useQRCode ? 
+            <div className="space-y-2">
+                <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted />
+                {hasCameraPermission === false && (
+                    <Alert variant="destructive">
+                              <AlertTitle>Camera Access Required</AlertTitle>
+                              <AlertDescription>
+                                Please allow camera access to use this feature.
+                              </AlertDescription>
+                      </Alert>
+                )}
+                <QRCodeView enrollmentLink={enrollmentLink} />
+            </div>
+          : <LiveStudentList studentList={students} />}
 
         </div>
         <DialogFooter>

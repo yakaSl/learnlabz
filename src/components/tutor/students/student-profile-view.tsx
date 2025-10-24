@@ -1,3 +1,4 @@
+
 "use client";
 
 import { notFound } from 'next/navigation';
@@ -10,7 +11,6 @@ import { Phone, Mail, FileText, LayoutDashboard, Calendar, BarChart2, CheckSquar
 import { StudentAttendanceView } from './attendance/student-attendance-view';
 import { useState } from 'react';
 import { GenerateReportDialog } from './generate-report-dialog';
-import { FinancialsTab } from './financials/financials-tab';
 import { OverviewTab } from './overview/overview-tab';
 import GradesPerformanceView from '@/components/student/grades/grades-performance-view';
 
@@ -91,7 +91,7 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
                     <PlaceholderTab title="Assessments" />
                 </TabsContent>
                  <TabsContent value="financials" className="mt-4">
-                    <FinancialsTab student={student} />
+                    <PlaceholderTab title="Financials" />
                 </TabsContent>
                 <TabsContent value="notes" className="mt-4">
                     <PlaceholderTab title="Notes" />

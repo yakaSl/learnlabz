@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -6,7 +7,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText, PlusCircle } from 'lucide-react';
+import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText, PlusCircle, DollarSign } from 'lucide-react';
 import OverviewTab from './details/overview';
 import StudentsTab from './details/students';
 import AttendanceTab from './details/attendance';
@@ -16,6 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShareEnrollmentDialog } from './details/share-enrollment-dialog';
 import Link from 'next/link';
 import { useAppContext } from '@/hooks/use-context';
+import { FinancialsTab } from './financials/financials-tab';
 
 interface ClassDetailViewProps {
   classId: string;
@@ -98,13 +100,14 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
       )}
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview"><Users className="mr-2 h-4 w-4" />Overview</TabsTrigger>
           <TabsTrigger value="students"><Users className="mr-2 h-4 w-4" />Students</TabsTrigger>
           <TabsTrigger value="attendance"><Calendar className="mr-2 h-4 w-4" />Attendance</TabsTrigger>
           <TabsTrigger value="materials"><BookOpen className="mr-2 h-4 w-4" />Materials</TabsTrigger>
           <TabsTrigger value="assessments"><CheckSquare className="mr-2 h-4 w-4" />Assessments</TabsTrigger>
           <TabsTrigger value="exams"><FileText className="mr-2 h-4 w-4" />Exams</TabsTrigger>
+          <TabsTrigger value="financials"><DollarSign className="mr-2 h-4 w-4" />Financials</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           <OverviewTab classInfo={classInfo} />
@@ -123,6 +126,9 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
         </TabsContent>
         <TabsContent value="exams" className="mt-4">
             <ExamsTab classId={classId} />
+        </TabsContent>
+        <TabsContent value="financials" className="mt-4">
+            <FinancialsTab />
         </TabsContent>
       </Tabs>
     </div>

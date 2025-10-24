@@ -1,6 +1,4 @@
 
-"use client";
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,9 +12,10 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
+import { NewExamForm } from "@/components/tutor/classes/details/new-exam-form";
 
 export default function NewExamPage({ params }: { params: { classId: string } }) {
-    const [examDate, setExamDate] = React.useState<Date>();
+    const { classId } = React.use(params);
 
     return (
         <div className="flex flex-col gap-4">
@@ -25,9 +24,9 @@ export default function NewExamPage({ params }: { params: { classId: string } })
                     <h1 className="text-2xl font-bold tracking-tight">Create New Exam</h1>
                     <p className="text-muted-foreground">Build and configure a new online exam for your class.</p>
                 </div>
-                <div className="flex gap-2">
+                 <div className="flex gap-2">
                      <Button variant="outline" asChild>
-                        <Link href={`/tutor/classes/${params.classId}`}>Cancel</Link>
+                        <Link href={`/tutor/classes/${classId}`}>Cancel</Link>
                     </Button>
                     <Button variant="outline">
                         <Save className="mr-2" />
@@ -37,100 +36,7 @@ export default function NewExamPage({ params }: { params: { classId: string } })
                 </div>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div className="lg:col-span-2 space-y-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Exam Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="title">Title</Label>
-                                <Input id="title" placeholder="e.g., Mid-Term Exam" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="description">Instructions</Label>
-                                <Textarea id="description" placeholder="Provide clear instructions for the exam..." className="min-h-[150px]" />
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Exam Date & Time</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn("w-full justify-start text-left font-normal", !examDate && "text-muted-foreground")}
-                                            >
-                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {examDate ? format(examDate, "PPP") : <span>Pick a date</span>}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0">
-                                            <Calendar mode="single" selected={examDate} onSelect={setExamDate} initialFocus />
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>‎</Label> {/* Empty label for alignment */}
-                                    <Input type="time" defaultValue="09:00" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="duration">Duration (minutes)</Label>
-                                    <Input id="duration" type="number" placeholder="60" />
-                                </div>
-                                 <div className="space-y-2">
-                                    <Label htmlFor="total-marks">Total Marks</Label>
-                                    <Input id="total-marks" type="number" placeholder="100" />
-                                </div>
-                                 <div className="space-y-2">
-                                    <Label htmlFor="passing-marks">Passing Marks</Label>
-                                    <Input id="passing-marks" type="number" placeholder="40" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                             <div>
-                                <CardTitle>Questions</CardTitle>
-                                <CardDescription>Add questions to your exam.</CardDescription>
-                            </div>
-                            <Button variant="outline"><PlusCircle className="mr-2" /> Add Question</Button>
-                        </CardHeader>
-                        <CardContent>
-                           <div className="text-center p-8 border-2 border-dashed rounded-lg">
-                                <p>Your questions will appear here.</p>
-                           </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="space-y-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Exam Settings</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="shuffle">Shuffle Questions</Label>
-                                <Switch id="shuffle" />
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="webcam">Webcam Proctoring</Label>
-                                <Switch id="webcam" />
-                            </div>
-                             <div className="flex items-center justify-between">
-                                <Label htmlFor="fullscreen">Force Full-screen</Label>
-                                <Switch id="fullscreen" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
+           <NewExamForm />
         </div>
     );
 }
-

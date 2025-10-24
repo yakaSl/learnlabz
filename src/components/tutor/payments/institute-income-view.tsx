@@ -7,9 +7,9 @@ import { Info, DollarSign, Users, AlertTriangle } from "lucide-react";
 import { useAppContext } from "@/hooks/use-context";
 
 const stats = [
-    { title: "Your Classes' Contribution", value: "$1,820.50", icon: <DollarSign />, description: "This month so far" },
-    { title: "Student Payment Rate", value: "95%", icon: <Users />, description: "85/90 students paid" },
-    { title: "Outstanding Fees", value: "$450.00", icon: <AlertTriangle className="text-destructive"/>, description: "From 5 students" },
+    { title: "Your Classes' Contribution", value: "Rs. 90,000", icon: <DollarSign />, description: "40% of collections" },
+    { title: "Students Paid", value: "85/90 (94%)", icon: <Users />, description: "in your classes" },
+    { title: "Outstanding Fees", value: "Rs. 15,000", icon: <AlertTriangle className="text-destructive"/>, description: "From 5 students" },
 ];
 
 export function InstituteIncomeView() {
@@ -26,7 +26,7 @@ export function InstituteIncomeView() {
                 <Info className="h-4 w-4" />
                 <AlertTitle>Informational Only</AlertTitle>
                 <AlertDescription>
-                    All income shown here is collected by and paid out to {selectedContext.label}. For your personal earnings from your own classes, please switch to your 'Personal Workspace' context.
+                    This income goes to {selectedContext.label}. You are employed as a tutor. For your personal classes income, switch to your 'Personal Workspace' context.
                 </AlertDescription>
             </Alert>
 
@@ -47,10 +47,10 @@ export function InstituteIncomeView() {
 
              <Card>
                 <CardHeader>
-                    <CardTitle>Class Contribution</CardTitle>
+                    <CardTitle>Class Contribution Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">A breakdown of revenue per class will be shown here.</p>
+                    <p className="text-muted-foreground">A breakdown of revenue per class and payment trends will be shown here.</p>
                 </CardContent>
             </Card>
         </div>

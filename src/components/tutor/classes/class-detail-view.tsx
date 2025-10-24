@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { classes } from './data';
 import { notFound } from 'next/navigation';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Edit, Users, Calendar, BookOpen, CheckSquare, BarChart2, Share2 } from 'lucide-react';
@@ -92,7 +93,7 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
           <MaterialsTab />
         </TabsContent>
         <TabsContent value="assessments" className="mt-4">
-          <AssessmentsTab />
+          <AssessmentsTab classId={classId} />
         </TabsContent>
       </Tabs>
     </div>

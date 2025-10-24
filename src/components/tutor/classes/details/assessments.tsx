@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { PlusCircle, FileText, MoreVertical, CheckCircle, BarChart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const assessments = [
     { id: 1, title: "Mid-Term Quiz", type: "MCQ", status: "Graded", average: "85%" },
@@ -12,7 +13,7 @@ const assessments = [
     { id: 3, title: "Final Project", type: "File Upload", status: "Draft", average: "N/A" },
 ]
 
-export default function AssessmentsTab() {
+export default function AssessmentsTab({ classId }: { classId: string }) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -20,9 +21,11 @@ export default function AssessmentsTab() {
                     <CardTitle>Assessments</CardTitle>
                     <CardDescription>Create, manage, and grade quizzes, homework, and tests.</CardDescription>
                 </div>
-                 <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    New Assessment
+                 <Button asChild>
+                    <Link href={`/tutor/classes/${classId}/assessments/new`}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        New Assessment
+                    </Link>
                 </Button>
             </CardHeader>
             <CardContent className="space-y-4">

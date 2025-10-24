@@ -48,7 +48,7 @@ export default function AssessmentsTab({ classId }: { classId: string }) {
                             </div>
                             <div className="flex gap-2">
                                 <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/tutor/classes/${classId}/assessments/${item.id}/submissions/1`}>
+                                    <Link href={`/tutor/classes/${classId}/assessments/${item.id}`}>
                                         Grade ({item.submissions})
                                     </Link>
                                 </Button>

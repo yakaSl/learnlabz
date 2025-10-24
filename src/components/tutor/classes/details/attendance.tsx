@@ -3,66 +3,68 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle, Calendar } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useState } from "react";
+import { AttendanceSessionDialog } from "./attendance-session-dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { FileText } from "lucide-react";
 
-const students = [
-  { id: '1', name: 'Alice Johnson', avatar: 'https://picsum.photos/seed/s1/40/40' },
-  { id: '2', name: 'Bob Williams', avatar: 'https://picsum.photos/seed/s2/40/40' },
-  { id: '3', name: 'Charlie Brown', avatar: 'https://picsum.photos/seed/s3/40/40' },
-  { id: '4', name: 'Diana Miller', avatar: 'https://picsum.photos/seed/s4/40/40', isAbsent: true },
+const pastSessions = [
+  { date: "July 26, 2024", present: 11, total: 12, attendance: "92%" },
+  { date: "July 24, 2024", present: 12, total: 12, attendance: "100%" },
+  { date: "July 22, 2024", present: 10, total: 12, attendance: "83%" },
 ];
 
+
 export default function AttendanceTab() {
+  const [isSessionOpen, setIsSessionOpen] = useState(false);
+
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Attendance for July 26, 2024</CardTitle>
-                <CardDescription>Track and manage student attendance for each session.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline"><Calendar className="mr-2 h-4 w-4" /> Change Date</Button>
+        <div className="space-y-6">
+            <AttendanceSessionDialog isOpen={isSessionOpen} onOpenChange={setIsSessionOpen} />
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Live Attendance</CardTitle>
+                        <CardDescription>Start a new session to mark today's attendance.</CardDescription>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline">Mark All Present</Button>
-                        <Button variant="outline">Mark All Absent</Button>
+                    <Button onClick={() => setIsSessionOpen(true)}>Start Live Attendance Session</Button>
+                </CardHeader>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Past Attendance Records</CardTitle>
+                    <CardDescription>A history of previous attendance sessions for this class.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="border rounded-md">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Attendance</TableHead>
+                                    <TableHead>Ratio</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {pastSessions.map(session => (
+                                    <TableRow key={session.date}>
+                                        <TableCell className="font-medium">{session.date}</TableCell>
+                                        <TableCell>{session.attendance}</TableCell>
+                                        <TableCell>{session.present}/{session.total}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="outline" size="sm">
+                                                <FileText className="mr-2 h-4 w-4" />
+                                                View Report
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
-                </div>
-
-                <div className="space-y-4">
-                    {students.map(student => (
-                        <div key={student.id} className="flex items-center gap-4 p-3 rounded-md border">
-                            <Checkbox id={`student-${student.id}`} className="h-5 w-5" defaultChecked={!student.isAbsent} />
-                            <Avatar>
-                                <AvatarImage src={student.avatar} alt={student.name} />
-                                <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <Label htmlFor={`student-${student.id}`} className="flex-1 font-medium">{student.name}</Label>
-                            <Input placeholder="Add a note..." className="w-1/3" />
-                        </div>
-                    ))}
-                </div>
-
-                <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>AI Chronic Absence Alert</AlertTitle>
-                    <AlertDescription>
-                        Diana Miller has been absent for 3 consecutive sessions. Consider reaching out to the parent.
-                    </AlertDescription>
-                </Alert>
-
-                 <div className="flex items-center justify-end">
-                    <Button>Save Attendance</Button>
-                </div>
-
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </div>
     )
 }

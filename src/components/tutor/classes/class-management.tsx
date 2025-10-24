@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, LayoutGrid, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClassCard } from './class-card';
-import { classes } from './data';
+import { personalClasses, instituteClasses } from './data';
 import { ClassCalendarView } from './class-calendar-view';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/hooks/use-context';
@@ -16,6 +17,8 @@ export default function ClassManagement() {
   const [view, setView] = useState<'grid' | 'calendar'>('grid');
   const { selectedContext } = useAppContext();
   const isPersonalContext = selectedContext.type === 'personal';
+
+  const displayedClasses = isPersonalContext ? personalClasses : instituteClasses;
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -96,7 +99,7 @@ export default function ClassManagement() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {classes.map(cls => (
+              {displayedClasses.map(cls => (
                 <ClassCard key={cls.id} classInfo={cls} />
               ))}
             </div>

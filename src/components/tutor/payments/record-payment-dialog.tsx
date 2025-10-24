@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,11 +16,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon, Check, ChevronsUpDown, QrCode } from 'lucide-react';
+import { Calendar as CalendarIcon, Check, ChevronsUpDown, QrCode, List } from 'lucide-react';
 import { format } from "date-fns";
 import { cn } from '@/lib/utils';
 import { students } from '../students/data';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface RecordPaymentDialogProps {
   open: boolean;
@@ -33,11 +35,51 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
   const [studentOpen, setStudentOpen] = React.useState(false);
   const [studentValue, setStudentValue] = React.useState("");
   
+  const [showScanner, setShowScanner] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { toast } = useToast();
+
   const platformFee = amount ? (parseFloat(amount) * 0.05).toFixed(2) : '0.00';
   const netPayout = amount ? (parseFloat(amount) * 0.95).toFixed(2) : '0.00';
 
+  useEffect(() => {
+    if (showScanner) {
+      const getCameraPermission = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          setHasCameraPermission(true);
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (error) {
+          console.error('Error accessing camera:', error);
+          setHasCameraPermission(false);
+          toast({
+            variant: "destructive",
+            title: "Camera Access Denied",
+            description: "Please enable camera permissions in your browser settings.",
+          });
+        }
+      };
+      getCameraPermission();
+    } else {
+        // Stop camera stream when scanner is hidden
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+        }
+    }
+  }, [showScanner, toast]);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+        if (!isOpen) {
+            setShowScanner(false); // Reset scanner view on close
+        }
+        onOpenChange(isOpen);
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Record Offline Payment</DialogTitle>
@@ -47,8 +89,27 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
         </DialogHeader>
         <div className="grid gap-4 py-4">
             <div className="space-y-2">
-                <Label htmlFor="student">Student</Label>
-                <div className="flex gap-2">
+                <div className="flex justify-between items-center">
+                    <Label htmlFor="student">Student</Label>
+                     <Button variant="ghost" size="sm" onClick={() => setShowScanner(!showScanner)}>
+                        {showScanner ? <List className="mr-2" /> : <QrCode className="mr-2" />}
+                        {showScanner ? 'Manual Select' : 'Scan QR'}
+                    </Button>
+                </div>
+                 {showScanner ? (
+                    <div className="space-y-2">
+                        <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
+                        {hasCameraPermission === false && (
+                             <Alert variant="destructive">
+                                <AlertTitle>Camera Access Required</AlertTitle>
+                                <AlertDescription>
+                                    Please allow camera access to use this feature. You may need to grant permissions in your browser settings.
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                        <p className="text-center text-sm text-muted-foreground">Point the camera at the student's QR code.</p>
+                    </div>
+                ) : (
                     <Popover open={studentOpen} onOpenChange={setStudentOpen}>
                     <PopoverTrigger asChild>
                         <Button
@@ -90,10 +151,7 @@ export function RecordPaymentDialog({ open, onOpenChange }: RecordPaymentDialogP
                         </Command>
                     </PopoverContent>
                     </Popover>
-                    <Button variant="outline" size="icon">
-                        <QrCode className="h-4 w-4" />
-                    </Button>
-                </div>
+                )}
             </div>
             <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">

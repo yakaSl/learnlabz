@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Phone, Mail } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { StudentAttendanceView } from './attendance/student-attendance-view';
 
 interface StudentProfileViewProps {
     studentId: string;
@@ -69,7 +70,7 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
                     <PlaceholderTab title="Overview" />
                 </TabsContent>
                 <TabsContent value="attendance" className="mt-4">
-                    <PlaceholderTab title="Attendance" />
+                    <StudentAttendanceView student={student} />
                 </TabsContent>
                 <TabsContent value="performance" className="mt-4">
                     <PlaceholderTab title="Performance" />

@@ -21,6 +21,7 @@ import {
   getDay
 } from 'date-fns';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import Link from 'next/link';
 
 // Mock data
 const classes = [
@@ -95,16 +96,17 @@ export function ClassCalendarView() {
               </span>
               <div className="flex-grow overflow-y-auto text-xs space-y-1 mt-1">
                 {dayClasses.map(c => (
-                  <div 
-                    key={c.id} 
-                    className={cn(
-                        "p-1.5 rounded-sm text-white cursor-pointer hover:opacity-90",
-                        c.color
-                    )}
-                  >
-                    <p className="font-semibold whitespace-nowrap overflow-hidden text-ellipsis">{c.title}</p>
-                     <p className="hidden md:block">{c.time}</p>
-                  </div>
+                  <Link key={c.id} href={`/institute-admin/classes/${c.id}`} passHref>
+                    <div 
+                      className={cn(
+                          "p-1.5 rounded-sm text-white cursor-pointer hover:opacity-90",
+                          c.color
+                      )}
+                    >
+                      <p className="font-semibold whitespace-nowrap overflow-hidden text-ellipsis">{c.title}</p>
+                      <p className="hidden md:block">{c.time}</p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

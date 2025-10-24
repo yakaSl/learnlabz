@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { CalendarCheck, BookPlus, Upload, MessageSquare } from "lucide-react"
+import Link from "next/link"
 
 export function QuickActions() {
   return (
@@ -14,9 +14,11 @@ export function QuickActions() {
           <CalendarCheck className="mr-2 h-4 w-4" />
           Mark Attendance
         </Button>
-        <Button variant="outline">
-          <BookPlus className="mr-2 h-4 w-4" />
-          Add Class
+        <Button variant="outline" asChild>
+          <Link href="/tutor/classes/new">
+            <BookPlus className="mr-2 h-4 w-4" />
+            Add Class
+          </Link>
         </Button>
         <Button variant="outline">
           <Upload className="mr-2 h-4 w-4" />

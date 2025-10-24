@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -42,6 +41,7 @@ export default function UINavigator() {
   const tutorPages = [
     { href: "/tutor", name: "Tutor Dashboard" },
     { href: "/tutor/classes", name: "Class Management" },
+    { href: "/tutor/classes/new", name: "Create Class"},
     { href: "/tutor/students", name: "Student Management" },
     { href: "/tutor/materials", name: "Materials" },
     { href: "/tutor/payments", name: "Payments" },

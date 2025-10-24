@@ -46,10 +46,10 @@ export default function Header() {
         </nav>
         <div className="flex items-center gap-4 ml-auto">
           <Button variant="ghost" asChild>
-            <Link href="#">Login</Link>
+            <Link href="/login">Login</Link>
           </Button>
           <Button variant="accent" asChild>
-            <Link href="#">Get Started</Link>
+            <Link href="/register">Get Started</Link>
           </Button>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>

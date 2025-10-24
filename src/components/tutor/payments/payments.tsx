@@ -2,7 +2,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,18 +10,9 @@ import React from "react";
 import { RecordPaymentDialog } from "./record-payment-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
+import { paymentHistory, payoutHistory } from "./data";
+import { StudentPaymentsTable } from "./student-payments-table";
 
-const paymentHistory = [
-  { id: 'pay_1', student: 'Alice Johnson', class: 'Algebra 101', amount: 50, date: '2024-07-20', status: 'Paid' },
-  { id: 'pay_2', student: 'Diana Miller', class: 'Physics', amount: 75, date: '2024-07-18', status: 'Paid' },
-  { id: 'pay_3', student: 'Bob Williams', class: 'Algebra 101', amount: 50, date: '2024-07-15', status: 'Pending' },
-];
-
-const payoutHistory = [
-    { id: 'payout_1', date: 'July 15, 2024', gross: 920.00, fees: 46.00, net: 874.00, status: 'Completed' },
-    { id: 'payout_2', date: 'July 8, 2024', gross: 850.50, fees: 42.53, net: 807.97, status: 'Completed' },
-    { id: 'payout_3', date: 'July 1, 2024', gross: 980.00, fees: 49.00, net: 931.00, status: 'Completed' },
-]
 
 export default function Payments() {
   const [isRecordPaymentOpen, setIsRecordPaymentOpen] = React.useState(false);
@@ -83,41 +73,7 @@ export default function Payments() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              <Card>
-                  <CardHeader className="flex flex-row items-center justify-between">
-                      <div>
-                          <CardTitle>Student Payment History</CardTitle>
-                          <CardDescription>Recent payments from students.</CardDescription>
-                      </div>
-                      <Button variant="outline" size="sm"><Download className="mr-2"/>Export</Button>
-                  </CardHeader>
-                  <CardContent>
-                      <div className="border rounded-md">
-                          <Table>
-                              <TableHeader>
-                                  <TableRow>
-                                      <TableHead>Student</TableHead>
-                                      <TableHead>Amount</TableHead>
-                                      <TableHead>Status</TableHead>
-                                  </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                  {paymentHistory.map((payment) => (
-                                      <TableRow key={payment.id}>
-                                          <TableCell>{payment.student}</TableCell>
-                                          <TableCell>${payment.amount.toFixed(2)}</TableCell>
-                                          <TableCell>
-                                              <Badge variant={payment.status === 'Paid' ? 'default' : 'secondary'}>
-                                                  {payment.status}
-                                              </Badge>
-                                          </TableCell>
-                                      </TableRow>
-                                  ))}
-                              </TableBody>
-                          </Table>
-                      </div>
-                  </CardContent>
-              </Card>
+              <StudentPaymentsTable data={paymentHistory} />
               
               <Card>
                   <CardHeader>

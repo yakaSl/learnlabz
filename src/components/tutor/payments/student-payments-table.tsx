@@ -129,7 +129,10 @@ export function StudentPaymentsTable({ columns, data }: { columns: ColumnDef<Pay
     },
   })
 
-  const numSelected = table.getFilteredSelectedRowModel().rows.length;
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
+  const numSelected = selectedRows.length;
+  const canSendReminder = selectedRows.some(row => row.original.status === 'Pending' || row.original.status === 'Overdue');
+
 
   return (
     <Card>
@@ -140,9 +143,9 @@ export function StudentPaymentsTable({ columns, data }: { columns: ColumnDef<Pay
         </div>
         <div className="flex items-center gap-2">
             {numSelected > 0 && (
-                <Button>
+                <Button disabled={!canSendReminder}>
                     <Mail className="mr-2 h-4 w-4" />
-                    Send Reminders ({numSelected})
+                    Send Reminders ({selectedRows.filter(row => row.original.status === 'Pending' || row.original.status === 'Overdue').length})
                 </Button>
             )}
             <Button variant="outline" size="sm"><Download className="mr-2"/>Export</Button>

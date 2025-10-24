@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Edit, Users, Calendar, BookOpen, CheckSquare, BarChart2, Share2 } from 'lucide-react';
+import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText } from 'lucide-react';
 import OverviewTab from './details/overview';
 import StudentsTab from './details/students';
 import AttendanceTab from './details/attendance';
@@ -17,6 +17,28 @@ import { ShareEnrollmentDialog } from './details/share-enrollment-dialog';
 
 interface ClassDetailViewProps {
   classId: string;
+}
+
+function ExamsTab({ classId }: { classId: string }) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Online Exams</CardTitle>
+                    <CardDescription>Create and manage timed, auto-graded exams.</CardDescription>
+                </div>
+                <Button asChild>
+                    <Link href={`/tutor/classes/${classId}/exams/new`}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        New Exam
+                    </Link>
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <p>No exams created yet.</p>
+            </CardContent>
+        </Card>
+    )
 }
 
 export default function ClassDetailView({ classId }: ClassDetailViewProps) {
@@ -72,13 +94,13 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
       )}
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview"><Users className="mr-2 h-4 w-4" />Overview</TabsTrigger>
           <TabsTrigger value="students"><Users className="mr-2 h-4 w-4" />Students</TabsTrigger>
-
           <TabsTrigger value="attendance"><Calendar className="mr-2 h-4 w-4" />Attendance</TabsTrigger>
           <TabsTrigger value="materials"><BookOpen className="mr-2 h-4 w-4" />Materials</TabsTrigger>
           <TabsTrigger value="assessments"><CheckSquare className="mr-2 h-4 w-4" />Assessments</TabsTrigger>
+          <TabsTrigger value="exams"><FileText className="mr-2 h-4 w-4" />Exams</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           <OverviewTab classInfo={classInfo} />
@@ -94,6 +116,9 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
         </TabsContent>
         <TabsContent value="assessments" className="mt-4">
           <AssessmentsTab classId={classId} />
+        </TabsContent>
+        <TabsContent value="exams" className="mt-4">
+            <ExamsTab classId={classId} />
         </TabsContent>
       </Tabs>
     </div>

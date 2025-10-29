@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound } from 'next/navigation';
@@ -15,8 +14,7 @@ import React from 'react';
 const assignedClasses = classes.slice(0, 2);
 
 function TutorProfilePage({ params }: { params: { tutorId: string } }) {
-    const resolvedParams = React.use(params);
-    const tutor = tutors.find(t => t.id === resolvedParams.tutorId);
+    const tutor = tutors.find(t => t.id === params.tutorId);
 
     if (!tutor) {
         notFound();
@@ -119,4 +117,3 @@ function TutorProfilePage({ params }: { params: { tutorId: string } }) {
 }
 
 export default TutorProfilePage;
-

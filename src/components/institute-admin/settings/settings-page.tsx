@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BranchManagementTab } from "./branch-management-tab";
 
 export default function SettingsPage() {
   return (
@@ -51,15 +52,7 @@ export default function SettingsPage() {
                 </Card>
             </TabsContent>
             <TabsContent value="branches" className="mt-4">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Branch Management</CardTitle>
-                        <CardDescription>Manage your institute's various branches.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Branch management features coming soon.</p>
-                    </CardContent>
-                </Card>
+                 <BranchManagementTab />
             </TabsContent>
         </Tabs>
     </div>

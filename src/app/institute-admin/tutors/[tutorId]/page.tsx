@@ -10,11 +10,13 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, MessageSquare, BookOpen, Star, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { classes } from '@/components/tutor/classes/data';
+import React from 'react';
 
 const assignedClasses = classes.slice(0, 2);
 
 function TutorProfilePage({ params }: { params: { tutorId: string } }) {
-    const tutor = tutors.find(t => t.id === params.tutorId);
+    const resolvedParams = React.use(params);
+    const tutor = tutors.find(t => t.id === resolvedParams.tutorId);
 
     if (!tutor) {
         notFound();

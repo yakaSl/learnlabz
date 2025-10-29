@@ -8,6 +8,7 @@ import { MoreVertical, Star, BookOpen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 interface TutorListItemProps {
   tutor: Tutor;
@@ -28,7 +29,7 @@ export function TutorListItem({ tutor }: TutorListItemProps) {
             <span className={cn("absolute bottom-0 right-0 block h-2 w-2 rounded-full", statusColors[tutor.status])} />
         </div>
         <div className="flex-grow">
-          <p className="font-bold">{tutor.name}</p>
+          <Link href={`/institute-admin/tutors/${tutor.id}`} className="font-bold hover:underline">{tutor.name}</Link>
           <p className="text-sm text-muted-foreground hidden md:block">{tutor.status}</p>
         </div>
       </div>
@@ -51,7 +52,9 @@ export function TutorListItem({ tutor }: TutorListItemProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>View Profile</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href={`/institute-admin/tutors/${tutor.id}`}>View Profile</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Send Message</DropdownMenuItem>
                 <DropdownMenuItem>Assign Class</DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive">Suspend</DropdownMenuItem>

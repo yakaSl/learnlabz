@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Star, BookOpen, MessageSquare } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface TutorCardProps {
   tutor: Tutor;
@@ -53,7 +54,9 @@ export function TutorCard({ tutor }: TutorCardProps) {
       </CardContent>
       <CardFooter className="border-t pt-4">
         <div className="flex w-full justify-between items-center">
-            <Button variant="outline" size="sm">View Profile</Button>
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/institute-admin/tutors/${tutor.id}`}>View Profile</Link>
+            </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">

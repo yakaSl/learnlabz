@@ -41,7 +41,7 @@ export default function TutorAssistantLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-            <SidebarMenuItem>
+             <SidebarMenuItem>
               <Link href="/tutor-assistant/attendance" passHref>
                 <SidebarMenuButton tooltip="Attendance">
                   <CheckSquare />

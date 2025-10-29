@@ -34,7 +34,7 @@ function DraggableWidget({ widget }: { widget: typeof widgets[0] }) {
 
 export function WidgetLibrary() {
     return (
-        <Card className="w-full lg:w-72 xl:w-80">
+        <Card className="w-full">
             <CardHeader>
                 <CardTitle>Widget Library</CardTitle>
                 <CardDescription>Drag & drop to build your dashboard.</CardDescription>

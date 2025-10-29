@@ -8,6 +8,5 @@ export default function AssignmentDetailPage({
 }: {
   params: { assignmentId: string };
 }) {
-  const { assignmentId } = React.use(params);
-  return <AssignmentView assignmentId={assignmentId} />;
+  return <AssignmentView assignmentId={params.assignmentId} />;
 }

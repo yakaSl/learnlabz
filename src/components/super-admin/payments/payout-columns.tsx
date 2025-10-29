@@ -1,3 +1,4 @@
+
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 
 const getStatusVariant = (status: string) => {
@@ -57,13 +59,13 @@ export const columns: ColumnDef<Payout>[] = [
     cell: ({ row }) => {
         const payout = row.original;
         return (
-            <div className="flex items-center gap-2">
+            <Link href={`/super-admin/payments/payouts/${payout.id}`} className="flex items-center gap-2 hover:underline">
                 <Avatar className="h-8 w-8">
                     <AvatarImage src={payout.tutorAvatar} alt={payout.tutorName} />
                     <AvatarFallback>{payout.tutorName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <span className="font-medium">{payout.tutorName}</span>
-            </div>
+            </Link>
         )
     }
   },
@@ -112,6 +114,7 @@ export const columns: ColumnDef<Payout>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const payout = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -122,7 +125,9 @@ export const columns: ColumnDef<Payout>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>View Details</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/super-admin/payments/payouts/${payout.id}`}>View Details</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Approve Payout</DropdownMenuItem>
             <DropdownMenuItem>Place on Hold</DropdownMenuItem>
             <DropdownMenuSeparator />

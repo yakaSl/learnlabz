@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AttendanceTab } from './attendance-tab';
+import { StudentsTab } from './students-tab';
 
 interface ClassDetailViewProps {
   classId: string;
@@ -45,7 +46,7 @@ export function ClassDetailView({ classId }: ClassDetailViewProps) {
           <TabsTrigger value="attendance"><Calendar className="mr-2 h-4 w-4" />Attendance</TabsTrigger>
         </TabsList>
         <TabsContent value="students" className="mt-4">
-          <Card><CardContent className="p-6">Student list coming soon.</CardContent></Card>
+          <StudentsTab />
         </TabsContent>
         <TabsContent value="attendance" className="mt-4">
           <AttendanceTab />

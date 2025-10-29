@@ -7,9 +7,9 @@ import { Info, DollarSign, Users, AlertTriangle } from "lucide-react";
 import { useAppContext } from "@/hooks/use-context";
 
 const stats = [
-    { title: "Your Classes' Contribution", value: "Rs. 90,000", icon: <DollarSign />, description: "40% of collections" },
+    { title: "Your Classes' Contribution", value: "$12,500", icon: <DollarSign />, description: "40% of collections" },
     { title: "Students Paid", value: "85/90 (94%)", icon: <Users />, description: "in your classes" },
-    { title: "Outstanding Fees", value: "Rs. 15,000", icon: <AlertTriangle className="text-destructive"/>, description: "From 5 students" },
+    { title: "Outstanding Fees", value: "$1,500", icon: <AlertTriangle className="text-destructive"/>, description: "From 5 students" },
 ];
 
 export function InstituteIncomeView() {

@@ -10,18 +10,22 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, LayoutGrid, List, Filter, UserPlus } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InviteTutorDialog } from './invite-tutor-dialog';
 
 export default function TutorManagement() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   return (
+    <>
+    <InviteTutorDialog isOpen={isInviteOpen} onOpenChange={setIsInviteOpen} />
     <div className="flex flex-col gap-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Tutor Management</h1>
                 <p className="text-muted-foreground">Manage all tutors in your institute.</p>
             </div>
-            <Button>
+            <Button onClick={() => setIsInviteOpen(true)}>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Invite Tutor
             </Button>
@@ -84,5 +88,6 @@ export default function TutorManagement() {
           </CardContent>
         </Card>
     </div>
+    </>
   );
 }

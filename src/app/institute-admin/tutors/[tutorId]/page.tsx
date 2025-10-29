@@ -7,8 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, MessageSquare, BookOpen, Star } from 'lucide-react';
+import { ArrowLeft, Edit, MessageSquare, BookOpen, Star, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
+import { classes } from '@/components/tutor/classes/data';
+
+const assignedClasses = classes.slice(0, 2);
 
 function TutorProfilePage({ params }: { params: { tutorId: string } }) {
     const tutor = tutors.find(t => t.id === params.tutorId);
@@ -82,12 +85,31 @@ function TutorProfilePage({ params }: { params: { tutorId: string } }) {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Assigned Classes</CardTitle>
-                    <CardDescription>A list of classes this tutor is currently teaching.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Assigned Classes</CardTitle>
+                        <CardDescription>A list of classes this tutor is currently teaching.</CardDescription>
+                    </div>
+                    <Button variant="outline">
+                        <PlusCircle className="mr-2" />
+                        Assign to Class
+                    </Button>
                 </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">Class assignment functionality coming soon.</p>
+                <CardContent className="space-y-3">
+                    {assignedClasses.map(c => (
+                        <div key={c.id} className="flex items-center p-3 border rounded-lg">
+                            <div className="flex-1">
+                                <p className="font-semibold">{c.name}</p>
+                                <p className="text-sm text-muted-foreground">{c.schedule}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Badge variant="secondary">{c.enrolled}/{c.capacity} students</Badge>
+                                <Button size="sm" variant="ghost" asChild>
+                                    <Link href={`/institute-admin/classes/${c.id}`}>Manage</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
                 </CardContent>
             </Card>
         </div>
@@ -95,3 +117,4 @@ function TutorProfilePage({ params }: { params: { tutorId: string } }) {
 }
 
 export default TutorProfilePage;
+

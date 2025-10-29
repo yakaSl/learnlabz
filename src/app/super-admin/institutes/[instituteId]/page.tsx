@@ -10,6 +10,7 @@ import { ArrowLeft, Edit, MoreVertical, Building, Users, BarChart, CreditCard, P
 import Image from 'next/image';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import React from 'react';
 
 interface InstituteProfilePageProps {
     params: {
@@ -32,7 +33,8 @@ function PlaceholderTab({ title }: { title: string }) {
 
 
 export default function InstituteProfilePage({ params }: InstituteProfilePageProps) {
-    const institute = institutes.find(i => i.id === params.instituteId);
+    const { instituteId } = React.use(params);
+    const institute = institutes.find(i => i.id === instituteId);
     const searchParams = useSearchParams();
     const defaultTab = searchParams.get('tab') || 'info';
 

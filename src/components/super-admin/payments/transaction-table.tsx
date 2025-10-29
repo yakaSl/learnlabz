@@ -30,6 +30,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { TransactionFilters } from "./payment-management";
 
 const columns: ColumnDef<Transaction>[] = [
   { accessorKey: "id", header: "Transaction ID" },
@@ -45,7 +46,11 @@ const columns: ColumnDef<Transaction>[] = [
   { accessorKey: "type", header: "Type" },
 ];
 
-export function TransactionTable() {
+interface TransactionTableProps {
+  filters: TransactionFilters;
+}
+
+export function TransactionTable({ filters }: TransactionTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -74,6 +79,12 @@ export function TransactionTable() {
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    table.getColumn('method')?.setFilterValue(filters.paymentMethods.length > 0 ? filters.paymentMethods : undefined);
+    table.getColumn('status')?.setFilterValue(filters.status !== 'all' ? filters.status : undefined);
+    table.getColumn('type')?.setFilterValue(filters.transactionTypes.length > 0 ? filters.transactionTypes : undefined);
+  }, [filters, table]);
 
   return (
     <Card>

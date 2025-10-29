@@ -4,8 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { TransactionFilters } from "./payment-management";
+import React from "react";
 
-export function FilterSidebar() {
+interface FilterSidebarProps {
+    filters: TransactionFilters;
+    setFilters: React.Dispatch<React.SetStateAction<TransactionFilters>>;
+}
+
+export function FilterSidebar({ filters, setFilters }: FilterSidebarProps) {
+
+    const handleCheckedChange = (filterKey: 'paymentMethods' | 'transactionTypes', value: string) => {
+        setFilters(prev => {
+            const currentValues = prev[filterKey] as string[];
+            const newValues = currentValues.includes(value)
+                ? currentValues.filter(v => v !== value)
+                : [...currentValues, value];
+            return { ...prev, [filterKey]: newValues };
+        });
+    };
+
+    const paymentMethodOptions = ["Credit Card", "PayPal", "Bank Transfer"];
+    const transactionTypeOptions = ["Subscription", "Payout", "Platform Fee", "Refund"];
+
   return (
     <Card>
       <CardHeader>
@@ -15,38 +36,36 @@ export function FilterSidebar() {
         <div className="space-y-2">
           <Label>Payment Method</Label>
           <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="filter-cc" />
-              <Label htmlFor="filter-cc" className="font-normal">Credit Card</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="filter-paypal" />
-              <Label htmlFor="filter-paypal" className="font-normal">PayPal</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="filter-bank" />
-              <Label htmlFor="filter-bank" className="font-normal">Bank Transfer</Label>
-            </div>
+             {paymentMethodOptions.map(option => (
+                <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                        id={`filter-${option.toLowerCase().replace(' ', '-')}`}
+                        checked={filters.paymentMethods.includes(option)}
+                        onCheckedChange={() => handleCheckedChange('paymentMethods', option)}
+                    />
+                    <Label htmlFor={`filter-${option.toLowerCase().replace(' ', '-')}`} className="font-normal">{option}</Label>
+                </div>
+            ))}
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Status</Label>
-           <RadioGroup defaultValue="all">
+           <RadioGroup value={filters.status} onValueChange={(value) => setFilters(prev => ({...prev, status: value}))}>
             <div className="flex items-center space-x-2">
                 <RadioGroupItem value="all" id="status-all" />
                 <Label htmlFor="status-all" className="font-normal">All</Label>
             </div>
             <div className="flex items-center space-x-2">
-                <RadioGroupItem value="completed" id="status-completed" />
+                <RadioGroupItem value="Completed" id="status-completed" />
                 <Label htmlFor="status-completed" className="font-normal">Completed</Label>
             </div>
              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="pending" id="status-pending" />
+                <RadioGroupItem value="Pending" id="status-pending" />
                 <Label htmlFor="status-pending" className="font-normal">Pending</Label>
             </div>
             <div className="flex items-center space-x-2">
-                <RadioGroupItem value="failed" id="status-failed" />
+                <RadioGroupItem value="Failed" id="status-failed" />
                 <Label htmlFor="status-failed" className="font-normal">Failed</Label>
             </div>
           </RadioGroup>
@@ -55,22 +74,16 @@ export function FilterSidebar() {
         <div className="space-y-2">
           <Label>Transaction Type</Label>
           <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="type-sub" />
-              <Label htmlFor="type-sub" className="font-normal">Subscription</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="type-payout" />
-              <Label htmlFor="type-payout" className="font-normal">Payout</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="type-fee" />
-              <Label htmlFor="type-fee" className="font-normal">Platform Fee</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="type-refund" />
-              <Label htmlFor="type-refund" className="font-normal">Refund</Label>
-            </div>
+            {transactionTypeOptions.map(option => (
+                <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                        id={`type-${option.toLowerCase().replace(' ', '-')}`}
+                        checked={filters.transactionTypes.includes(option)}
+                        onCheckedChange={() => handleCheckedChange('transactionTypes', option)}
+                    />
+                    <Label htmlFor={`type-${option.toLowerCase().replace(' ', '-')}`} className="font-normal">{option}</Label>
+                </div>
+            ))}
           </div>
         </div>
       </CardContent>

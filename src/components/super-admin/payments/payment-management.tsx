@@ -7,8 +7,21 @@ import { FraudAlerts } from "./fraud-alerts";
 import { FilterSidebar } from "./filter-sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import * as React from "react";
+
+export type TransactionFilters = {
+    paymentMethods: string[];
+    status: string;
+    transactionTypes: string[];
+};
 
 export default function PaymentManagement() {
+  const [filters, setFilters] = React.useState<TransactionFilters>({
+    paymentMethods: [],
+    status: 'all',
+    transactionTypes: [],
+  });
+
   return (
     <div className="flex flex-col gap-8">
        <div>
@@ -25,11 +38,11 @@ export default function PaymentManagement() {
         <TabsContent value="transactions" className="mt-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-9">
-                    <TransactionTable />
+                    <TransactionTable filters={filters} />
                 </div>
                 <div className="lg:col-span-3">
                     <div className="space-y-8">
-                        <FilterSidebar />
+                        <FilterSidebar filters={filters} setFilters={setFilters} />
                         <FraudAlerts />
                     </div>
                 </div>

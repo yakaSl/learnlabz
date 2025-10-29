@@ -26,7 +26,7 @@ export function PerformanceTrendChart() {
                             domain={[70, 100]} 
                             stroke="#888888"
                             fontSize={12}
-                            tickFormatter={(value) => `${value}%`}
+                            tickFormatter={(value) => `${'\'\'\''}${value}%${'\'\'\''}`}
                         />
                         <Tooltip 
                              contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))'}} 

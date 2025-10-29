@@ -42,7 +42,7 @@ export function SubjectGradeBreakdown() {
                             domain={[50, 100]}
                             stroke="#888888"
                             fontSize={12}
-                            tickFormatter={(value) => `${value}%`}
+                            tickFormatter={(value) => `${'\'\'\''}${value}%${'\'\'\''}`}
                         />
                         <Tooltip 
                             cursor={{fill: 'hsla(var(--muted))'}}

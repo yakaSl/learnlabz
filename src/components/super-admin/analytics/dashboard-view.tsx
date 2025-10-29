@@ -11,7 +11,7 @@ import { WidgetLibrary } from "./widget-library";
 
 export function DashboardView() {
   return (
-    <DndContext>
+    <DndContext id="super-admin-analytics-dashboard">
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h2 className="text-xl font-semibold">My Dashboard</h2>
@@ -46,3 +46,4 @@ export function DashboardView() {
     </DndContext>
   );
 }
+

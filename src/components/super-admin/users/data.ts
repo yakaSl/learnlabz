@@ -11,6 +11,19 @@ export type User = {
   riskScore: number
 }
 
+export const roles = [
+  { value: "Tutor", label: "Tutor" },
+  { value: "Student", label: "Student" },
+  { value: "Institute Admin", label: "Institute Admin" },
+  { value: "Super Admin", label: "Super Admin" },
+]
+
+export const statuses = [
+  { value: "Active", label: "Active" },
+  { value: "Inactive", label: "Inactive" },
+  { value: "Suspended", label: "Suspended" },
+]
+
 export const users: User[] = [
   {
     id: "1",

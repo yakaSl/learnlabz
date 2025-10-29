@@ -4,8 +4,10 @@
 import { Table } from "@tanstack/react-table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
-import { SlidersHorizontal, Download, Trash, UserX, UserCheck } from "lucide-react"
+import { DataTableViewOptions } from "./data-table-view-options"
+import { Download, Trash, UserX, UserCheck } from "lucide-react"
+import { DataTableFacetedFilter } from "./data-table-faceted-filter"
+import { roles, statuses } from "./data"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -27,41 +29,32 @@ export function DataTableToolbar<TData>({
                     }
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
-                
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8">
-                            <SlidersHorizontal className="mr-2 h-4 w-4" />
-                            View
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {table
-                        .getAllColumns()
-                        .filter(
-                            (column) =>
-                            typeof column.accessorFn !== "undefined" && column.getCanHide()
-                        )
-                        .map((column) => {
-                            return (
-                            <DropdownMenuCheckboxItem
-                                key={column.id}
-                                className="capitalize"
-                                checked={column.getIsVisible()}
-                                onCheckedChange={(value) =>
-                                column.toggleVisibility(!!value)
-                                }
-                            >
-                                {column.id}
-                            </DropdownMenuCheckboxItem>
-                            )
-                        })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
-                 {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                {table.getColumn("role") && (
+                  <DataTableFacetedFilter
+                    column={table.getColumn("role")}
+                    title="Role"
+                    options={roles}
+                  />
+                )}
+                {table.getColumn("status") && (
+                  <DataTableFacetedFilter
+                    column={table.getColumn("status")}
+                    title="Status"
+                    options={statuses}
+                  />
+                )}
+                 {isFiltered && (
+                    <Button
+                        variant="ghost"
+                        onClick={() => table.resetColumnFilters()}
+                        className="h-8 px-2 lg:px-3"
+                    >
+                        Reset
+                    </Button>
+                )}
+            </div>
+            <div className="flex items-center space-x-2">
+                {table.getFilteredSelectedRowModel().rows.length > 0 && (
                      <div className="flex items-center space-x-2">
                         <Button variant="outline" size="sm" className="h-8">
                             <Download className="mr-2 h-4 w-4" />
@@ -81,6 +74,7 @@ export function DataTableToolbar<TData>({
                         </Button>
                     </div>
                 )}
+                <DataTableViewOptions table={table} />
             </div>
         </div>
   )

@@ -12,7 +12,7 @@ export function AttendanceSummaryCards() {
   const unexcusedAbsences = attendanceData.filter(d => d.status === 'Absent').length;
 
   const stats = [
-    { title: "Overall Attendance", value: `${overallPercentage}%`, icon: <BadgePercent /> },
+    { title: "Overall Attendance", value: `${'\'\'\''}${overallPercentage}%${'\'\'\''}`, icon: <BadgePercent /> },
     { title: "Active Classes", value: "4", icon: <BookOpen /> },
     { title: "Unexcused Absences", value: `${unexcusedAbsences}`, icon: <AlertTriangle /> },
     { title: "Attendance Streak", value: "8 Days", icon: <TrendingUp /> },

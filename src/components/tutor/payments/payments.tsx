@@ -93,10 +93,10 @@ function PersonalPaymentsView() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+           <Card>
             <CardHeader>
               <CardTitle className="text-sm font-medium">
-                Record Offline Payment
+                Offline Payments
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -113,8 +113,8 @@ function PersonalPaymentsView() {
 
         <Tabs defaultValue="student-payments">
             <TabsList className="grid w-full grid-cols-2 max-w-md">
-                <TabsTrigger value="student-payments"><User className="mr-2" />Student Payments</TabsTrigger>
-                <TabsTrigger value="payout-history"><FileText className="mr-2" />Payout History</TabsTrigger>
+                <TabsTrigger value="student-payments"><User className="mr-2"/>Student Payments</TabsTrigger>
+                <TabsTrigger value="payout-history"><FileText className="mr-2"/>Payout History</TabsTrigger>
             </TabsList>
             <TabsContent value="student-payments" className="mt-4">
                 <StudentPaymentsTable columns={columns} data={paymentHistory} />

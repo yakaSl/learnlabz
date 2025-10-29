@@ -11,6 +11,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import React from 'react';
+import { InstituteInfoTab } from '@/components/super-admin/institutes/details/institute-info-tab';
+import { InstituteUsersTab } from '@/components/super-admin/institutes/details/institute-users-tab';
 
 interface InstituteProfilePageProps {
     params: {
@@ -86,10 +88,10 @@ export default function InstituteProfilePage({ params }: InstituteProfilePagePro
                     <TabsTrigger value="branding"><Palette className="mr-2 h-4 w-4" />Branding</TabsTrigger>
                 </TabsList>
                 <TabsContent value="info" className="mt-4">
-                    <PlaceholderTab title="Info" />
+                    <InstituteInfoTab institute={institute} />
                 </TabsContent>
                 <TabsContent value="users" className="mt-4">
-                    <PlaceholderTab title="Users" />
+                    <InstituteUsersTab />
                 </TabsContent>
                 <TabsContent value="stats" className="mt-4">
                     <PlaceholderTab title="Stats" />

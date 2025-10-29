@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { GenerateReportDialog } from './generate-report-dialog';
 import { OverviewTab } from './overview/overview-tab';
 import GradesPerformanceView from '@/components/student/grades/grades-performance-view';
+import { FinancialsTab } from './financials/financials-tab';
 
 interface StudentProfileViewProps {
     studentId: string;
@@ -91,7 +92,7 @@ export default function StudentProfileView({ studentId }: StudentProfileViewProp
                     <PlaceholderTab title="Assessments" />
                 </TabsContent>
                  <TabsContent value="financials" className="mt-4">
-                    <PlaceholderTab title="Financials" />
+                    <FinancialsTab student={student} />
                 </TabsContent>
                 <TabsContent value="notes" className="mt-4">
                     <PlaceholderTab title="Notes" />

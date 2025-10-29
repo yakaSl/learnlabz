@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { columns } from "./payout-columns";
 import { payouts } from "./payouts-data";
 import { PayoutsTable } from "./payouts-table";
 import { CheckCircle, Clock, Download, Users } from "lucide-react";
+import { PayoutCalendarView } from "./payout-calendar-view";
 
 function PayoutSummary() {
     const stats = [
@@ -35,21 +37,28 @@ export function PayoutsDashboard() {
     return (
         <div className="space-y-8">
             <PayoutSummary />
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle>Payout Queue</CardTitle>
-                        <CardDescription>Review and approve pending payouts for the next cycle.</CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline"><Download className="mr-2" /> Export List</Button>
-                        <Button><CheckCircle className="mr-2" /> Approve All</Button>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <PayoutsTable columns={columns} data={payouts} />
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-2">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle>Payout Queue</CardTitle>
+                                <CardDescription>Review and approve pending payouts for the next cycle.</CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button variant="outline"><Download className="mr-2" /> Export List</Button>
+                                <Button><CheckCircle className="mr-2" /> Approve All</Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <PayoutsTable columns={columns} data={payouts} />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="lg:col-span-1">
+                    <PayoutCalendarView />
+                </div>
+            </div>
         </div>
     )
 }

@@ -9,6 +9,7 @@ import { MoreVertical } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
 
 interface InstituteListItemProps {
   institute: Institute;
@@ -39,7 +40,7 @@ export function InstituteListItem({ institute }: InstituteListItemProps) {
       <div className="flex items-center gap-4 w-1/3">
         <Image src={institute.logo} alt={`${institute.name} logo`} width={40} height={40} className="rounded-md" />
         <div className="flex-grow">
-          <p className="font-bold">{institute.name}</p>
+          <Link href={`/super-admin/institutes/${institute.id}`} className="font-bold hover:underline">{institute.name}</Link>
           <p className="text-sm text-muted-foreground">Admin: {institute.admin}</p>
         </div>
       </div>
@@ -67,7 +68,9 @@ export function InstituteListItem({ institute }: InstituteListItemProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>View Details</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/super-admin/institutes/${institute.id}`}>View Details</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive">Suspend</DropdownMenuItem>
             </DropdownMenuContent>

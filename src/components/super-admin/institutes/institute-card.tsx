@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Users, BarChart, FileText, Palette } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface InstituteCardProps {
   institute: Institute;
@@ -37,13 +38,13 @@ export function InstituteCard({ institute }: InstituteCardProps) {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="flex-row items-start justify-between pb-2">
-        <div className="flex items-center gap-4">
+        <Link href={`/super-admin/institutes/${institute.id}`} className="flex items-center gap-4">
           <Image src={institute.logo} alt={`${institute.name} logo`} width={48} height={48} className="rounded-lg" />
           <div>
             <h3 className="text-lg font-bold">{institute.name}</h3>
             <p className="text-sm text-muted-foreground">Admin: {institute.admin}</p>
           </div>
-        </div>
+        </Link>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -51,7 +52,9 @@ export function InstituteCard({ institute }: InstituteCardProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>View Details</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href={`/super-admin/institutes/${institute.id}`}>View Details</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive">Suspend</DropdownMenuItem>
             </DropdownMenuContent>
@@ -79,21 +82,29 @@ export function InstituteCard({ institute }: InstituteCardProps) {
       </CardContent>
       <CardFooter className="border-t pt-4">
         <div className="flex w-full justify-around gap-2">
-            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
-                <FileText className="h-4 w-4 mb-1" />
-                <span className="text-xs">Info</span>
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2" asChild>
+                <Link href={`/super-admin/institutes/${institute.id}?tab=info`}>
+                    <FileText className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Info</span>
+                </Link>
             </Button>
-            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
-                <Users className="h-4 w-4 mb-1" />
-                <span className="text-xs">Users</span>
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2" asChild>
+                 <Link href={`/super-admin/institutes/${institute.id}?tab=users`}>
+                    <Users className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Users</span>
+                </Link>
             </Button>
-            <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
-                <BarChart className="h-4 w-4 mb-1" />
-                <span className="text-xs">Stats</span>
+            <Button variant="ghost" size="sm" className="flex-col h-auto p-2" asChild>
+                <Link href={`/super-admin/institutes/${institute.id}?tab=stats`}>
+                    <BarChart className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Stats</span>
+                </Link>
             </Button>
-             <Button variant="ghost" size="sm" className="flex-col h-auto p-2">
-                <Palette className="h-4 w-4 mb-1" />
-                <span className="text-xs">Branding</span>
+             <Button variant="ghost" size="sm" className="flex-col h-auto p-2" asChild>
+                <Link href={`/super-admin/institutes/${institute.id}?tab=branding`}>
+                    <Palette className="h-4 w-4 mb-1" />
+                    <span className="text-xs">Branding</span>
+                </Link>
             </Button>
         </div>
       </CardFooter>

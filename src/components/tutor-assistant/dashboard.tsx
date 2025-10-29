@@ -1,4 +1,3 @@
-
 "use client";
 
 import { TodaysSchedule } from "./todays-schedule";

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound, useSearchParams } from 'next/navigation';
@@ -6,7 +5,7 @@ import { institutes } from '@/components/super-admin/institutes/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, MoreVertical, Building, Users, BarChart, CreditCard, Palette } from 'lucide-react';
+import { ArrowLeft, Edit, MoreVertical, Building, Users, BarChart, CreditCard, Palette, ShieldAlert } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -14,6 +13,17 @@ import React from 'react';
 import { InstituteInfoTab } from '@/components/super-admin/institutes/details/institute-info-tab';
 import { InstituteUsersTab } from '@/components/super-admin/institutes/details/institute-users-tab';
 import { BrandingTab } from '@/components/super-admin/institutes/details/branding-tab';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface InstituteProfilePageProps {
     params: {
@@ -65,18 +75,39 @@ export default function InstituteProfilePage({ params }: InstituteProfilePagePro
                         <Edit className="mr-2 h-4 w-4" />
                         Edit Institute
                     </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreVertical />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Change Tier</DropdownMenuItem>
-                            <DropdownMenuItem>Approve White-Label</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Suspend Institute</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <AlertDialog>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem>Change Tier</DropdownMenuItem>
+                                <DropdownMenuItem>Approve White-Label</DropdownMenuItem>
+                                 <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive">
+                                        <ShieldAlert className="mr-2 h-4 w-4" />
+                                        Suspend Institute
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                         <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will suspend the institute and all associated user accounts. They will not be able to access the platform. This action can be undone.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Yes, Suspend Institute
+                            </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
 

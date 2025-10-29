@@ -24,13 +24,25 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { transactions as data, Transaction } from "./data";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, Download } from "lucide-react";
+import { Calendar as CalendarIcon, Download, MoreHorizontal } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { TransactionFilters } from "./payment-management";
+import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+
+const getStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+        case 'Completed': return <Badge variant="default">Completed</Badge>;
+        case 'Pending': return <Badge variant="secondary">Pending</Badge>;
+        case 'Failed': return <Badge variant="destructive">Failed</Badge>;
+        case 'Refunded': return <Badge variant="outline">Refunded</Badge>;
+        default: return <Badge variant="outline">{status}</Badge>;
+    }
+}
 
 const columns: ColumnDef<Transaction>[] = [
   { accessorKey: "id", header: "Transaction ID" },
@@ -41,9 +53,36 @@ const columns: ColumnDef<Transaction>[] = [
     header: "Amount",
     cell: ({ row }) => `$${row.original.amount.toFixed(2)}`
   },
-  { accessorKey: "status", header: "Status" },
+  { 
+      accessorKey: "status", 
+      header: "Status",
+      cell: ({ row }) => getStatusBadge(row.original.status)
+  },
   { accessorKey: "method", header: "Method" },
   { accessorKey: "type", header: "Type" },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const transaction = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Mark as Verified</DropdownMenuItem>
+            <DropdownMenuItem>View User Profile</DropdownMenuItem>
+            <DropdownMenuItem disabled={transaction.status === 'Refunded'}>
+              Initiate Refund
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  },
 ];
 
 interface TransactionTableProps {
@@ -163,6 +202,9 @@ export function TransactionTable({ filters }: TransactionTableProps) {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className={cn(
+                        (row.original.status === 'Failed' || row.original.status === 'Refunded') && "bg-muted/50"
+                    )}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -13,8 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import { Check, Clipboard, QrCode } from "lucide-react";
+import { Check, Clipboard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode.react";
 
@@ -93,6 +93,10 @@ export function CreateClassForm() {
               <Label htmlFor="class-name">Class Name</Label>
               <Input id="class-name" placeholder="e.g., Mathematics - Grade 10" required />
             </div>
+            <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" placeholder="Describe the class, its goals, and what students will learn." required />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="subject">Subject</Label>
@@ -103,13 +107,19 @@ export function CreateClassForm() {
                 <Input id="grade-level" placeholder="e.g., 10th Grade, Beginner" required />
               </div>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="schedule">Class Schedule</Label>
+                    <Input id="schedule" placeholder="e.g., Mon, Wed, Fri at 10:00 AM" required />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="capacity">Class Capacity</Label>
+                    <Input id="capacity" type="number" placeholder="e.g., 15" required />
+                </div>
+            </div>
              <div className="space-y-2">
               <Label htmlFor="location">Location (Optional)</Label>
               <Input id="location" placeholder="e.g., Online via Zoom, Room 201" />
-            </div>
-             <div className="space-y-2">
-              <Label htmlFor="schedule">Class Schedule</Label>
-              <Input id="schedule" placeholder="e.g., Mon, Wed, Fri at 10:00 AM" required />
             </div>
           </CardContent>
         </Card>

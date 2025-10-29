@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import React from 'react';
 import { InstituteInfoTab } from '@/components/super-admin/institutes/details/institute-info-tab';
 import { InstituteUsersTab } from '@/components/super-admin/institutes/details/institute-users-tab';
+import { BrandingTab } from '@/components/super-admin/institutes/details/branding-tab';
 
 interface InstituteProfilePageProps {
     params: {
@@ -100,7 +101,7 @@ export default function InstituteProfilePage({ params }: InstituteProfilePagePro
                     <PlaceholderTab title="Billing" />
                 </TabsContent>
                 <TabsContent value="branding" className="mt-4">
-                    <PlaceholderTab title="Branding" />
+                    <BrandingTab />
                 </TabsContent>
             </Tabs>
         </div>

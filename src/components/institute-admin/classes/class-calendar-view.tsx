@@ -25,10 +25,10 @@ import Link from 'next/link';
 
 // Mock data
 const classes = [
-    { id: 1, title: 'Math 101', time: '10:00 AM', tutor: 'John Doe', date: new Date(new Date().setDate(new Date().getDate() + 1)), color: 'bg-blue-500' },
-    { id: 2, title: 'History 202', time: '02:00 PM', tutor: 'Emily Davis', date: new Date(new Date().setDate(new Date().getDate() + 1)), color: 'bg-purple-500' },
-    { id: 3, title: 'Physics Lab', time: '11:00 AM', tutor: 'John Doe', date: new Date(new Date().setDate(new Date().getDate() + 3)), color: 'bg-green-500' },
-    { id: 4, title: 'CS Introduction', time: '09:00 AM', tutor: 'Aisha Khan', date: new Date(new Date().setDate(new Date().getDate() - 2)), color: 'bg-red-500' },
+    { id: '1', title: 'Math 101', time: '10:00 AM', tutor: 'John Doe', date: new Date(new Date().setDate(new Date().getDate() + 1)), color: 'bg-blue-500' },
+    { id: '2', title: 'History 202', time: '02:00 PM', tutor: 'Emily Davis', date: new Date(new Date().setDate(new Date().getDate() + 1)), color: 'bg-purple-500' },
+    { id: '3', title: 'Physics Lab', time: '11:00 AM', tutor: 'John Doe', date: new Date(new Date().setDate(new Date().getDate() + 3)), color: 'bg-green-500' },
+    { id: '4', title: 'CS Introduction', time: '09:00 AM', tutor: 'Aisha Khan', date: new Date(new Date().setDate(new Date().getDate() - 2)), color: 'bg-red-500' },
 ];
 
 export function ClassCalendarView() {

@@ -10,19 +10,19 @@ export function QuickActions() {
         <CardDescription>Common administrative tasks.</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Button variant="outline">
+        <Button variant="outline" className="justify-start text-left">
           <PlusCircle className="mr-2 h-4 w-4" />
           New Institute
         </Button>
-        <Button variant="outline">
+        <Button variant="outline" className="justify-start text-left">
           <Megaphone className="mr-2 h-4 w-4" />
           Broadcast
         </Button>
-        <Button variant="outline">
+        <Button variant="outline" className="justify-start text-left">
           <Wrench className="mr-2 h-4 w-4" />
           System Config
         </Button>
-        <Button variant="outline" >
+        <Button variant="outline" className="justify-start text-left">
           <ShieldAlert className="mr-2 h-4 w-4" />
           Security Scan
         </Button>

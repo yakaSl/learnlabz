@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck, GraduationCap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import UserNav from "@/components/super-admin/user-nav";
@@ -41,10 +41,18 @@ export default function SuperAdminLayout({
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/super-admin/users" passHref>
-                <SidebarMenuButton tooltip="Users">
+              <Link href="/super-admin/tutors" passHref>
+                <SidebarMenuButton tooltip="Tutors">
                   <Users />
-                  <span>Users</span>
+                  <span>Tutors</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/super-admin/students" passHref>
+                <SidebarMenuButton tooltip="Students">
+                  <GraduationCap />
+                  <span>Students</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -85,6 +93,14 @@ export default function SuperAdminLayout({
                 <SidebarMenuButton tooltip="Audit Logs">
                   <ShieldCheck />
                   <span>Audit Logs</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <Link href="/super-admin/users" passHref>
+                <SidebarMenuButton tooltip="All Users">
+                  <Users />
+                  <span>All Users</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

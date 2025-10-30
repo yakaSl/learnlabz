@@ -58,49 +58,65 @@ The application is divided into several distinct portals, each tailored to a spe
 
 - **Purpose:** Platform-wide management and oversight.
 - **Key UI Patterns:**
-  - Extensive use of `Table` with sorting, filtering, and pagination for managing users, institutes, and payments.
-  - Data visualization widgets using `recharts` for analytics.
-  - Multi-tabbed interfaces (`Tabs`) for complex settings pages (e.g., System Settings).
+  - **Dashboard (`/super-admin`):** Features `StatGrid`, `RevenueChart`, `UserGrowthChart`, `ActivityFeed`, `SystemHealth`, `AlertPanel`, `PredictiveAnalytics`, and `QuickActions` components.
+  - **Institute Management (`/super-admin/institutes`):** Uses a `Tabs` component to switch between an `InstituteManagement` view (with `InstituteCard` or `InstituteListItem`) and a `WhiteLabelQueue`.
+  - **Institute Detail Page (`/super-admin/institutes/[instituteId]`):** A detailed, tabbed view (`Tabs`) showing `InstituteInfoTab`, `InstituteUsersTab`, and a `BrandingTab`.
+  - **User Management (`/super-admin/users`, `/tutors`, `/students`):** A `UserTable` with faceted filters (`DataTableFacetedFilter`) and view options (`DataTableViewOptions`). The component is reused to show all users or filter by "Tutor" or "Student" roles.
+  - **Payments (`/super-admin/payments`):** A tabbed view with a `TransactionTable` and a `PayoutsDashboard`, which includes a `PayoutsTable` and `PayoutCalendarView`.
+  - **Analytics (`/super-admin/analytics`):** A customizable dashboard view (`DashboardView`) using a `DndContext` for draggable chart widgets (`AreaChartWidget`, `BarChartWidget`, `PieChartWidget`) and an `AiInsights` panel.
+  - **Audit Logs (`/super-admin/audit-logs`):** Displays a `LogTable` with an expandable row for details, alongside a `LogFilterPanel` and an `AiAnomalyDetector`.
 
 ### 3.2. Institute Admin Portal (`/institute-admin`)
 
 - **Purpose:** Managing a single educational institute.
 - **Key UI Patterns:**
-  - Dashboards with `Card`-based statistics.
-  - Management pages for tutors, students, and classes.
-  - A calendar view (`ClassCalendarView`) for scheduling.
+  - **Dashboard (`/institute-admin`):** Composed of `StatCards`, `QuickActions`, `RevenueChart`, `ClassCalendar`, `AiInsights`, and an `ActivityFeed`.
+  - **Tutor Management (`/institute-admin/tutors`):** A view with `TutorCard` and `TutorListItem` components. Includes an `InviteTutorDialog`.
+  - **Tutor Detail Page (`/institute-admin/tutors/[tutorId]`):** Shows a detailed profile with stats and a list of assigned classes.
+  - **Class Management (`/institute-admin/classes`):** Features a toggle between a `ClassCalendarView` and a list view.
+  - **Class Detail Page (`/institute-admin/classes/[classId]`):** A tabbed interface to manage `StudentsTab` and `AttendanceTab` for a specific class.
+  - **Student Management (`/institute-admin/students`):** A `Table`-based view for managing all students in the institute.
 
 ### 3.3. Tutor Portal (`/tutor`)
 
 - **Purpose:** For tutors to manage their classes, students, and materials.
 - **Key UI Patterns:**
-  - `ContextSwitcher` to toggle between a "Personal Workspace" and an "Institute" context.
-  - `ClassCard` grid for a visual overview of classes.
-  - Detailed class view with tabs for managing students, attendance, materials, and assessments.
+  - **ContextSwitcher:** Allows the tutor to toggle between a "Personal Workspace" and an "Institute" context, which changes the data and available actions.
+  - **Dashboard (`/tutor`):** A workspace with `EarningsSummary`, `TodaysSchedule`, `AttendanceStats`, `AiAssistantWidget`, and `StudentPerformance` widgets.
+  - **Class Management (`/tutor/classes`):** Displays `ClassCard` components for a visual overview of classes. The `CreateClassForm` at `/tutor/classes/new` allows tutors to create their own classes in their personal context.
+  - **Class Detail Page (`/tutor/classes/[classId]`):** A comprehensive, tabbed view including `OverviewTab`, `StudentsTab`, `AttendanceTab` (with a `AttendanceSessionDialog`), `MaterialsTab` (with `UploadMaterialDialog`), `AssessmentsTab`, an `ExamsTab`, and a `FinancialsTab`.
+  - **Assessment/Exam Creation (`/tutor/classes/[classId]/assessments/new`, `.../exams/new`):** Multi-column forms (`NewAssessmentPage`, `NewExamForm`) for creating assignments and exams.
+  - **Grading View (`/tutor/classes/.../submissions/[submissionId]`):** A two-pane layout with a `SubmissionViewer` for the student's work and a `GradingPanel` for feedback and grades.
+  - **Student Management (`/tutor/students`):** A grid of `StudentCard` components for all enrolled students.
+  - **Student Profile Page (`/tutor/students/[studentId]`):** A detailed, tabbed view of a single student, including `OverviewTab`, `StudentAttendanceView`, and a `Performance` tab.
 
 ### 3.4. Student Portal (`/student`)
 
 - **Purpose:** For students to access their classes, grades, and learning materials.
 - **Key UI Patterns:**
-  - Dashboard focused on upcoming deadlines and progress.
-  - Gamification elements like `PointsSummary` and `BadgeGallery`.
-  - An `AiTutorChat` interface for interactive learning.
+  - **Dashboard (`/student`):** Focuses on immediate tasks with `UpcomingClasses`, `RecentGrades`, `AssignmentDeadlines`, `GamificationSummary`, `AiChatTutorWidget`, and `CourseProgress`.
+  - **Class Management (`/student/classes`):** A grid of `StudentClassCard` components.
+  - **Class Detail Page (`/student/classes/[classId]`):** A tabbed view for students to see a class `Overview`, `Materials`, `Assignments`, `Grades`, and a `Discussion` forum.
+  - **Assignment Submission (`/student/assignments/[assignmentId]`):** A dedicated view (`AssignmentView`) for a single assignment, showing instructions, status, and a file submission area.
+  - **Gamification (`/student/achievements`):** A `GamificationHub` that includes a class `Leaderboard`, a `BadgeGallery`, a `PointsSummary`, and `AiSuggestions`.
+  - **AI Tutor (`/student/ai-tutor`):** An interactive `AiTutorChat` interface with context selection and chat history.
 
 ### 3.5. Parent Portal (`/parent`)
 
 - **Purpose:** For parents to monitor their children's progress.
 - **Key UI Patterns:**
-  - `ChildSelector` to switch between different children's dashboards.
-  - Read-only views of performance analytics, attendance, and schedules.
-  - A three-pane `CommunicationHub` for messaging tutors.
+  - **ChildSelector:** A key component in the header that allows the parent to switch between different children's dashboards.
+  - **Dashboard (`/parent`):** A summary view with `PerformanceSummary`, `UpcomingClassesWidget`, `RecentGradesWidget`, a `PaymentStatusPanel`, and `CommunicationWidget`.
+  - **Performance (`/parent/performance`):** A `PerformanceDashboard` with `PerformanceTrendChart` and `SubjectGradeBreakdown` charts.
+  - **Messages (`/parent/messages`):** A three-pane `CommunicationHub` for messaging tutors.
+  - **Gamification (`/parent/achievements`):** A read-only view of the child's progress, including `PointsSummary`, `BadgeGallery`, `Leaderboard`, and `AiMotivationSuggestions`.
 
 ### 3.6. Tutor Assistant Portal (`/tutor-assistant`)
 
 - **Purpose:** A simplified view for assistants to perform delegated tasks.
 - **Key UI Patterns:**
-  - A task-oriented dashboard (`TaskList`).
-  - Read-only views of schedules.
-  - A dedicated UI for marking attendance.
+  - **Dashboard (`/tutor-assistant`):** A task-oriented view with `TaskList`, `TodaysSchedule`, and `Notifications`.
+  - **Attendance Marking (`/tutor-assistant/attendance`):** A dedicated UI (`AttendanceMarking`) with a list of students and radio buttons to mark them "Present" or "Absent."
 
 ## 4. Theming and Styling
 

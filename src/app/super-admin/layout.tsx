@@ -147,7 +147,7 @@ export default function SuperAdminLayout({
             <UserNav />
           </div>
         </header>
-        <main className="flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 overflow-auto">
+        <main className="flex-1 flex flex-col gap-4 p-4 md:gap-8 md:p-8 overflow-auto">
           {children}
         </main>
       </SidebarInset>

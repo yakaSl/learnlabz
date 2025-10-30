@@ -101,7 +101,7 @@ export default function ParentLayout({
              <h1 className="text-lg font-semibold">Parent Portal</h1>
              <ChildSelector />
           </div>
-          <div className="flex-1 hidden md:block">
+          <div className="flex-1 hidden md:flex">
             <SearchBar />
           </div>
           <div className="flex items-center gap-2">

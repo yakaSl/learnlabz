@@ -110,7 +110,7 @@ export default function TutorLayout({
             <div className="flex-1 flex items-center gap-4">
               <ContextSwitcher />
             </div>
-             <div className="flex-1 hidden md:block">
+             <div className="flex-1 hidden md:flex">
                 <SearchBar />
             </div>
             <div className="flex items-center gap-2">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import ParentUserNav from "@/components/parent/user-nav";
 import { ChildSelector } from "@/components/parent/child-selector";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
+import { SearchBar } from "@/components/ui/search-bar";
 
 export default function ParentLayout({
   children,
@@ -98,6 +99,7 @@ export default function ParentLayout({
              <h1 className="text-lg font-semibold">Parent Portal</h1>
              <ChildSelector />
           </div>
+          <SearchBar />
           <div className="flex items-center gap-4">
             <ParentUserNav />
           </div>

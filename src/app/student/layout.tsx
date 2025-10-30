@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import StudentUserNav from "@/components/student/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
+import { SearchBar } from "@/components/ui/search-bar";
 
 export default function StudentLayout({
   children,
@@ -110,7 +111,7 @@ export default function StudentLayout({
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
           <SidebarTrigger className="md:hidden"/>
           <div className="flex-1">
-             <h1 className="text-lg font-semibold">Student Portal</h1>
+             <SearchBar />
           </div>
           <div className="flex items-center gap-4">
             <StudentUserNav />

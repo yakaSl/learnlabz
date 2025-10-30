@@ -7,6 +7,7 @@ import TutorUserNav from "@/components/tutor/user-nav";
 import { ContextSwitcher } from "@/components/tutor/context-switcher";
 import { AppProvider } from "@/hooks/use-context";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
+import { SearchBar } from "@/components/ui/search-bar";
 
 export default function TutorLayout({
   children,
@@ -107,6 +108,7 @@ export default function TutorLayout({
             <div className="flex-1 flex items-center gap-4">
               <ContextSwitcher />
             </div>
+             <SearchBar />
             <div className="flex items-center gap-4">
               <TutorUserNav />
             </div>

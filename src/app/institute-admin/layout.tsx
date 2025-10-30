@@ -7,6 +7,7 @@ import InstituteAdminUserNav from "@/components/institute-admin/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function InstituteAdminLayout({
   children,
@@ -77,11 +78,7 @@ export default function InstituteAdminLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-           <SidebarMenu>
-            <SidebarMenuItem>
+             <SidebarMenuItem>
               <Link href="/institute-admin/settings" passHref>
                 <SidebarMenuButton tooltip="Settings">
                   <Settings />
@@ -90,6 +87,8 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
           </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -99,6 +98,7 @@ export default function InstituteAdminLayout({
              <SearchBar />
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Link href="/institute-admin/notifications" passHref>
                 <Button variant="ghost" size="icon">
                     <Bell />

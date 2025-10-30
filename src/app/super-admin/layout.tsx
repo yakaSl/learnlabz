@@ -7,6 +7,7 @@ import UserNav from "@/components/super-admin/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function SuperAdminLayout({
   children,
@@ -130,6 +131,7 @@ export default function SuperAdminLayout({
              <SearchBar />
           </div>
           <div className="flex items-center gap-2">
+             <ThemeToggle />
              <Link href="/super-admin/notifications" passHref>
                 <Button variant="ghost" size="icon">
                     <Bell />

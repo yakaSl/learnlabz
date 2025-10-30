@@ -7,6 +7,7 @@ import StudentUserNav from "@/components/student/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function StudentLayout({
   children,
@@ -115,6 +116,7 @@ export default function StudentLayout({
              <SearchBar />
           </div>
           <div className="flex items-center gap-2">
+             <ThemeToggle />
              <Link href="/student/notifications" passHref>
                 <Button variant="ghost" size="icon">
                     <Bell />

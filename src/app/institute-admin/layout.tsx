@@ -4,6 +4,7 @@ import { LayoutDashboard, Users, BookOpen, GraduationCap, BarChart2, CreditCard,
 import Image from "next/image";
 import Link from "next/link";
 import InstituteAdminUserNav from "@/components/institute-admin/user-nav";
+import { SidebarLogo } from "@/components/ui/sidebar-logo";
 
 export default function InstituteAdminLayout({
   children,
@@ -14,14 +15,7 @@ export default function InstituteAdminLayout({
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center justify-center p-2 group-data-[collapsible=icon]:p-0">
-            <div className="bg-white p-1 rounded-md group-data-[collapsible=icon]:hidden">
-                <Image src="/logo/logo.png" alt="Institute Logo" width={140} height={28} />
-            </div>
-             <div className="hidden group-data-[collapsible=icon]:block p-1 bg-white rounded-lg">
-                <Image src="/logo/logo.png" alt="Institute Logo Icon" width={36} height={36}  />
-            </div>
-          </div>
+          <SidebarLogo />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>

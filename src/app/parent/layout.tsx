@@ -1,12 +1,13 @@
 
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar, CalendarDays, Trophy } from "lucide-react";
+import { LayoutDashboard, BarChart2, Wallet, MessageSquare, User, Calendar, CalendarDays, Trophy, Settings, Bell } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ParentUserNav from "@/components/parent/user-nav";
 import { ChildSelector } from "@/components/parent/child-selector";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
+import { Button } from "@/components/ui/button";
 
 export default function ParentLayout({
   children,
@@ -99,8 +100,22 @@ export default function ParentLayout({
              <h1 className="text-lg font-semibold">Parent Portal</h1>
              <ChildSelector />
           </div>
-          <SearchBar />
-          <div className="flex items-center gap-4">
+          <div className="flex-1 hidden md:block">
+            <SearchBar />
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/parent/notifications" passHref>
+                <Button variant="ghost" size="icon">
+                    <Bell />
+                    <span className="sr-only">Notifications</span>
+                </Button>
+            </Link>
+             <Link href="/parent/profile" passHref>
+                <Button variant="ghost" size="icon">
+                    <Settings />
+                    <span className="sr-only">Settings</span>
+                </Button>
+            </Link>
             <ParentUserNav />
           </div>
         </header>

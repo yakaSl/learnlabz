@@ -1,11 +1,12 @@
 
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, CheckSquare, Settings } from "lucide-react";
+import { LayoutDashboard, CheckSquare, Settings, Bell } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import TutorUserNav from "@/components/tutor/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
+import { Button } from "@/components/ui/button";
 
 export default function TutorAssistantLayout({
   children,
@@ -65,7 +66,19 @@ export default function TutorAssistantLayout({
           <div className="flex-1">
              <SearchBar />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Link href="/tutor-assistant/notifications" passHref>
+                <Button variant="ghost" size="icon">
+                    <Bell />
+                    <span className="sr-only">Notifications</span>
+                </Button>
+            </Link>
+             <Link href="/tutor-assistant/settings" passHref>
+                <Button variant="ghost" size="icon">
+                    <Settings />
+                    <span className="sr-only">Settings</span>
+                </Button>
+            </Link>
             <TutorUserNav />
           </div>
         </header>

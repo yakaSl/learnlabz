@@ -1,6 +1,6 @@
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { LayoutDashboard, BookOpen, GraduationCap, Folder, Wallet, Megaphone, Bot, BarChart2, Settings } from "lucide-react";
+import { LayoutDashboard, BookOpen, GraduationCap, Folder, Wallet, Megaphone, Bot, BarChart2, Settings, Bell } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import TutorUserNav from "@/components/tutor/user-nav";
@@ -8,6 +8,7 @@ import { ContextSwitcher } from "@/components/tutor/context-switcher";
 import { AppProvider } from "@/hooks/use-context";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
+import { Button } from "@/components/ui/button";
 
 export default function TutorLayout({
   children,
@@ -108,8 +109,22 @@ export default function TutorLayout({
             <div className="flex-1 flex items-center gap-4">
               <ContextSwitcher />
             </div>
-             <SearchBar />
-            <div className="flex items-center gap-4">
+             <div className="flex-1 hidden md:block">
+                <SearchBar />
+            </div>
+            <div className="flex items-center gap-2">
+               <Link href="/tutor/notifications" passHref>
+                    <Button variant="ghost" size="icon">
+                        <Bell />
+                        <span className="sr-only">Notifications</span>
+                    </Button>
+                </Link>
+                <Link href="/tutor/settings" passHref>
+                    <Button variant="ghost" size="icon">
+                        <Settings />
+                        <span className="sr-only">Settings</span>
+                    </Button>
+                </Link>
               <TutorUserNav />
             </div>
           </header>

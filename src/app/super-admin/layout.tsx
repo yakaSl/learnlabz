@@ -6,6 +6,7 @@ import Link from "next/link";
 import UserNav from "@/components/super-admin/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
+import { Button } from "@/components/ui/button";
 
 export default function SuperAdminLayout({
   children,
@@ -128,7 +129,19 @@ export default function SuperAdminLayout({
           <div className="flex-1">
              <SearchBar />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+             <Link href="/super-admin/notifications" passHref>
+                <Button variant="ghost" size="icon">
+                    <Bell />
+                    <span className="sr-only">Notifications</span>
+                </Button>
+            </Link>
+             <Link href="/super-admin/settings" passHref>
+                <Button variant="ghost" size="icon">
+                    <Settings />
+                    <span className="sr-only">Settings</span>
+                </Button>
+            </Link>
             <UserNav />
           </div>
         </header>

@@ -1,11 +1,12 @@
 
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter } from "@/components/ui/sidebar";
-import { LayoutDashboard, BookOpen, Bot, Trophy, User, BarChart2, Folder, Calendar, Wallet, Megaphone } from "lucide-react";
+import { LayoutDashboard, BookOpen, Bot, Trophy, User, BarChart2, Folder, Calendar, Wallet, Megaphone, Settings, Bell } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import StudentUserNav from "@/components/student/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
+import { Button } from "@/components/ui/button";
 
 export default function StudentLayout({
   children,
@@ -113,7 +114,19 @@ export default function StudentLayout({
           <div className="flex-1">
              <SearchBar />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+             <Link href="/student/notifications" passHref>
+                <Button variant="ghost" size="icon">
+                    <Bell />
+                    <span className="sr-only">Notifications</span>
+                </Button>
+            </Link>
+             <Link href="/student/profile" passHref>
+                <Button variant="ghost" size="icon">
+                    <Settings />
+                    <span className="sr-only">Settings</span>
+                </Button>
+            </Link>
             <StudentUserNav />
           </div>
         </header>

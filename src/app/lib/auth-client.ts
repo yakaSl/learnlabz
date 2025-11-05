@@ -10,6 +10,18 @@ import {
   Permission,
 } from "@/types/auth.types";
 
+
+export const AUTH_CONFIG = {
+  paths: {
+    login: "/login",
+    register: "/register",
+    forgotPassword: "/forgot-password",
+    resetPassword: "/reset-password",
+    verifyEmail: "/verify-email",
+    twoFactor: "/two-factor",
+  },
+};
+
 // ============================================================================
 // PERMISSION HELPERS
 // ============================================================================

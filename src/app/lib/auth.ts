@@ -26,15 +26,6 @@ export const AUTH_CONFIG = {
     accessToken: "auth_token",
     refreshToken: "refresh_token",
   },
-
-  paths: {
-    login: "/login",
-    register: "/register",
-    forgotPassword: "/forgot-password",
-    resetPassword: "/reset-password",
-    verifyEmail: "/verify-email",
-    twoFactor: "/two-factor",
-  },
 };
 
 // ============================================================================

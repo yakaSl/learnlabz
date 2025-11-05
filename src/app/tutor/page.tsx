@@ -1,4 +1,3 @@
-
 import { EarningsSummary } from "@/components/tutor/dashboard/earnings-summary";
 import { TodaysSchedule } from "@/components/tutor/dashboard/todays-schedule";
 import { AttendanceStats } from "@/components/tutor/dashboard/attendance-stats";

@@ -1,4 +1,3 @@
-
 import { StatCards } from "@/components/institute-admin/dashboard/stat-cards";
 import { RevenueChart } from "@/components/institute-admin/dashboard/revenue-chart";
 import { ClassCalendar } from "@/components/institute-admin/dashboard/class-calendar";

@@ -1,4 +1,3 @@
-
 import { UpcomingClasses } from "@/components/student/dashboard/upcoming-classes";
 import { RecentGrades } from "@/components/student/dashboard/recent-grades";
 import { AssignmentDeadlines } from "@/components/student/dashboard/assignment-deadlines";

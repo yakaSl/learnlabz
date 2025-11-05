@@ -78,34 +78,20 @@ const roleDashboardPaths: Record<UserRole, string> = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  
-  useEffect(() => {
-    async function loadUser() {
-      if (!user) {
-        try {
-          const response = await AuthService.getCurrentUser();
-          if (response.success && response.data) {
-            setUser(response.data);
-          }
-        } catch (error) {
-          // It's okay if this fails, middleware will handle redirects
-          console.error("Could not fetch user on client.", error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        setIsLoading(false);
-      }
-    }
-    loadUser();
-  }, [user]);
 
+  const handleSuccessfulAuth = (authenticatedUser: User) => {
+    setUser(authenticatedUser);
+    const dashboardUrl = roleDashboardPaths[authenticatedUser.role] || '/';
+    router.push(dashboardUrl);
+  };
+  
   /**
    * Login with email and password
    */
   const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
+    setIsLoading(true);
     try {
       const response = await AuthService.login(credentials);
 
@@ -121,14 +107,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       const loggedInUser = loginData.user;
-      setUser(loggedInUser);
+      handleSuccessfulAuth(loggedInUser);
 
       return loginData;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
+    } finally {
+        setIsLoading(false);
     }
-  }, []);
+  }, [router]);
 
   /**
    * Login with Google
@@ -159,6 +147,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Verify 2FA code
    */
   const verifyTwoFactor = useCallback(async (data: TwoFactorRequest): Promise<LoginResponse> => {
+    setIsLoading(true);
     try {
       const response = await AuthService.verifyTwoFactor(data);
 
@@ -169,19 +158,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const loginData = response.data;
       const verifiedUser = loginData.user;
       
-      setUser(verifiedUser);
+      handleSuccessfulAuth(verifiedUser);
       
       return loginData;
     } catch (error) {
       console.error('2FA verification error:', error);
       throw error;
+    } finally {
+        setIsLoading(false);
     }
-  }, []);
+  }, [router]);
 
   /**
    * Register new user
    */
   const register = useCallback(async (data: RegisterRequest): Promise<RegisterResponse> => {
+    setIsLoading(true);
     try {
       const response = await AuthService.register(data);
 
@@ -192,19 +184,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const registerData = response.data;
       const newUser = registerData.user;
 
-      setUser(newUser);
+      handleSuccessfulAuth(newUser);
 
       return registerData;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [router]);
 
   /**
    * Logout user
    */
   const logout = useCallback(async () => {
+    setIsLoading(true);
     try {
       setUser(null);
       await AuthService.logout(); // Clear cookies on server
@@ -214,6 +209,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Still logout locally even if API call fails
        setUser(null);
        router.push('/login');
+    } finally {
+        setIsLoading(false);
     }
   }, [router]);
 

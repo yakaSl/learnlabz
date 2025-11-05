@@ -9,12 +9,11 @@ import {
   DEFAULT_PASSWORD_REQUIREMENTS,
   Permission,
 } from "@/types/auth.types";
-import { AUTH_CONFIG as PATH_CONFIG } from "@/config/auth.config";
-
 
 export const AUTH_CONFIG = {
   paths: {
-    ...PATH_CONFIG.paths,
+    login: "/login",
+    logout: "/logout",
     register: "/register",
     forgotPassword: "/forgot-password",
     resetPassword: "/reset-password",

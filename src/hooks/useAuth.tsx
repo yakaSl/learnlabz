@@ -452,14 +452,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const redirectToDashboard = (role: UserRole) => {
     const dashboardRoutes: Record<UserRole, string> = {
-      [UserRole.SUPER_ADMIN]: '/super-admin/dashboard',
-      [UserRole.INSTITUTE_ADMIN]: '/institute-admin/dashboard',
-      [UserRole.TEACHER]: '/teacher/dashboard',
-      [UserRole.BRANCH_MANAGER]: '/branch-manager/dashboard',
-      [UserRole.ACCOUNTANT]: '/accountant/dashboard',
-      [UserRole.COORDINATOR]: '/coordinator/dashboard',
-      [UserRole.STUDENT]: '/student/dashboard',
-      [UserRole.PARENT]: '/parent/dashboard',
+      [UserRole.SUPER_ADMIN]: '/super-admin',
+      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
+      [UserRole.TEACHER]: '/tutor',
+      [UserRole.BRANCH_MANAGER]: '/branch-manager',
+      [UserRole.ACCOUNTANT]: '/accountant',
+      [UserRole.COORDINATOR]: '/coordinator',
+      [UserRole.STUDENT]: '/student',
+      [UserRole.PARENT]: '/parent',
     };
 
     router.push(dashboardRoutes[role] || '/');

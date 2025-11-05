@@ -2,16 +2,15 @@
  * @fileoverview This file initializes and configures the Genkit AI instance.
  */
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/google-genai';
-import {genkitEval} from 'genkitx-eval';
+import {googleAI, genkitEval} from '@genkit-ai/google-genai';
 
 export const ai = genkit({
   plugins: [
     googleAI(),
     genkitEval({
-      judge: 'googleai/gemini-2.5-flash',
+      judge: googleAI.model('gemini-2.5-flash'),
       metrics: ['bleu', 'rouge', 'safety', 'sentiment', 'style', 'toxicity'],
-      embedder: 'googleai/embedding-004',
+      embedder: googleAI.embedder('embedding-004'),
     }),
   ],
   logLevel: 'debug',

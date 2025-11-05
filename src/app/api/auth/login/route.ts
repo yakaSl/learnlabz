@@ -215,21 +215,8 @@ export async function POST(request: NextRequest) {
     // Generate tokens
     const tokens = await generateTokenPair(user, sessionId, remember);
 
-    // Create a response object to set cookies
-    const response = NextResponse.json({
-      success: true,
-      data: {
-        user: {
-          ...user,
-          twoFactorSecret: undefined,
-        },
-        tokens,
-      } as LoginResponse,
-    });
-
-    // Set auth cookies on the response
-    setAuthCookies({ res: response }, tokens);
-
+    // Set auth cookies
+    await setAuthCookies(tokens);
 
     // In production, save session to database
     // await saveSession({
@@ -245,7 +232,19 @@ export async function POST(request: NextRequest) {
     // await updateUserLastLogin(user.id);
 
     // Return success response
-    return response;
+    const response: LoginResponse = {
+      user: {
+        ...user,
+        // Don't send sensitive data to client
+        twoFactorSecret: undefined,
+      },
+      tokens,
+    };
+
+    return NextResponse.json({
+      success: true,
+      data: response,
+    });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(

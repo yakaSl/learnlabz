@@ -32,7 +32,7 @@ import {
 const defaultAuthContext: AuthContextType = {
   user: null,
   isAuthenticated: false,
-  isLoading: false, // Changed initial state
+  isLoading: false,
   login: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithGoogle: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithFacebook: async () => { throw new Error('AuthProvider not initialized'); },
@@ -78,7 +78,7 @@ const roleDashboardPaths: Record<UserRole, string> = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Only for active operations
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSuccessfulAuth = (authenticatedUser: User) => {

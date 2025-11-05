@@ -9,7 +9,7 @@ import { useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { UserRole, Permission } from '@/types/auth.types';
-import { AUTH_CONFIG } from '@/app/lib/auth';
+import { AUTH_CONFIG } from '@/app/lib/auth-client';
 
 // ============================================================================
 // PROTECTED ROUTE COMPONENT

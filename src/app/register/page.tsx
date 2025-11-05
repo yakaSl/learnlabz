@@ -1,17 +1,3 @@
-
-// import { SignUpForm } from "@/components/auth/sign-up-form";
-// import AuthLayout from "@/components/auth/auth-layout";
-
-// export default function RegisterPage() {
-//   return (
-//     <AuthLayout
-//       title="Create an account"
-//       description="Enter your information to create a tutor account"
-//     >
-//       <SignUpForm />
-//     </AuthLayout>
-//   );
-// }
 /**
  * Register Page Component
  * Comprehensive registration interface with validation and role selection
@@ -24,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { RegisterRequest, UserRole } from '@/types/auth.types';
-import { validatePasswordStrength } from '@/app/lib/auth';
+import { validatePasswordStrength } from '@/app/lib/auth-client';
 import { FaEye, FaEyeSlash, FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function RegisterPage() {

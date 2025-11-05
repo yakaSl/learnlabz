@@ -24,7 +24,6 @@ import {
   UserRole,
   ROLE_PERMISSIONS,
 } from '@/types/auth.types';
-import { AUTH_CONFIG } from '@/app/lib/auth';
 
 // ============================================================================
 // AUTH CONTEXT
@@ -227,7 +226,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const handleLogout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    router.push(AUTH_CONFIG.paths.login);
+    router.push('/login');
   };
 
   /**
@@ -296,7 +295,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
 
-      router.push(AUTH_CONFIG.paths.login);
+      router.push('/login');
     } catch (error) {
       console.error('Confirm reset password error:', error);
       throw error;

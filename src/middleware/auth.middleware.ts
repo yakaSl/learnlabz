@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken, AUTH_CONFIG } from '@/app/lib/auth';
-import { UserRole, Permission, ROLE_PERMISSIONS } from '@/types/auth.types';
+import { UserRole, Permission } from '@/types/auth.types';
 
 // ============================================================================
 // ROUTE CONFIGURATION

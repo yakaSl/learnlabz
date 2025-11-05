@@ -4,9 +4,9 @@ import GradeSubmissionPage from "@/components/tutor/classes/details/grading/grad
 export default async function SubmissionPage({
   params,
 }: {
-  params: { classId: string; assessmentId: string; submissionId: string };
+  params: Promise<{ classId: string; assessmentId: string; submissionId: string }>;
 }) {
-  const { classId, assessmentId, submissionId } = params;
+  const { classId, assessmentId, submissionId } = await params;
   return (
     <GradeSubmissionPage 
       classId={classId} 

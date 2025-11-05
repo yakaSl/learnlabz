@@ -125,7 +125,7 @@ export default function AssignmentView({ assignmentId }: AssignmentViewProps) {
           </CardContent>
         </Card>
         
-        {assignment.grade ? (
+        {assignment.grade && assignment.feedback ? (
           <Card>
             <CardHeader>
               <CardTitle>Grade & Feedback</CardTitle>

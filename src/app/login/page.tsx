@@ -14,7 +14,7 @@ import { LoginRequest } from '@/types/auth.types';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-function LoginPageContent() {
+function LoginPage() {
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
     password: '',
@@ -341,11 +341,10 @@ function LoginPageContent() {
   );
 }
 
-
-export default function LoginPage() {
+export default function LoginPageWrapper() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LoginPageContent />
+      <LoginPage />
     </Suspense>
   )
 }

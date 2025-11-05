@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FileQuestion } from 'lucide-react';
 
-function NotFoundContent() {
+function NotFoundPage() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message') || "The page you're looking for doesn't exist or has been moved.";
 
@@ -24,10 +25,10 @@ function NotFoundContent() {
   );
 }
 
-export default function NotFoundPage() {
+export default function NotFoundPageWrapper() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <NotFoundContent />
+      <NotFoundPage />
     </Suspense>
   );
 }

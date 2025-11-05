@@ -1,10 +1,11 @@
 
 import AssignmentView from '@/components/student/assignments/assignment-view';
 
-export default function AssignmentDetailPage({
+export default async function AssignmentDetailPage({
   params,
 }: {
-  params: { assignmentId: string };
+  params: Promise<{ assignmentId: string }>;
 }) {
-  return <AssignmentView assignmentId={params.assignmentId} />;
+  const { assignmentId } = await params;
+  return <AssignmentView assignmentId={assignmentId} />;
 }

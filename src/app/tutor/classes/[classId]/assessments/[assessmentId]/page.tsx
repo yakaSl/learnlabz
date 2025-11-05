@@ -1,6 +1,7 @@
 
 import AssignmentSubmissionsPage from "@/components/tutor/classes/assessments/submissions-page";
 
-export default function SubmissionsPage({ params }: { params: { classId: string, assessmentId: string } }) {
-  return <AssignmentSubmissionsPage classId={params.classId} assessmentId={params.assessmentId} />;
+export default async function SubmissionsPage({ params }: { params: Promise<{ classId: string, assessmentId: string }> }) {
+  const { classId, assessmentId } = await params;
+  return <AssignmentSubmissionsPage classId={classId} assessmentId={assessmentId} />;
 }

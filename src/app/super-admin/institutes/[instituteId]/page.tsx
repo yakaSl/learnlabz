@@ -1,6 +1,7 @@
 
 import InstituteProfilePage from "@/components/super-admin/institutes/details/institute-profile-page";
 
-export default function SuperAdminInstituteDetailPage({ params }: { params: { instituteId: string } }) {
-    return <InstituteProfilePage instituteId={params.instituteId} />;
+export default async function SuperAdminInstituteDetailPage({ params }: { params: Promise<{ instituteId: string }> }) {
+    const { instituteId } = await params;
+    return <InstituteProfilePage instituteId={instituteId} />;
 }

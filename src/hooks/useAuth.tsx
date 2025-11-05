@@ -70,8 +70,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   /**
    * Initialize auth state on mount
@@ -93,7 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setIsAuthenticated(true);
         } else {
           // Token exists but is invalid
-          handleLogout();
+          await handleLogout();
         }
       }
     } catch (error) {
@@ -143,19 +141,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
 
-      const redirectParam = searchParams.get('redirect');
-        if (redirectParam) {
-            router.push(decodeURIComponent(redirectParam));
-        } else {
-            redirectToDashboard(loginData.user.role);
-        }
+      const redirectPath = new URLSearchParams(window.location.search).get('redirect') || roleDashboardPaths[loginData.user.role] || '/';
+      router.push(redirectPath);
 
       return loginData;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   /**
    * Login with Google
@@ -197,19 +191,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
       
-      const redirectParam = searchParams.get('redirect');
-      if (redirectParam) {
-          router.push(decodeURIComponent(redirectParam));
-      } else {
-          redirectToDashboard(loginData.user.role);
-      }
+      const redirectPath = new URLSearchParams(window.location.search).get('redirect') || roleDashboardPaths[loginData.user.role] || '/';
+      router.push(redirectPath);
 
       return loginData;
     } catch (error) {
       console.error('2FA verification error:', error);
       throw error;
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   /**
    * Register new user
@@ -241,18 +231,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(async () => {
     try {
       await AuthService.logout();
-      handleLogout();
+      await handleLogout();
     } catch (error) {
       console.error('Logout error:', error);
       // Still logout locally even if API call fails
-      handleLogout();
+      await handleLogout();
     }
   }, [router]);
 
   /**
    * Handle logout (clear state and redirect)
    */
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUser(null);
     setIsAuthenticated(false);
     router.push('/login');
@@ -396,7 +386,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Token refresh error:', error);
-      handleLogout();
+      await handleLogout();
     }
   }, [router]);
 

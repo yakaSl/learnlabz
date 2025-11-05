@@ -1,4 +1,5 @@
 
+'use client';
 import { PayoutAdjustmentView } from '@/components/super-admin/payments/payout-adjustment-view';
 import { payouts } from '@/components/super-admin/payments/payouts-data';
 import { notFound } from 'next/navigation';

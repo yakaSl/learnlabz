@@ -6,7 +6,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
   User,
@@ -70,6 +70,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   /**
    * Initialize auth state on mount
@@ -77,6 +79,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     initializeAuth();
   }, []);
+
+  /**
+   * This effect handles redirection after login
+   */
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+        const redirectParam = searchParams.get('redirect');
+        
+        if (redirectParam) {
+            // Redirect to the page they were trying to access
+            router.push(decodeURIComponent(redirectParam));
+        } else {
+            // Always redirect to dashboard after login
+            redirectToDashboard(user.role);
+        }
+    }
+  }, [isLoading, isAuthenticated, user, searchParams, router]);
 
   /**
    * Initialize authentication state
@@ -102,6 +121,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   /**
+   * Redirect to appropriate dashboard based on role
+   */
+  const redirectToDashboard = (role: UserRole) => {
+    const dashboardRoutes: Record<UserRole, string> = {
+      [UserRole.SUPER_ADMIN]: '/super-admin',
+      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
+      [UserRole.TEACHER]: '/tutor',
+      [UserRole.BRANCH_MANAGER]: '/branch-manager',
+      [UserRole.ACCOUNTANT]: '/accountant',
+      [UserRole.COORDINATOR]: '/coordinator',
+      [UserRole.STUDENT]: '/student',
+      [UserRole.PARENT]: '/parent',
+    };
+
+    router.push(dashboardRoutes[role] || '/');
+  };
+
+  /**
    * Login with email and password
    */
   const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
@@ -122,9 +159,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Update state
       setUser(loginData.user);
       setIsAuthenticated(true);
-
-      // Redirect to appropriate dashboard
-      redirectToDashboard(loginData.user.role);
 
       return loginData;
     } catch (error) {
@@ -173,8 +207,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
 
-      redirectToDashboard(loginData.user.role);
-
       return loginData;
     } catch (error) {
       console.error('2FA verification error:', error);
@@ -196,8 +228,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const registerData = response.data;
       setUser(registerData.user);
       setIsAuthenticated(true);
-
-      redirectToDashboard(registerData.user.role);
 
       return registerData;
     } catch (error) {
@@ -446,24 +476,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!user) return false;
     return roles.includes(user.role);
   }, [user]);
-
-  /**
-   * Redirect to appropriate dashboard based on role
-   */
-  const redirectToDashboard = (role: UserRole) => {
-    const dashboardRoutes: Record<UserRole, string> = {
-      [UserRole.SUPER_ADMIN]: '/super-admin',
-      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
-      [UserRole.TEACHER]: '/tutor',
-      [UserRole.BRANCH_MANAGER]: '/branch-manager',
-      [UserRole.ACCOUNTANT]: '/accountant',
-      [UserRole.COORDINATOR]: '/coordinator',
-      [UserRole.STUDENT]: '/student',
-      [UserRole.PARENT]: '/parent',
-    };
-
-    router.push(dashboardRoutes[role] || '/');
-  };
 
   // Context value
   const value: AuthContextType = {

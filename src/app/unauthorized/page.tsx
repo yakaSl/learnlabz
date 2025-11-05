@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { FaExclamationTriangle } from 'react-icons/fa';
+import { UserRole } from '@/types/auth.types';
 
 export default function UnauthorizedPage() {
   const { user, isAuthenticated } = useAuth();
@@ -17,6 +18,21 @@ export default function UnauthorizedPage() {
   const handleGoBack = () => {
     router.back();
   };
+  
+  const getDashboardUrl = (role: UserRole): string => {
+    const roleMap: Record<string, string> = {
+      [UserRole.SUPER_ADMIN]: '/super-admin',
+      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
+      [UserRole.TEACHER]: '/tutor',
+      [UserRole.BRANCH_MANAGER]: '/branch-manager',
+      [UserRole.ACCOUNTANT]: '/accountant',
+      [UserRole.COORDINATOR]: '/coordinator',
+      [UserRole.STUDENT]: '/student',
+      [UserRole.PARENT]: '/parent',
+    };
+  
+    return roleMap[role] || '/';
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
@@ -71,20 +87,4 @@ export default function UnauthorizedPage() {
       </div>
     </div>
   );
-}
-
-// Helper function to get dashboard URL based on role
-function getDashboardUrl(role: string): string {
-  const roleMap: Record<string, string> = {
-    SUPER_ADMIN: '/super-admin/dashboard',
-    INSTITUTE_ADMIN: '/institute-admin/dashboard',
-    TEACHER: '/teacher/dashboard',
-    BRANCH_MANAGER: '/branch-manager/dashboard',
-    ACCOUNTANT: '/accountant/dashboard',
-    COORDINATOR: '/coordinator/dashboard',
-    STUDENT: '/student/dashboard',
-    PARENT: '/parent/dashboard',
-  };
-
-  return roleMap[role] || '/';
 }

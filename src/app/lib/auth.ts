@@ -26,6 +26,11 @@ export const AUTH_CONFIG = {
     accessToken: "auth_token",
     refreshToken: "refresh_token",
   },
+  
+  paths: {
+    login: "/login",
+    logout: "/logout",
+  },
 };
 
 // ============================================================================

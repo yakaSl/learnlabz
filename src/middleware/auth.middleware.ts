@@ -58,6 +58,11 @@ const roleDashboardPaths: Record<UserRole, string> = {
 export async function authMiddleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow static files and public assets to pass through
+  if (pathname.startsWith('/_next/') || pathname.startsWith('/logo/') || pathname.startsWith('/credit-cards/') || pathname.endsWith('.ico')) {
+    return NextResponse.next();
+  }
+  
   // Check if the path is public
   const isPublic = publicPaths.includes(pathname) || publicApiPrefixes.some(prefix => pathname.startsWith(prefix));
 
@@ -70,13 +75,16 @@ export async function authMiddleware(request: NextRequest) {
         const payload = await verifyAccessToken(accessToken);
         const dashboardUrl = roleDashboardPaths[payload.role] || '/';
         
-        // Prevent redirect loops for the root path '/'
-        if (pathname !== '/') {
+        // Prevent redirect loops for the root path '/' and other public but accessible-when-logged-in paths
+        if (pathname === '/login' || pathname === '/register') {
             return NextResponse.redirect(new URL(dashboardUrl, request.url));
         }
       } catch (error) {
-        // Invalid token, let them proceed to the public page
-        return NextResponse.next();
+        // Invalid token, let them proceed to the public page but clear the bad cookie
+        const response = NextResponse.next();
+        response.cookies.delete(AUTH_CONFIG.cookies.accessToken);
+        response.cookies.delete(AUTH_CONFIG.cookies.refreshToken);
+        return response;
       }
     }
     return NextResponse.next();
@@ -94,7 +102,7 @@ export async function authMiddleware(request: NextRequest) {
     const payload = await verifyAccessToken(accessToken);
 
     // Check role-based access
-    const requiredRolePath = Object.keys(roleDashboardPaths).find(rolePath => pathname.startsWith(roleDashboardPaths[rolePath as UserRole]));
+    const requiredRolePath = Object.values(roleDashboardPaths).find(rolePath => pathname.startsWith(rolePath));
     
     if (requiredRolePath) {
         const userRolePath = roleDashboardPaths[payload.role];

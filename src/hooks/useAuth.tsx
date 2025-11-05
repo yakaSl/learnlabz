@@ -6,7 +6,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
   User,
@@ -79,42 +79,28 @@ const roleDashboardPaths: Record<UserRole, string> = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-
-  const handleLogout = useCallback(async () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    await AuthService.logout(); // Clear cookies on server
-    router.push('/login');
-  }, [router]);
   
-  /**
-   * Initialize auth state on mount
-   */
   useEffect(() => {
-    const initializeAuth = async () => {
+    async function loadUser() {
+      if (!user) {
         try {
-        if (AuthService.isAuthenticated()) {
-            const response = await AuthService.getCurrentUser();
-            
-            if (response.success && response.data) {
+          const response = await AuthService.getCurrentUser();
+          if (response.success && response.data) {
             setUser(response.data);
-            setIsAuthenticated(true);
-            } else {
-            // Token exists but is invalid
-            await handleLogout();
-            }
-        }
+          }
         } catch (error) {
-            console.error('Auth initialization error:', error);
-            await handleLogout();
+          // It's okay if this fails, middleware will handle redirects
+          console.error("Could not fetch user on client.", error);
         } finally {
-        setIsLoading(false);
+          setIsLoading(false);
         }
-    };
-    initializeAuth();
-  }, [handleLogout]);
+      } else {
+        setIsLoading(false);
+      }
+    }
+    loadUser();
+  }, [user]);
 
   /**
    * Login with email and password
@@ -133,10 +119,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (loginData.requiresTwoFactor) {
         return loginData; // Return with 2FA session ID
       }
-
-      // Update state
-      setUser(loginData.user);
-      setIsAuthenticated(true);
+      
+      const loggedInUser = loginData.user;
+      setUser(loggedInUser);
 
       return loginData;
     } catch (error) {
@@ -182,8 +167,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       const loginData = response.data;
-      setUser(loginData.user);
-      setIsAuthenticated(true);
+      const verifiedUser = loginData.user;
+      
+      setUser(verifiedUser);
       
       return loginData;
     } catch (error) {
@@ -204,8 +190,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       const registerData = response.data;
-      setUser(registerData.user);
-      setIsAuthenticated(true);
+      const newUser = registerData.user;
+
+      setUser(newUser);
 
       return registerData;
     } catch (error) {
@@ -219,13 +206,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const logout = useCallback(async () => {
     try {
-      await handleLogout();
+      setUser(null);
+      await AuthService.logout(); // Clear cookies on server
+      router.push('/login');
     } catch (error) {
       console.error('Logout error:', error);
       // Still logout locally even if API call fails
-      await handleLogout();
+       setUser(null);
+       router.push('/login');
     }
-  }, [handleLogout]);
+  }, [router]);
 
   /**
    * Setup 2FA
@@ -365,9 +355,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Token refresh error:', error);
-      await handleLogout();
+      await logout();
     }
-  }, [handleLogout]);
+  }, [logout]);
 
   /**
    * Get user sessions
@@ -448,7 +438,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Context value
   const value: AuthContextType = {
     user,
-    isAuthenticated,
+    isAuthenticated: !!user,
     isLoading,
     login,
     loginWithGoogle,

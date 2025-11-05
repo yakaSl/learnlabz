@@ -8,7 +8,7 @@ export const ai = genkit({
   plugins: [
     googleAI(),
     genkitEval({
-      judge: googleAI.model('gemini-2.5-flash'),
+      judge: googleAI.model('gemini-pro'),
       metrics: ['bleu', 'rouge', 'safety', 'sentiment', 'style', 'toxicity'],
       embedder: googleAI.embedder('embedding-004'),
     }),

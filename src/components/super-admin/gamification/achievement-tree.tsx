@@ -1,9 +1,17 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { GitBranch, Star, Zap, Lightbulb } from "lucide-react";
+import React from "react";
 
-const tree = {
+type TreeNode = {
+    name: string;
+    icon: React.ReactNode;
+    children?: TreeNode[];
+};
+
+const tree: TreeNode = {
   name: "Master Learner",
   icon: <Star />,
   children: [
@@ -24,13 +32,13 @@ const suggestions = [
     "Early Bird: Complete a lesson before 7 AM."
 ];
 
-const renderTree = (node: any, level = 0) => (
+const renderTree = (node: TreeNode, level = 0) => (
   <div key={node.name} style={{ marginLeft: `${level * 2}rem` }}>
     <div className="flex items-center gap-3 p-2 rounded-md hover:bg-muted">
         <div className="bg-primary/10 text-primary p-2 rounded-lg">{node.icon}</div>
         <span className="font-medium">{node.name}</span>
     </div>
-    {node.children && node.children.map(child => renderTree(child, level + 1))}
+    {node.children && node.children.map((child: TreeNode) => renderTree(child, level + 1))}
   </div>
 );
 

@@ -81,23 +81,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   /**
-   * This effect handles redirection after login
-   */
-  useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
-        const redirectParam = searchParams.get('redirect');
-        
-        if (redirectParam) {
-            // Redirect to the page they were trying to access
-            router.push(decodeURIComponent(redirectParam));
-        } else {
-            // Always redirect to dashboard after login
-            redirectToDashboard(user.role);
-        }
-    }
-  }, [isLoading, isAuthenticated, user, searchParams, router]);
-
-  /**
    * Initialize authentication state
    */
   const initializeAuth = async () => {
@@ -160,12 +143,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
 
+      const redirectParam = searchParams.get('redirect');
+        if (redirectParam) {
+            router.push(decodeURIComponent(redirectParam));
+        } else {
+            redirectToDashboard(loginData.user.role);
+        }
+
       return loginData;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
-  }, []);
+  }, [router, searchParams]);
 
   /**
    * Login with Google
@@ -206,13 +196,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const loginData = response.data;
       setUser(loginData.user);
       setIsAuthenticated(true);
+      
+      const redirectParam = searchParams.get('redirect');
+      if (redirectParam) {
+          router.push(decodeURIComponent(redirectParam));
+      } else {
+          redirectToDashboard(loginData.user.role);
+      }
 
       return loginData;
     } catch (error) {
       console.error('2FA verification error:', error);
       throw error;
     }
-  }, []);
+  }, [router, searchParams]);
 
   /**
    * Register new user
@@ -229,12 +226,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(registerData.user);
       setIsAuthenticated(true);
 
+      redirectToDashboard(registerData.user.role);
+
       return registerData;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
     }
-  }, []);
+  }, [router]);
 
   /**
    * Logout user
@@ -248,7 +247,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Still logout locally even if API call fails
       handleLogout();
     }
-  }, []);
+  }, [router]);
 
   /**
    * Handle logout (clear state and redirect)
@@ -330,7 +329,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Confirm reset password error:', error);
       throw error;
     }
-  }, []);
+  }, [router]);
 
   /**
    * Change password
@@ -399,7 +398,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Token refresh error:', error);
       handleLogout();
     }
-  }, []);
+  }, [router]);
 
   /**
    * Get user sessions

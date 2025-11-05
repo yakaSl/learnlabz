@@ -29,9 +29,9 @@ import {
 // AUTH CONTEXT
 // ============================================================================
 
-const defaultAuthContext: Omit<AuthContextType, 'isLoading'> = {
+const defaultAuthContext: AuthContextType = {
   user: null,
-  isAuthenticated: false,
+  isInitialized: false,
   login: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithGoogle: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithFacebook: async () => { throw new Error('AuthProvider not initialized'); },
@@ -55,7 +55,7 @@ const defaultAuthContext: Omit<AuthContextType, 'isLoading'> = {
   hasAnyRole: () => false,
 };
 
-const AuthContext = React.createContext<AuthContextType>(defaultAuthContext as AuthContextType);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 // ============================================================================
 // AUTH PROVIDER COMPONENT
@@ -78,7 +78,25 @@ const roleDashboardPaths: Record<UserRole, string> = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+        try {
+            const response = await AuthService.getCurrentUser();
+            if (response.success && response.data) {
+                setUser(response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch current user:", error);
+            setUser(null);
+        } finally {
+            setIsInitialized(true);
+        }
+    };
+    initializeAuth();
+  }, []);
   
   const handleSuccessfulAuth = (authenticatedUser: User) => {
     setUser(authenticatedUser);
@@ -419,10 +437,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return roles.includes(user.role);
   }, [user]);
 
+  // Add token refresh interval
+  useEffect(() => {
+    if (!user) return;
+
+    // Refresh token every 14 minutes (assuming 15 min token expiry)
+    const refreshInterval = setInterval(async () => {
+      try {
+        await refreshToken();
+      } catch (error) {
+        console.error('Failed to refresh token:', error);
+        // If refresh fails, logout user
+        await logout();
+      }
+    }, 14 * 60 * 1000); // 14 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, [user, refreshToken, logout]);
+
   // Context value
   const value: AuthContextType = {
     user,
-    isAuthenticated: !!user,
+    isInitialized,
     login,
     loginWithGoogle,
     loginWithFacebook,
@@ -459,7 +495,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
 
-  if (context === (defaultAuthContext as AuthContextType)) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
 
@@ -471,3 +507,5 @@ export function useAuth(): AuthContextType {
 // ============================================================================
 
 export default useAuth;
+
+    

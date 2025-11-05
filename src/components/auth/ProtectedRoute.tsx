@@ -32,13 +32,19 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { 
     user,
+    isInitialized,
     hasAnyRole,
     hasAllPermissions,
     hasPermission
   } = useAuth();
 
-  // If we require auth and there's no user, show loading spinner.
-  // The middleware will handle the redirect.
+  // If we require auth and the auth state hasn't been initialized, show a spinner.
+  if (requireAuth && !isInitialized) {
+    return fallback || <LoadingSpinner />;
+  }
+  
+  // If we require auth and there's no user (after initialization), the middleware will redirect.
+  // We can show a spinner while that happens.
   if (requireAuth && !user) {
     return fallback || <LoadingSpinner />;
   }

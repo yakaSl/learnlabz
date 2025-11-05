@@ -313,7 +313,7 @@ export interface Session {
 
 export interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean;
+  isInitialized: boolean;
   
   login: (credentials: LoginRequest) => Promise<LoginResponse>;
   loginWithGoogle: () => Promise<void>;
@@ -395,3 +395,5 @@ export const DEFAULT_PASSWORD_REQUIREMENTS: PasswordRequirements = {
   requireNumbers: true,
   requireSpecialChars: true,
 };
+
+    

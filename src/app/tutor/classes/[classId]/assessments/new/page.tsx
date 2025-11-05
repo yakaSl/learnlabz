@@ -12,7 +12,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, UploadCloud, Link as LinkIcon, Save } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 export default function NewAssessmentPage() {
     const [dueDate, setDueDate] = React.useState<Date>();

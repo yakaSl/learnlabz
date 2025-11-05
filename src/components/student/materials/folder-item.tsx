@@ -4,7 +4,7 @@ import { Material } from "./data";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Folder, Bookmark } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 interface FolderItemProps {
     item: Material;

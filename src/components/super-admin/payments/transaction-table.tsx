@@ -29,7 +29,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { DateRange } from "react-day-picker"
 import { addDays, format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/lib/utils"
 import { TransactionFilters } from "./payment-management"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"

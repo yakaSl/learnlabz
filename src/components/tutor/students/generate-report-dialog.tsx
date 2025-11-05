@@ -20,7 +20,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon, Download } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { addDays, format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import { Separator } from '@/components/ui/separator';
 
 interface GenerateReportDialogProps {

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Users, Calendar, Edit, Link2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import Link from "next/link";
 
 interface ClassCardProps {

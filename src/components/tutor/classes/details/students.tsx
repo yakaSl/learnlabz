@@ -10,7 +10,7 @@ import { MoreHorizontal, PlusCircle, MessageSquare } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { students } from "@/components/tutor/students/data";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 export default function StudentsTab() {
   const getPerformanceColor = (level: string) => {

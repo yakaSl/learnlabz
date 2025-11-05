@@ -11,7 +11,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Search, Inbox, Send, Archive, Trash2, Edit, Users, Megaphone, MessageSquare } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 
 const announcements = [
     { id: 1, title: "Mid-term Exam Schedule", from: "Mr. John Doe", time: "2 hours ago", snippet: "Hi everyone, the mid-term exam has been scheduled for next Friday...", read: false },

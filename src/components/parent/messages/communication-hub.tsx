@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Search, Inbox, Send, Users, Megaphone, Paperclip } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import { tutors, messages, selectedMessage } from './data';
 
 export default function CommunicationHub() {

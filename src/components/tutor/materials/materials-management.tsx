@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from '@/components/ui/button';
 import { Folder, File, Upload, Search, MoreVertical, LayoutGrid, List } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 
 const fileSystem = {
   name: 'Root',

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Bold, Italic, Underline, List, Send, Clock, Lightbulb } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import { format } from "date-fns";
 
 export function ComposeNotification() {

@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 // Custom Progress component that accepts indicatorClassName
 const CustomProgress = React.forwardRef<

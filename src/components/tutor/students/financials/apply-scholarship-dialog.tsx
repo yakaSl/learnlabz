@@ -20,7 +20,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import { addDays, format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { type Student } from '../data';

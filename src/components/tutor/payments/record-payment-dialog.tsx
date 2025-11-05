@@ -18,7 +18,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
 import { format } from "date-fns";
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import { students } from '../students/data';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 

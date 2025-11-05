@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, User, Building, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import { useAppContext, type Context } from '@/hooks/use-context';
 
 const contexts: Context[] = [

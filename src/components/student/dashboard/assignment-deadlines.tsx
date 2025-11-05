@@ -2,7 +2,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 const assignments = [
   { id: 1, title: "Calculus Homework", due: "in 2 days", urgency: "red" },

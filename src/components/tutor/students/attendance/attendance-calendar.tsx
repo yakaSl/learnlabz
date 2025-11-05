@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 import {
   startOfMonth,
   endOfMonth,

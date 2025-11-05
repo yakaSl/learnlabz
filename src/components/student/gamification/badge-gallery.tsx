@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { badges, Badge as BadgeType } from "./data";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import { Lock } from "lucide-react";
 import {
   Tooltip,

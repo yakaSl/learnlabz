@@ -11,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
 import { addDays, format } from "date-fns";
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 export function LogFilterPanel() {
   const [date, setDate] = React.useState<DateRange | undefined>({

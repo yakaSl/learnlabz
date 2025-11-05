@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, TrendingUp, TrendingDown, Phone, MessageSquare } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import {
   Tooltip,
   TooltipContent,

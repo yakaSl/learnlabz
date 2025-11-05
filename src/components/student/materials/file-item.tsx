@@ -4,7 +4,7 @@ import { Material } from "./data";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Download, Bookmark, File, FileText, Video, FileType } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 interface FileItemProps {
     item: Material;

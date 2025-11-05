@@ -28,6 +28,7 @@ const PUBLIC_ROUTES = [
   '/terms',
   '/privacy',
   '/unauthorized',
+  '/ui',
 ];
 
 /**
@@ -53,6 +54,7 @@ function getRequiredRoles(pathname: string): UserRole[] {
     if (pathname.startsWith('/super-admin')) return [UserRole.SUPER_ADMIN];
     if (pathname.startsWith('/institute-admin')) return [UserRole.INSTITUTE_ADMIN];
     if (pathname.startsWith('/tutor')) return [UserRole.TEACHER];
+    if (pathname.startsWith('/tutor-assistant')) return [UserRole.TEACHER]; // Assistants are a type of teacher
     if (pathname.startsWith('/student')) return [UserRole.STUDENT];
     if (pathname.startsWith('/parent')) return [UserRole.PARENT];
     return [];
@@ -73,10 +75,12 @@ function getRequiredPermissions(pathname: string): Permission[] {
 export async function authMiddleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Skip middleware for static files
+  // Skip middleware for static files, fonts, and images
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
+    pathname.startsWith('/fonts') ||
+    pathname.startsWith('/logo') ||
     pathname.includes('/api/health') ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js|json)$/)
   ) {
@@ -87,7 +91,8 @@ export async function authMiddleware(request: NextRequest) {
     return NextResponse.next();
   }
   // Check if route is public
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || (route !== '/' && pathname.startsWith(route + '/')));
+
   const accessToken = request.cookies.get(AUTH_CONFIG.cookies.accessToken)?.value;
   // CRITICAL: No token + protected route = immediate redirect to login
   if (!accessToken && !isPublicRoute) {
@@ -109,7 +114,9 @@ export async function authMiddleware(request: NextRequest) {
       // Check role-based access
       const requiredRoles = getRequiredRoles(pathname);
       if (requiredRoles.length > 0 && !requiredRoles.includes(payload.role)) {
-        return NextResponse.redirect(new URL('/unauthorized', request.url));
+        const unauthorizedUrl = new URL('/unauthorized', request.url);
+        unauthorizedUrl.searchParams.set('from', pathname);
+        return NextResponse.redirect(unauthorizedUrl);
       }
       
       // Check permission-based access
@@ -120,7 +127,9 @@ export async function authMiddleware(request: NextRequest) {
         );
         
         if (!hasRequiredPermissions) {
-          return NextResponse.redirect(new URL('/unauthorized', request.url));
+          const unauthorizedUrl = new URL('/unauthorized', request.url);
+          unauthorizedUrl.searchParams.set('from', pathname);
+          return NextResponse.redirect(unauthorizedUrl);
         }
       }
       

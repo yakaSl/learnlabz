@@ -314,7 +314,6 @@ export interface Session {
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
   
   login: (credentials: LoginRequest) => Promise<LoginResponse>;
   loginWithGoogle: () => Promise<void>;

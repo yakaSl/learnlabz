@@ -1,22 +1,26 @@
-/**
- * Unauthorized Page
- * Displayed when users try to access routes they don't have permission for
- */
-
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { UserRole } from '@/types/auth.types';
+import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default function UnauthorizedPage() {
-  const { user, isAuthenticated } = useAuth();
+function UnauthorizedContent() {
+  const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
 
   const handleGoBack = () => {
-    router.back();
+    // If 'from' is provided and is a valid relative path, go there.
+    // Otherwise, go back in history or to the dashboard.
+    if (from && from.startsWith('/')) {
+      router.push(from);
+    } else {
+      router.back();
+    }
   };
   
   const getDashboardUrl = (role: UserRole): string => {
@@ -33,6 +37,8 @@ export default function UnauthorizedPage() {
   
     return roleMap[role] || '/';
   }
+
+  const isAuthenticated = !!user;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
@@ -87,4 +93,13 @@ export default function UnauthorizedPage() {
       </div>
     </div>
   );
+}
+
+
+export default function UnauthorizedPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <UnauthorizedContent />
+        </Suspense>
+    )
 }

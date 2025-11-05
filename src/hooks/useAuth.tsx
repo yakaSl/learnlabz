@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
@@ -78,7 +78,6 @@ const roleDashboardPaths: Record<UserRole, string> = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Only for active operations like login/logout
   const router = useRouter();
   
   const handleSuccessfulAuth = (authenticatedUser: User) => {
@@ -91,7 +90,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Login with email and password
    */
   const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
-    setIsLoading(true);
     try {
       const response = await AuthService.login(credentials);
 
@@ -113,8 +111,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Login error:', error);
       throw error;
-    } finally {
-        setIsLoading(false);
     }
   }, [router]);
 
@@ -147,7 +143,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Verify 2FA code
    */
   const verifyTwoFactor = useCallback(async (data: TwoFactorRequest): Promise<LoginResponse> => {
-    setIsLoading(true);
     try {
       const response = await AuthService.verifyTwoFactor(data);
 
@@ -164,8 +159,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('2FA verification error:', error);
       throw error;
-    } finally {
-        setIsLoading(false);
     }
   }, [router]);
 
@@ -173,7 +166,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Register new user
    */
   const register = useCallback(async (data: RegisterRequest): Promise<RegisterResponse> => {
-    setIsLoading(true);
     try {
       const response = await AuthService.register(data);
 
@@ -190,8 +182,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   }, [router]);
 
@@ -199,7 +189,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Logout user
    */
   const logout = useCallback(async () => {
-    setIsLoading(true);
     try {
       setUser(null);
       await AuthService.logout(); // Clear cookies on server
@@ -209,8 +198,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Still logout locally even if API call fails
        setUser(null);
        router.push('/login');
-    } finally {
-        setIsLoading(false);
     }
   }, [router]);
 
@@ -436,7 +423,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
-    isLoading,
     login,
     loginWithGoogle,
     loginWithFacebook,

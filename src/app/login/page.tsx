@@ -1,17 +1,4 @@
 
-// import { LoginForm } from "@/components/auth/login-form";
-// import AuthLayout from "@/components/auth/auth-layout";
-
-// export default function LoginPage() {
-//   return (
-//     <AuthLayout
-//       title="Welcome back!"
-//       description="Enter your email below to log in to your account"
-//     >
-//       <LoginForm />
-//     </AuthLayout>
-//   );
-// }
 /**
  * Login Page Component
  * Comprehensive login interface with email/password, social auth, and 2FA support
@@ -19,7 +6,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,7 +14,7 @@ import { LoginRequest } from '@/types/auth.types';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
     password: '',
@@ -352,4 +339,13 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
+  )
 }

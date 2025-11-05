@@ -1,29 +1,62 @@
+
 "use client";
 
 import { useState } from 'react';
 import { classes } from '../data';
 import { notFound } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Edit, Users, Calendar, BookOpen, CheckSquare, BarChart2 } from 'lucide-react';
+import { Edit, Users, Calendar, BookOpen, CheckSquare, Share2, FileText, PlusCircle, DollarSign } from 'lucide-react';
 import OverviewTab from './overview';
 import StudentsTab from './students';
 import AttendanceTab from './attendance';
 import MaterialsTab from './materials';
 import AssessmentsTab from './assessments';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ShareEnrollmentDialog } from './share-enrollment-dialog';
+import Link from 'next/link';
+import { useAppContext } from '@/hooks/use-context';
+import { FinancialsTab } from '../financials/financials-tab';
 
 interface ClassDetailViewProps {
   classId: string;
 }
 
+function ExamsTab({ classId }: { classId: string }) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Online Exams</CardTitle>
+                    <CardDescription>Create and manage timed, auto-graded exams.</CardDescription>
+                </div>
+                <Button asChild>
+                    <Link href={`/tutor/classes/${classId}/exams/new`}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        New Exam
+                    </Link>
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <p>No exams created yet.</p>
+            </CardContent>
+        </Card>
+    )
+}
+
 export default function ClassDetailView({ classId }: ClassDetailViewProps) {
   const classInfo = classes.find(c => c.id === classId);
   const [isEditing, setIsEditing] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const { selectedContext } = useAppContext();
+  const isPersonalContext = selectedContext.type === 'personal';
 
   if (!classInfo) {
     notFound();
   }
+  
+  const enrollmentLink = `https://learnlabz.app/enroll/${classInfo.id}`;
 
   return (
     <div className="flex flex-col gap-4">
@@ -37,20 +70,44 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
           <p className="text-muted-foreground">{classInfo.subject} - {classInfo.schedule}</p>
         </div>
         <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => setIsEditing(!isEditing)}>
-                <Edit className="h-4 w-4" />
+            <Button variant="outline" onClick={() => setIsShareOpen(true)}>
+                <Share2 className="mr-2 h-4 w-4" />
+                Share Enrollment
             </Button>
-            {isEditing && <Button onClick={() => setIsEditing(false)}>Save</Button>}
+            <Button variant="outline" size="sm" onClick={() => setIsEditing(!isEditing)} disabled={!isPersonalContext}>
+                <Edit className="mr-2 h-4 w-4" />
+                {isEditing ? 'Cancel' : (isPersonalContext ? 'Edit Class' : 'Request Edit')}
+            </Button>
+            {isEditing && <Button onClick={() => setIsEditing(false)}>{isPersonalContext ? 'Save Changes' : 'Submit for Approval'}</Button>}
         </div>
       </div>
+      
+      <ShareEnrollmentDialog 
+        isOpen={isShareOpen} 
+        onOpenChange={setIsShareOpen} 
+        enrollmentLink={enrollmentLink}
+        className={classInfo.name}
+      />
+
+      {isEditing && (
+          <Alert>
+              <Edit className="h-4 w-4" />
+              <AlertTitle>Edit Mode</AlertTitle>
+              <AlertDescription>
+                  {isPersonalContext ? 'You are editing your personal class details.' : 'You are in edit mode. Any changes you make will be submitted to the institute admin for approval.'}
+              </AlertDescription>
+          </Alert>
+      )}
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview"><Users className="mr-2 h-4 w-4" />Overview</TabsTrigger>
           <TabsTrigger value="students"><Users className="mr-2 h-4 w-4" />Students</TabsTrigger>
           <TabsTrigger value="attendance"><Calendar className="mr-2 h-4 w-4" />Attendance</TabsTrigger>
           <TabsTrigger value="materials"><BookOpen className="mr-2 h-4 w-4" />Materials</TabsTrigger>
           <TabsTrigger value="assessments"><CheckSquare className="mr-2 h-4 w-4" />Assessments</TabsTrigger>
+          <TabsTrigger value="exams"><FileText className="mr-2 h-4 w-4" />Exams</TabsTrigger>
+          <TabsTrigger value="financials"><DollarSign className="mr-2 h-4 w-4" />Financials</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           <OverviewTab classInfo={classInfo} />
@@ -65,7 +122,13 @@ export default function ClassDetailView({ classId }: ClassDetailViewProps) {
           <MaterialsTab />
         </TabsContent>
         <TabsContent value="assessments" className="mt-4">
-          <AssessmentsTab />
+          <AssessmentsTab classId={classId} />
+        </TabsContent>
+        <TabsContent value="exams" className="mt-4">
+            <ExamsTab classId={classId} />
+        </TabsContent>
+        <TabsContent value="financials" className="mt-4">
+            <FinancialsTab />
         </TabsContent>
       </Tabs>
     </div>

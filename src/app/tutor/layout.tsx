@@ -5,11 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import TutorUserNav from "@/components/tutor/user-nav";
 import { ContextSwitcher } from "@/components/tutor/context-switcher";
-import { AppProvider } from "@/hooks/use-context";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { TutorProvider } from "@/components/tutor/tutor-provider";
 
 export default function TutorLayout({
   children,
@@ -17,7 +17,7 @@ export default function TutorLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AppProvider>
+    <TutorProvider>
       <SidebarProvider>
         <Sidebar>
           <SidebarHeader>
@@ -135,6 +135,6 @@ export default function TutorLayout({
           </main>
         </SidebarInset>
       </SidebarProvider>
-    </AppProvider>
+    </TutorProvider>
   );
 }

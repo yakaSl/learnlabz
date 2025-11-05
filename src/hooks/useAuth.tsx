@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
@@ -29,10 +29,9 @@ import {
 // AUTH CONTEXT
 // ============================================================================
 
-const defaultAuthContext: AuthContextType = {
+const defaultAuthContext: Omit<AuthContextType, 'isLoading'> = {
   user: null,
   isAuthenticated: false,
-  isLoading: false,
   login: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithGoogle: async () => { throw new Error('AuthProvider not initialized'); },
   loginWithFacebook: async () => { throw new Error('AuthProvider not initialized'); },
@@ -56,7 +55,8 @@ const defaultAuthContext: AuthContextType = {
   hasAnyRole: () => false,
 };
 
-const AuthContext = React.createContext<AuthContextType>(defaultAuthContext);
+const AuthContext = React.createContext<AuthContextType>(defaultAuthContext as AuthContextType);
+
 // ============================================================================
 // AUTH PROVIDER COMPONENT
 // ============================================================================
@@ -78,9 +78,9 @@ const roleDashboardPaths: Record<UserRole, string> = {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Only for active operations like login/logout
   const router = useRouter();
-
+  
   const handleSuccessfulAuth = (authenticatedUser: User) => {
     setUser(authenticatedUser);
     const dashboardUrl = roleDashboardPaths[authenticatedUser.role] || '/';
@@ -473,7 +473,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
 
-  if (context === defaultAuthContext) {
+  if (context === (defaultAuthContext as AuthContextType)) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
 

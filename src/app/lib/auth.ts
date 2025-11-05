@@ -147,7 +147,7 @@ const JWT_REFRESH_SECRET = new TextEncoder().encode(
 export async function verifyAccessToken(token: string): Promise<JWTPayload> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as JWTPayload;
+    return payload as unknown as JWTPayload;
   } catch (error) {
     throw new Error("Invalid or expired access token");
   }

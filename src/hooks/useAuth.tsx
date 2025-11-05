@@ -65,59 +65,56 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const roleDashboardPaths: Record<UserRole, string> = {
+    [UserRole.SUPER_ADMIN]: '/super-admin',
+    [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
+    [UserRole.TEACHER]: '/tutor',
+    [UserRole.STUDENT]: '/student',
+    [UserRole.PARENT]: '/parent',
+    [UserRole.BRANCH_MANAGER]: '/branch-manager',
+    [UserRole.ACCOUNTANT]: '/accountant',
+    [UserRole.COORDINATOR]: '/coordinator',
+};
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
+  const handleLogout = useCallback(async () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    await AuthService.logout(); // Clear cookies on server
+    router.push('/login');
+  }, [router]);
+  
   /**
    * Initialize auth state on mount
    */
   useEffect(() => {
-    initializeAuth();
-  }, []);
-
-  /**
-   * Initialize authentication state
-   */
-  const initializeAuth = async () => {
-    try {
-      if (AuthService.isAuthenticated()) {
-        const response = await AuthService.getCurrentUser();
-        
-        if (response.success && response.data) {
-          setUser(response.data);
-          setIsAuthenticated(true);
-        } else {
-          // Token exists but is invalid
-          await handleLogout();
+    const initializeAuth = async () => {
+        try {
+        if (AuthService.isAuthenticated()) {
+            const response = await AuthService.getCurrentUser();
+            
+            if (response.success && response.data) {
+            setUser(response.data);
+            setIsAuthenticated(true);
+            } else {
+            // Token exists but is invalid
+            await handleLogout();
+            }
         }
-      }
-    } catch (error) {
-      console.error('Auth initialization error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Redirect to appropriate dashboard based on role
-   */
-  const redirectToDashboard = (role: UserRole) => {
-    const dashboardRoutes: Record<UserRole, string> = {
-      [UserRole.SUPER_ADMIN]: '/super-admin',
-      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
-      [UserRole.TEACHER]: '/tutor',
-      [UserRole.BRANCH_MANAGER]: '/branch-manager',
-      [UserRole.ACCOUNTANT]: '/accountant',
-      [UserRole.COORDINATOR]: '/coordinator',
-      [UserRole.STUDENT]: '/student',
-      [UserRole.PARENT]: '/parent',
+        } catch (error) {
+            console.error('Auth initialization error:', error);
+            await handleLogout();
+        } finally {
+        setIsLoading(false);
+        }
     };
-
-    router.push(dashboardRoutes[role] || '/');
-  };
+    initializeAuth();
+  }, [handleLogout]);
 
   /**
    * Login with email and password
@@ -141,15 +138,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
 
-      const redirectPath = new URLSearchParams(window.location.search).get('redirect') || roleDashboardPaths[loginData.user.role] || '/';
-      router.push(redirectPath);
-
       return loginData;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
-  }, [router]);
+  }, []);
 
   /**
    * Login with Google
@@ -191,15 +185,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(loginData.user);
       setIsAuthenticated(true);
       
-      const redirectPath = new URLSearchParams(window.location.search).get('redirect') || roleDashboardPaths[loginData.user.role] || '/';
-      router.push(redirectPath);
-
       return loginData;
     } catch (error) {
       console.error('2FA verification error:', error);
       throw error;
     }
-  }, [router]);
+  }, []);
 
   /**
    * Register new user
@@ -216,37 +207,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(registerData.user);
       setIsAuthenticated(true);
 
-      redirectToDashboard(registerData.user.role);
-
       return registerData;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
     }
-  }, [router]);
+  }, []);
 
   /**
    * Logout user
    */
   const logout = useCallback(async () => {
     try {
-      await AuthService.logout();
       await handleLogout();
     } catch (error) {
       console.error('Logout error:', error);
       // Still logout locally even if API call fails
       await handleLogout();
     }
-  }, [router]);
-
-  /**
-   * Handle logout (clear state and redirect)
-   */
-  const handleLogout = async () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    router.push('/login');
-  };
+  }, [handleLogout]);
 
   /**
    * Setup 2FA
@@ -388,7 +367,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Token refresh error:', error);
       await handleLogout();
     }
-  }, [router]);
+  }, [handleLogout]);
 
   /**
    * Get user sessions

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const translations = [
     { key: "dashboard.title", english: "Dashboard", spanish: "Tablero", french: "Tableau de bord", arabic: "لوحة القيادة", module: "Dashboard", status: "Translated" },
@@ -108,19 +110,52 @@ export default function LocalizationManagement() {
                                 <TableCell>
                                     <div className="relative">
                                         <Input defaultValue={item.spanish} className="h-8" />
-                                        {!item.spanish && <Globe className="absolute right-2 top-2 h-4 w-4 text-accent cursor-pointer" title="AI Suggestion" />}
+                                        {!item.spanish && (
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Globe className="absolute right-2 top-2 h-4 w-4 text-accent cursor-pointer" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>AI Suggestion</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        )}
                                     </div>
                                 </TableCell>
                                 <TableCell>
                                      <div className="relative">
                                         <Input defaultValue={item.french} className="h-8" />
-                                        {!item.french && <Globe className="absolute right-2 top-2 h-4 w-4 text-accent cursor-pointer" title="AI Suggestion" />}
+                                        {!item.french && (
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Globe className="absolute right-2 top-2 h-4 w-4 text-accent cursor-pointer" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>AI Suggestion</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        )}
                                     </div>
                                 </TableCell>
                                 <TableCell dir="rtl">
                                      <div className="relative">
                                         <Input defaultValue={item.arabic} className="h-8" />
-                                         {!item.arabic && <Globe className="absolute left-2 top-2 h-4 w-4 text-accent cursor-pointer" title="AI Suggestion" />}
+                                         {!item.arabic && (
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Globe className="absolute left-2 top-2 h-4 w-4 text-accent cursor-pointer" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>AI Suggestion</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                         )}
                                     </div>
                                 </TableCell>
                                 <TableCell>

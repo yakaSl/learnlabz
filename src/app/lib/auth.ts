@@ -4,7 +4,7 @@
  */
 
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import {
   JWTPayload,
   TokenPair,
@@ -197,11 +197,8 @@ export async function verify2FASessionToken(
 /**
  * Set authentication cookies
  */
-export async function setAuthCookies(tokens: TokenPair) {
-  const cookieStore = await cookies();
-
-  // Set access token cookie (httpOnly for security)
-  cookieStore.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
+export function setAuthCookies(ctx: any, tokens: TokenPair) {
+  setCookie(ctx, AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -209,8 +206,7 @@ export async function setAuthCookies(tokens: TokenPair) {
     path: "/",
   });
 
-  // Set refresh token cookie
-  cookieStore.set(AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
+  setCookie(ctx, AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -222,28 +218,25 @@ export async function setAuthCookies(tokens: TokenPair) {
 /**
  * Get access token from cookies
  */
-export async function getAccessToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookies.accessToken);
-  return token?.value || null;
+export function getAccessToken(ctx: any): string | null {
+  const cookies = parseCookies(ctx);
+  return cookies[AUTH_CONFIG.cookies.accessToken] || null;
 }
 
 /**
  * Get refresh token from cookies
  */
-export async function getRefreshToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookies.refreshToken);
-  return token?.value || null;
+export function getRefreshToken(ctx: any): string | null {
+  const cookies = parseCookies(ctx);
+  return cookies[AUTH_CONFIG.cookies.refreshToken] || null;
 }
 
 /**
  * Clear authentication cookies
  */
-export async function clearAuthCookies() {
-  const cookieStore = await cookies();
-  cookieStore.delete(AUTH_CONFIG.cookies.accessToken);
-  cookieStore.delete(AUTH_CONFIG.cookies.refreshToken);
+export function clearAuthCookies(ctx: any) {
+  destroyCookie(ctx, AUTH_CONFIG.cookies.accessToken, { path: '/' });
+  destroyCookie(ctx, AUTH_CONFIG.cookies.refreshToken, { path: '/' });
 }
 
 // ============================================================================
@@ -451,7 +444,7 @@ function parseExpiryToSeconds(expiry: string): number {
  */
 export async function getCurrentUser(): Promise<JWTPayload | null> {
   try {
-    const token = await getAccessToken();
+    const token = getAccessToken(null);
     if (!token) return null;
 
     return await verifyAccessToken(token);

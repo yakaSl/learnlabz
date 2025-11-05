@@ -73,12 +73,14 @@ export async function authMiddleware(request: NextRequest) {
     if (accessToken) {
       try {
         const payload = await verifyAccessToken(accessToken);
-        const dashboardUrl = roleDashboardPaths[payload.role] || '/';
         
-        // Prevent redirect loops for the root path '/' and other public but accessible-when-logged-in paths
-        if (pathname === '/login' || pathname === '/register') {
+        // Redirect authenticated users away from public auth pages
+        const authOnlyRoutes = ['/login', '/register', '/forgot-password'];
+        if (authOnlyRoutes.includes(pathname)) {
+            const dashboardUrl = roleDashboardPaths[payload.role] || '/';
             return NextResponse.redirect(new URL(dashboardUrl, request.url));
         }
+
       } catch (error) {
         // Invalid token, let them proceed to the public page but clear the bad cookie
         const response = NextResponse.next();

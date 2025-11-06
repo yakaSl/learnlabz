@@ -26,33 +26,32 @@ import {
 // API CONFIGURATION
 // ============================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 const AUTH_ENDPOINTS = {
-  login: '/auth/login',
-  register: '/auth/register',
-  logout: '/auth/logout',
-  refreshToken: '/auth/refresh',
-  forgotPassword: '/auth/forgot-password',
-  resetPassword: '/auth/reset-password',
-  changePassword: '/auth/change-password',
-  verifyEmail: '/auth/verify-email',
-  resendVerification: '/auth/resend-verification',
+  login: '/api/auth/login',
+  register: '/api/auth/register',
+  logout: '/api/auth/logout',
+  refreshToken: '/api/auth/refresh',
+  forgotPassword: '/api/auth/forgot-password',
+  resetPassword: '/api/auth/reset-password',
+  changePassword: '/api/auth/change-password',
+  verifyEmail: '/api/auth/verify-email',
+  resendVerification: '/api/auth/resend-verification',
   
   // 2FA endpoints
-  setup2FA: '/auth/2fa/setup',
-  verify2FA: '/auth/2fa/verify',
-  disable2FA: '/auth/2fa/disable',
+  setup2FA: '/api/auth/2fa/setup',
+  verify2FA: '/api/auth/2fa/verify',
+  disable2FA: '/api/auth/2fa/disable',
   
   // Session management
-  sessions: '/auth/sessions',
-  revokeSession: '/auth/sessions/revoke',
+  sessions: '/api/auth/sessions',
+  revokeSession: '/api/auth/sessions/revoke',
   
   // Social auth
-  googleLogin: '/auth/google',
-  facebookLogin: '/auth/facebook',
+  googleLogin: '/api/auth/google',
+  facebookLogin: '/api/auth/facebook',
   
   // User info
-  me: '/auth/me',
+  me: '/api/auth/me',
 };
 
 // ============================================================================
@@ -60,12 +59,6 @@ const AUTH_ENDPOINTS = {
 // ============================================================================
 
 class ApiClient {
-  private baseURL: string;
-
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-  }
-
   /**
    * Make HTTP request
    */
@@ -73,7 +66,7 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
+    const url = endpoint;
     
     const defaultHeaders: HeadersInit = {
       'Content-Type': 'application/json',
@@ -162,7 +155,7 @@ class ApiClient {
   }
 }
 
-const apiClient = new ApiClient(API_BASE_URL);
+const apiClient = new ApiClient();
 
 // ============================================================================
 // AUTHENTICATION SERVICE
@@ -182,7 +175,7 @@ export class AuthService {
   static async loginWithGoogle(): Promise<ApiResponse<LoginResponse>> {
     // Redirect to Google OAuth endpoint
     // The backend will handle the OAuth flow and redirect back
-    window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.googleLogin}`;
+    window.location.href = AUTH_ENDPOINTS.googleLogin;
     
     // Return a pending promise that will never resolve
     // The page will redirect before this matters
@@ -194,7 +187,7 @@ export class AuthService {
    */
   static async loginWithFacebook(): Promise<ApiResponse<LoginResponse>> {
     // Redirect to Facebook OAuth endpoint
-    window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.facebookLogin}`;
+    window.location.href = AUTH_ENDPOINTS.facebookLogin;
     
     return new Promise(() => {});
   }

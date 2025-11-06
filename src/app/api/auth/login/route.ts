@@ -1,274 +1,158 @@
 /**
- * Login API Route Example
- * This is an example implementation of the login endpoint
- * 
- * NOTE: This is a MOCK implementation for demonstration.
- * In production, you would:
- * 1. Validate credentials against a real database
- * 2. Hash passwords with bcrypt
- * 3. Implement proper error handling
- * 4. Add rate limiting
- * 5. Add security logging
+ * Login API Route (Modified)
+ * Uses centralized mock data from @fake-data
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { 
-  generateTokenPair, 
-  setAuthCookies, 
+import { NextRequest, NextResponse } from "next/server";
+import {
+  generateTokenPair,
+  setAuthCookies,
   generateSessionId,
-  generate2FASessionToken 
-} from '@/app/lib/auth';
-import { LoginRequest, LoginResponse, User, UserRole } from '@/types/auth.types';
-
-// Mock user database (replace with real database in production)
-const MOCK_USERS: Record<string, User> = {
-  'super@admin.com': {
-    id: '1',
-    email: 'super@admin.com',
-    firstName: 'Super',
-    lastName: 'Admin',
-    role: UserRole.SUPER_ADMIN,
-    emailVerified: true,
-    twoFactorEnabled: false,
-    isActive: true,
-    isBlocked: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date(),
-  },
-  'institute@admin.com': {
-    id: '2',
-    email: 'institute@admin.com',
-    firstName: 'Institute',
-    lastName: 'Admin',
-    role: UserRole.INSTITUTE_ADMIN,
-    instituteId: 'inst_001',
-    emailVerified: true,
-    twoFactorEnabled: false,
-    isActive: true,
-    isBlocked: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date(),
-  },
-  'teacher@test.com': {
-    id: '3',
-    email: 'teacher@test.com',
-    firstName: 'John',
-    lastName: 'Teacher',
-    role: UserRole.TEACHER,
-    instituteId: 'inst_001',
-    emailVerified: true,
-    twoFactorEnabled: false,
-    isActive: true,
-    isBlocked: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date(),
-  },
-  'student@test.com': {
-    id: '4',
-    email: 'student@test.com',
-    firstName: 'Jane',
-    lastName: 'Student',
-    role: UserRole.STUDENT,
-    globalStudentId: 'STU_GLOBAL_001',
-    emailVerified: true,
-    twoFactorEnabled: false,
-    isActive: true,
-    isBlocked: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date(),
-  },
-  '2fa@test.com': {
-    id: '5',
-    email: '2fa@test.com',
-    firstName: 'TwoFactor',
-    lastName: 'User',
-    role: UserRole.STUDENT,
-    emailVerified: true,
-    twoFactorEnabled: true,
-    twoFactorSecret: 'MOCK_2FA_SECRET',
-    isActive: true,
-    isBlocked: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date(),
-  },
-};
-
-// Mock password (in production, use bcrypt to hash and compare)
-const MOCK_PASSWORD = 'Test123!';
+  generate2FASessionToken,
+} from "@/app/lib/auth";
+import { LoginRequest, LoginResponse } from "@/types/auth.types";
+import { getUserByEmail, validatePassword } from "@fake-data";
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse request body
+    // 1. Parse request body
     const body: LoginRequest = await request.json();
     const { email, password, remember } = body;
 
-    // Validate input
+    // 2. Validate input
     if (!email || !password) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'INVALID_INPUT',
-            message: 'Email and password are required',
+            code: "INVALID_CREDENTIALS",
+            message: "Email and password are required",
           },
         },
         { status: 400 }
       );
     }
 
-    // Find user (in production, query database)
-    const user = MOCK_USERS[email.toLowerCase()];
+    // 3. Find user by email
+    const user = getUserByEmail(email);
 
-    // Check if user exists
     if (!user) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'INVALID_CREDENTIALS',
-            message: 'Invalid email or password',
+            code: "INVALID_CREDENTIALS",
+            message: "Invalid email or password",
           },
         },
         { status: 401 }
       );
     }
 
-    // Verify password (in production, use bcrypt.compare)
-    if (password !== MOCK_PASSWORD) {
+    // 4. Validate password
+    if (!validatePassword(email, password)) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'INVALID_CREDENTIALS',
-            message: 'Invalid email or password',
+            code: "INVALID_CREDENTIALS",
+            message: "Invalid email or password",
           },
         },
         { status: 401 }
       );
     }
 
-    // Check if account is blocked
-    if (user.isBlocked) {
+    // 5. Check if account is active
+    if (!user.isActive || user.isBlocked) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'ACCOUNT_BLOCKED',
-            message: 'Your account has been blocked. Please contact support.',
+            code: "ACCOUNT_DISABLED",
+            message: "Your account has been disabled. Please contact support.",
           },
         },
         { status: 403 }
       );
     }
 
-    // Check if account is active
-    if (!user.isActive) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'ACCOUNT_INACTIVE',
-            message: 'Your account is inactive. Please contact support.',
-          },
-        },
-        { status: 403 }
-      );
-    }
-
-    // Check if email is verified
+    // 6. Check if email is verified
     if (!user.emailVerified) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'EMAIL_NOT_VERIFIED',
-            message: 'Please verify your email address',
+            code: "EMAIL_NOT_VERIFIED",
+            message: "Please verify your email address before logging in.",
           },
         },
         { status: 403 }
       );
     }
 
-    // Check if 2FA is enabled
+    // 7. Handle 2FA if enabled
     if (user.twoFactorEnabled) {
       // Generate temporary 2FA session token
-      const twoFactorSessionId = await generate2FASessionToken(user.id, user.email);
+      const twoFactorToken = generate2FASessionToken(user.id, user.email);
 
       return NextResponse.json({
         success: true,
         data: {
-          user: {
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
           requiresTwoFactor: true,
-          twoFactorSessionId,
-        } as LoginResponse,
+          twoFactorToken,
+          email: user.email,
+        },
       });
     }
 
-    // Generate session ID
+    // 8. Generate session and tokens
     const sessionId = generateSessionId();
-
-    // Generate tokens
-    const tokens = await generateTokenPair(user, sessionId, remember);
-
-    // Set auth cookies
-    await setAuthCookies(tokens);
-
-    // In production, save session to database
-    // await saveSession({
-    //   id: sessionId,
+    // const { accessToken, refreshToken } = generateTokenPair({
     //   userId: user.id,
-    //   refreshToken: tokens.refreshToken,
-    //   userAgent: request.headers.get('user-agent') || '',
-    //   ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '',
-    //   expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    //   email: user.email,
+    //   role: user.role,
+    //   sessionId,
+    //   instituteId: user.instituteId,
+    //   branchId: user.branchId,
     // });
-
-    // Update last login time in database
-    // await updateUserLastLogin(user.id);
-
-    // Return success response
-    const response: LoginResponse = {
-      user: {
-        ...user,
-        // Don't send sensitive data to client
-        twoFactorSecret: undefined,
-      },
-      tokens,
-    };
-
-    return NextResponse.json({
-      success: true,
-      data: response,
+    const tokenPair = await generateTokenPair({
+      user: user,
+      sessionId: sessionId,
+      remember: remember ? true : false,
     });
+
+    // 9. Create response
+    const response = NextResponse.json({
+      success: true,
+      data: {
+        user: {
+          ...user,
+          // Don't send sensitive data
+          twoFactorSecret: undefined,
+        },
+        tokens: tokenPair,
+        requiresTwoFactor: false,
+      } as LoginResponse,
+    });
+console.log("tokenPair",tokenPair);
+
+    // 10. Set auth cookies
+    setAuthCookies(response, tokenPair);
+
+    return response;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred',
+          code: "INTERNAL_ERROR",
+          message: "An error occurred during login. Please try again.",
         },
       },
       { status: 500 }
     );
   }
-}
-
-/**
- * OPTIONS handler for CORS preflight requests
- */
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
 }

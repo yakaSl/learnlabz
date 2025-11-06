@@ -12,12 +12,12 @@ export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   INSTITUTE_ADMIN = 'INSTITUTE_ADMIN',
   TEACHER = 'TEACHER',
-  TEACHER_ASSISTANT = 'TEACHER_ASSISTANT',
+  // TEACHER_ASSISTANT = 'TEACHER_ASSISTANT',
   BRANCH_MANAGER = 'BRANCH_MANAGER',
   ACCOUNTANT = 'ACCOUNTANT',
   COORDINATOR = 'COORDINATOR',
   STUDENT = 'STUDENT',
-  PARENT = 'PARENT',
+  PARENT = 'PARENT'
 }
 
 // ============================================================================
@@ -121,11 +121,11 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.AI_USE,
   ],
 
-  [UserRole.TEACHER_ASSISTANT]: [
-    Permission.CLASS_READ,
-    Permission.USER_READ,
-    Permission.CONTENT_UPDATE, // For marking attendance
-  ],
+  // [UserRole.TEACHER_ASSISTANT]: [
+  //   Permission.CLASS_READ,
+  //   Permission.USER_READ,
+  //   Permission.CONTENT_UPDATE, // For marking attendance
+  // ],
   
   [UserRole.BRANCH_MANAGER]: [
     Permission.CLASS_READ,
@@ -170,7 +170,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.ANALYTICS_VIEW,
     Permission.MESSAGE_SEND,
     Permission.PAYMENT_VIEW,
-  ],
+  ]
 };
 
 // ============================================================================

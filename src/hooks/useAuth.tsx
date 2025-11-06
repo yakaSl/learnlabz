@@ -1,3 +1,4 @@
+
 /**
  * useAuth Hook
  * React hook for authentication state management
@@ -69,6 +70,7 @@ const roleDashboardPaths: Record<UserRole, string> = {
     [UserRole.SUPER_ADMIN]: '/super-admin',
     [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
     [UserRole.TEACHER]: '/tutor',
+    [UserRole.TEACHER_ASSISTANT]: '/tutor-assistant',
     [UserRole.STUDENT]: '/student',
     [UserRole.PARENT]: '/parent',
     [UserRole.BRANCH_MANAGER]: '/branch-manager',

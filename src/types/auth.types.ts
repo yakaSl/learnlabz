@@ -1,3 +1,4 @@
+
 /**
  * Authentication Types for LearnLabz Platform
  * Comprehensive type definitions for JWT, users, roles, and permissions
@@ -11,6 +12,7 @@ export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   INSTITUTE_ADMIN = 'INSTITUTE_ADMIN',
   TEACHER = 'TEACHER',
+  TEACHER_ASSISTANT = 'TEACHER_ASSISTANT',
   BRANCH_MANAGER = 'BRANCH_MANAGER',
   ACCOUNTANT = 'ACCOUNTANT',
   COORDINATOR = 'COORDINATOR',
@@ -117,6 +119,12 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.MESSAGE_SEND,
     Permission.ANALYTICS_VIEW,
     Permission.AI_USE,
+  ],
+
+  [UserRole.TEACHER_ASSISTANT]: [
+    Permission.CLASS_READ,
+    Permission.USER_READ,
+    Permission.CONTENT_UPDATE, // For marking attendance
   ],
   
   [UserRole.BRANCH_MANAGER]: [

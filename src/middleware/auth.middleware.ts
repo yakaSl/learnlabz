@@ -39,6 +39,7 @@ const getDashboardUrlForRole = (role: UserRole): string => {
         [UserRole.SUPER_ADMIN]: '/super-admin',
         [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
         [UserRole.TEACHER]: '/tutor',
+        [UserRole.TEACHER_ASSISTANT]: '/tutor-assistant',
         [UserRole.STUDENT]: '/student',
         [UserRole.PARENT]: '/parent',
         [UserRole.BRANCH_MANAGER]: '/branch-manager',
@@ -54,7 +55,7 @@ function getRequiredRoles(pathname: string): UserRole[] {
     if (pathname.startsWith('/super-admin')) return [UserRole.SUPER_ADMIN];
     if (pathname.startsWith('/institute-admin')) return [UserRole.INSTITUTE_ADMIN];
     if (pathname.startsWith('/tutor')) return [UserRole.TEACHER];
-    if (pathname.startsWith('/tutor-assistant')) return [UserRole.TEACHER]; // Assistants are a type of teacher
+    if (pathname.startsWith('/tutor-assistant')) return [UserRole.TEACHER_ASSISTANT];
     if (pathname.startsWith('/student')) return [UserRole.STUDENT];
     if (pathname.startsWith('/parent')) return [UserRole.PARENT];
     return [];

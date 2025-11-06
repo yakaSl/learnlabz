@@ -1,5 +1,5 @@
 'use client';
-
+import * as React from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
 import GradeSubmissionPage from "@/components/tutor/classes/details/grading/grade-submission-page";
@@ -7,9 +7,9 @@ import GradeSubmissionPage from "@/components/tutor/classes/details/grading/grad
 export default function SubmissionPage({
   params,
 }: {
-  params: { classId: string; assessmentId: string; submissionId: string };
+  params: Promise<{ classId: string; assessmentId: string; submissionId: string }>;
 }) {
-  const { classId, assessmentId, submissionId } = params;
+  const { classId, assessmentId, submissionId } = React.use(params);
   return (
     <ProtectedRoute
       requireAuth={true}

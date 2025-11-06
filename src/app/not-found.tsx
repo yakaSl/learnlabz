@@ -1,13 +1,16 @@
 
 'use client';
 
+export const dynamicParams = true;
+export const dynamic = 'force-dynamic';
+
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FileQuestion } from 'lucide-react';
 
-function NotFoundPage() {
+function NotFoundContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message') || "The page you're looking for doesn't exist or has been moved.";
 
@@ -25,10 +28,10 @@ function NotFoundPage() {
   );
 }
 
-export default function NotFoundPageWrapper() {
+export default function NotFoundPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <NotFoundPage />
+      <NotFoundContent />
     </Suspense>
   );
 }

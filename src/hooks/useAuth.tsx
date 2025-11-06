@@ -1,3 +1,4 @@
+
 /**
  * useAuth Hook
  * React hook for authentication state management
@@ -6,7 +7,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
   User,
@@ -80,6 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -100,8 +102,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   
   const handleSuccessfulAuth = (authenticatedUser: User) => {
     setUser(authenticatedUser);
-    const dashboardUrl = roleDashboardPaths[authenticatedUser.role] || '/';
-    router.push(dashboardUrl);
+    const redirectTo = searchParams.get('redirect') || roleDashboardPaths[authenticatedUser.role] || '/';
+    router.push(redirectTo);
   };
   
   /**
@@ -130,7 +132,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Login error:', error);
       throw error;
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   /**
    * Login with Google
@@ -178,7 +180,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('2FA verification error:', error);
       throw error;
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   /**
    * Register new user
@@ -201,7 +203,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Registration error:', error);
       throw error;
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   /**
    * Logout user

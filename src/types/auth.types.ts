@@ -17,7 +17,7 @@ export enum UserRole {
   ACCOUNTANT = 'ACCOUNTANT',
   COORDINATOR = 'COORDINATOR',
   STUDENT = 'STUDENT',
-  PARENT = 'PARENT',
+  PARENT = 'PARENT'
 }
 
 // ============================================================================
@@ -170,7 +170,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.ANALYTICS_VIEW,
     Permission.MESSAGE_SEND,
     Permission.PAYMENT_VIEW,
-  ],
+  ]
 };
 
 // ============================================================================

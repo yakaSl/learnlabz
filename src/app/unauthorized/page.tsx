@@ -1,105 +1,91 @@
-'use client';
+/**
+ * Unauthorized Access Page
+ * Shown when users try to access routes they don't have permission for
+ */
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { FaExclamationTriangle } from 'react-icons/fa';
-import { UserRole } from '@/types/auth.types';
-import Link from 'next/link';
-import { Suspense } from 'react';
+"use client";
 
-function UnauthorizedContent() {
-  const { user } = useAuth();
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { getDashboardRoute } from "@/config/routes.config";
+import { Button } from "@/components/ui/button";
+import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
+
+export default function UnauthorizedPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const from = searchParams.get('from');
+  const { user } = useAuth(); // ✅ Removed isAuthenticated - use user instead
 
-  const handleGoBack = () => {
-    // If 'from' is provided and is a valid relative path, go there.
-    // Otherwise, go back in history or to the dashboard.
-    if (from && from.startsWith('/')) {
-      router.push(from);
+  const handleGoToDashboard = () => {
+    if (user) {
+      const dashboardUrl = getDashboardRoute(user.role);
+      router.push(dashboardUrl);
     } else {
-      router.back();
+      router.push("/");
     }
   };
-  
-  const getDashboardUrl = (role: UserRole): string => {
-    const roleMap: Record<string, string> = {
-      [UserRole.SUPER_ADMIN]: '/super-admin',
-      [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
-      [UserRole.TEACHER]: '/tutor',
-      [UserRole.BRANCH_MANAGER]: '/branch-manager',
-      [UserRole.ACCOUNTANT]: '/accountant',
-      [UserRole.COORDINATOR]: '/coordinator',
-      [UserRole.STUDENT]: '/student',
-      [UserRole.PARENT]: '/parent',
-    };
-  
-    return roleMap[role] || '/';
-  }
 
-  const isAuthenticated = !!user;
+  const handleGoBack = () => {
+    router.back();
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full text-center">
-        <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-red-100 mb-6">
-          <FaExclamationTriangle className="h-12 w-12 text-red-600" />
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-8 text-center">
+        {/* Icon */}
+        <div className="flex justify-center">
+          <div className="rounded-full bg-destructive/10 p-6">
+            <ShieldAlert className="h-16 w-16 text-destructive" />
+          </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Access Denied</h1>
-        
-        <p className="text-lg text-gray-600 mb-8">
-          {isAuthenticated
-            ? "You don't have permission to access this page."
-            : "You need to be logged in to access this page."}
-        </p>
+        {/* Title */}
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">Access Denied</h1>
+          <p className="text-lg text-muted-foreground">
+            You don't have permission to access this page
+          </p>
+        </div>
 
+        {/* Description */}
         <div className="space-y-4">
-          {isAuthenticated ? (
-            <>
-              <button
-                onClick={handleGoBack}
-                className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Go Back
-              </button>
-              
-              {user && (
-                <Link
-                  href={getDashboardUrl(user.role)}
-                  className="w-full inline-flex justify-center items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Go to Dashboard
-                </Link>
-              )}
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Sign In
-            </Link>
-          )}
+          <p className="text-sm text-muted-foreground">
+            {user
+              ? `Your current role (${user.role}) doesn't have access to this resource. If you believe this is a mistake, please contact your administrator.`
+              : "Please log in with an account that has the required permissions."}
+          </p>
         </div>
 
-        <div className="mt-8 text-sm text-gray-500">
-          Need help?{' '}
-          <Link href="/contact" className="font-medium text-blue-600 hover:text-blue-500">
-            Contact Support
-          </Link>
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button
+            onClick={handleGoBack}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Go Back
+          </Button>
+
+          <Button
+            onClick={handleGoToDashboard}
+            className="flex items-center gap-2"
+          >
+            <Home className="h-4 w-4" />
+            {user ? "Go to Dashboard" : "Go to Home"}
+          </Button>
         </div>
+
+        {/* Additional Info */}
+        {user && (
+          <div className="pt-8 border-t">
+            <p className="text-xs text-muted-foreground">
+              Logged in as: <span className="font-medium">{user.email}</span>
+              <br />
+              Role: <span className="font-medium">{user.role}</span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
-}
-
-
-export default function UnauthorizedPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <UnauthorizedContent />
-        </Suspense>
-    )
 }

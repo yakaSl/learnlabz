@@ -1,0 +1,186 @@
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
+import {
+  User,
+  UserRole,
+  Permission,
+  LoginRequest,
+  LoginResponse,
+} from "@/types/auth.types";
+import { AuthService } from "@/services/auth.service";
+import { ROLE_PERMISSIONS } from "@/types/auth.types";
+import { getDashboardRoute } from "@/config/routes.config";
+
+interface AuthContextType {
+  user: User | null;
+  isInitialized:boolean;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (credentials: LoginRequest) => Promise<LoginResponse>;
+  logout: () => Promise<void>;
+  hasRole: (role: UserRole) => boolean;
+  hasAnyRole: (roles: UserRole[]) => boolean;
+  hasPermission: (permission: Permission) => boolean;
+  hasAllPermissions: (permissions: Permission[]) => boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  // Helper functions
+  const hasRole = useCallback(
+    (role: UserRole): boolean => {
+      return user?.role === role;
+    },
+    [user]
+  );
+
+  const hasAnyRole = useCallback(
+    (roles: UserRole[]): boolean => {
+      return user ? roles.includes(user.role) : false;
+    },
+    [user]
+  );
+
+  const hasPermission = useCallback(
+    (permission: Permission): boolean => {
+      if (!user) return false;
+      const userPermissions = ROLE_PERMISSIONS[user.role] || [];
+      return userPermissions.includes(permission);
+    },
+    [user]
+  );
+
+  const hasAllPermissions = useCallback(
+    (permissions: Permission[]): boolean => {
+      if (!user) return false;
+      const userPermissions = ROLE_PERMISSIONS[user.role] || [];
+      return permissions.every((permission) =>
+        userPermissions.includes(permission)
+      );
+    },
+    [user]
+  );
+
+  const isAuthenticated = !!user;
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    const initializeAuth = async () => {
+      console.log("🔄 Initializing auth...");
+console.log("AuthService.hasAuthToken()",AuthService.hasAuthToken())
+      try {
+        // Check if we have cookies
+        if (!AuthService.hasAuthToken()) {
+          console.log("❌ No auth token found");
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("✅ Auth token found, fetching user from /api/auth/me");
+        const response = await AuthService.getCurrentUser();
+
+        console.log("📦 API Response:", response);
+
+        if (response.success && response.data) {
+          console.log("✅ User restored:", response.data.email);
+          setUser(response.data);
+        } else {
+          console.log("❌ Failed to get user, clearing tokens");
+          AuthService.clearTokens();
+        }
+      } catch (error) {
+        console.error("❌ Auth initialization error:", error);
+        AuthService.clearTokens();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  // Login function
+  const login = useCallback(
+    async (credentials: LoginRequest): Promise<LoginResponse> => {
+      try {
+        const response = await AuthService.login(credentials);
+
+        if (!response.success || !response.data) {
+          throw new Error(response.error?.message || "Login failed");
+        }
+
+        const loginData = response.data;
+
+        if (loginData.requiresTwoFactor) {
+          return loginData;
+        }
+
+        console.log("✅ Login successful, setting user:", loginData.user.email);
+        setUser(loginData.user);
+
+        // Redirect to dashboard
+        const dashboardUrl = getDashboardRoute(loginData.user.role);
+        console.log("🔀 Redirecting to:", dashboardUrl);
+        router.push(dashboardUrl);
+
+        return loginData;
+      } catch (error) {
+        console.error("❌ Login error:", error);
+        throw error;
+      }
+    },
+    [router]
+  );
+
+  // Logout function
+  const logout = useCallback(async () => {
+    try {
+      await AuthService.logout();
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+    } finally {
+      setUser(null);
+      AuthService.clearTokens();
+      window.location.href = "/login";
+    }
+  }, []);
+
+  const value: AuthContextType = {
+    user,
+    isAuthenticated,
+    isInitialized: !isLoading,
+    isLoading,
+    login,
+    logout,
+    hasRole,
+    hasAnyRole,
+    hasPermission,
+    hasAllPermissions,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
+}

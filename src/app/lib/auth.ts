@@ -1,20 +1,34 @@
 /**
- * Authentication Library (Server-Side)
- * Core utilities for JWT handling and server-side cookie management.
+ * Authentication Library
+ * Core utilities for JWT handling, token management, and security
  */
 
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
 import {
   JWTPayload,
   TokenPair,
   User,
   ROLE_PERMISSIONS,
+  Permission,
+  PasswordStrength,
+  PasswordRequirements,
+  DEFAULT_PASSWORD_REQUIREMENTS,
 } from "@/types/auth.types";
+import { NextResponse } from "next/server";
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production"
+);
+
+const JWT_REFRESH_SECRET = new TextEncoder().encode(
+  process.env.JWT_REFRESH_SECRET ||
+    "your-super-secret-refresh-key-change-in-production"
+);
 
 export const AUTH_CONFIG = {
   accessTokenExpiry: "15m", // 15 minutes
@@ -23,13 +37,17 @@ export const AUTH_CONFIG = {
   twoFactorSessionExpiry: "5m", // 5 minutes for 2FA
 
   cookies: {
-    accessToken: "auth_token",
-    refreshToken: "refresh_token",
+    accessToken: "accessToken",
+    refreshToken: "refreshToken",
   },
-  
+
   paths: {
     login: "/login",
-    logout: "/logout",
+    register: "/register",
+    forgotPassword: "/forgot-password",
+    resetPassword: "/reset-password",
+    verifyEmail: "/verify-email",
+    twoFactor: "/two-factor",
   },
 };
 
@@ -86,19 +104,19 @@ export async function generateRefreshToken(
 /**
  * Generate Token Pair
  */
-export async function generateTokenPair(
-  user: User,
-  sessionId: string,
-  remember: boolean = false
-): Promise<TokenPair> {
+export async function generateTokenPair(p: {
+  user: User;
+  sessionId: string;
+  remember: boolean;
+}): Promise<TokenPair> {
   const accessTokenExpiry = AUTH_CONFIG.accessTokenExpiry;
-  const refreshTokenExpiry = remember
+  const refreshTokenExpiry = p.remember
     ? AUTH_CONFIG.rememberMeExpiry
     : AUTH_CONFIG.refreshTokenExpiry;
 
   const [accessToken, refreshToken] = await Promise.all([
-    generateAccessToken(user, sessionId, accessTokenExpiry),
-    generateRefreshToken(user.id, sessionId, refreshTokenExpiry),
+    generateAccessToken(p.user, p.sessionId, accessTokenExpiry),
+    generateRefreshToken(p.user.id, p.sessionId, refreshTokenExpiry),
   ]);
 
   return {
@@ -128,21 +146,13 @@ export async function generate2FASessionToken(
 // JWT TOKEN VERIFICATION
 // ============================================================================
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production"
-);
-
-const JWT_REFRESH_SECRET = new TextEncoder().encode(
-  process.env.JWT_REFRESH_SECRET ||
-    "your-super-secret-refresh-key-change-in-production"
-);
-
 /**
  * Verify Access Token
  */
 export async function verifyAccessToken(token: string): Promise<JWTPayload> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
+    // return payload as JWTPayload;
     return payload as unknown as JWTPayload;
   } catch (error) {
     throw new Error("Invalid or expired access token");
@@ -157,7 +167,8 @@ export async function verifyRefreshToken(
 ): Promise<{ userId: string; sessionId: string }> {
   try {
     const { payload } = await jwtVerify(token, JWT_REFRESH_SECRET);
-    return payload as { userId: string; sessionId: string };
+    // return payload as { userId: string; sessionId: string };s
+    return payload as unknown as { userId: string; sessionId: string };
   } catch (error) {
     throw new Error("Invalid or expired refresh token");
   }
@@ -183,69 +194,243 @@ export async function verify2FASessionToken(
 }
 
 // ============================================================================
-// COOKIE MANAGEMENT (SERVER-SIDE)
+// COOKIE MANAGEMENT
 // ============================================================================
 
 /**
  * Set authentication cookies
  */
-export async function setAuthCookies(tokens: TokenPair) {
-  const cookieStore = await cookies();
+export function setAuthCookies(response: NextResponse, tokens: TokenPair) {
+  const accessTokenMaxAge = tokens.expiresIn;
+  const refreshTokenMaxAge = parseExpiryToSeconds(
+    AUTH_CONFIG.refreshTokenExpiry
+  );
 
-  // Set access token cookie (httpOnly for security)
-  cookieStore.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+  const isDevelopment = process.env.NODE_ENV !== "production";
+
+  response.cookies.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
+    httpOnly: !isDevelopment,
+    secure: !isDevelopment,
     sameSite: "lax",
-    maxAge: tokens.expiresIn,
+    maxAge: accessTokenMaxAge,
     path: "/",
   });
 
-  // Set refresh token cookie
-  cookieStore.set(AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
+  response.cookies.set(AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: !isDevelopment,
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: refreshTokenMaxAge,
     path: "/",
   });
+
+  console.log("🍪 Cookies set successfully ✅");
 }
 
 /**
  * Get access token from cookies
  */
-export async function getAccessToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookies.accessToken);
-  return token?.value || null;
+export function getAccessToken(ctx: any): string | null {
+  const cookies = parseCookies(ctx);
+  return cookies[AUTH_CONFIG.cookies.accessToken] || null;
 }
 
 /**
  * Get refresh token from cookies
  */
-export async function getRefreshToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookies.refreshToken);
-  return token?.value || null;
+export function getRefreshToken(ctx: any): string | null {
+  const cookies = parseCookies(ctx);
+  return cookies[AUTH_CONFIG.cookies.refreshToken] || null;
 }
 
 /**
  * Clear authentication cookies
  */
-export async function clearAuthCookies() {
-  const cookieStore = await cookies();
-  cookieStore.delete(AUTH_CONFIG.cookies.accessToken);
-  cookieStore.delete(AUTH_CONFIG.cookies.refreshToken);
+export function clearAuthCookies(ctx: any) {
+  destroyCookie(ctx, AUTH_CONFIG.cookies.accessToken, { path: "/" });
+  destroyCookie(ctx, AUTH_CONFIG.cookies.refreshToken, { path: "/" });
 }
 
 // ============================================================================
-// HELPER FUNCTIONS (SERVER-SIDE)
+// PERMISSION HELPERS
+// ============================================================================
+
+/**
+ * Check if user has specific permission
+ */
+export function hasPermission(
+  userPermissions: Permission[],
+  permission: Permission
+): boolean {
+  return userPermissions.includes(permission);
+}
+
+/**
+ * Check if user has any of the specified permissions
+ */
+export function hasAnyPermission(
+  userPermissions: Permission[],
+  permissions: Permission[]
+): boolean {
+  return permissions.some((permission) => userPermissions.includes(permission));
+}
+
+/**
+ * Check if user has all of the specified permissions
+ */
+export function hasAllPermissions(
+  userPermissions: Permission[],
+  permissions: Permission[]
+): boolean {
+  return permissions.every((permission) =>
+    userPermissions.includes(permission)
+  );
+}
+
+// ============================================================================
+// PASSWORD UTILITIES
+// ============================================================================
+
+/**
+ * Validate password strength
+ */
+export function validatePasswordStrength(
+  password: string,
+  requirements: PasswordRequirements = DEFAULT_PASSWORD_REQUIREMENTS
+): PasswordStrength {
+  const feedback: string[] = [];
+  let score = 0;
+
+  // Length check
+  if (password.length < requirements.minLength) {
+    feedback.push(
+      `Password must be at least ${requirements.minLength} characters long`
+    );
+  } else {
+    score++;
+  }
+
+  // Uppercase check
+  if (requirements.requireUppercase && !/[A-Z]/.test(password)) {
+    feedback.push("Password must contain at least one uppercase letter");
+  } else if (requirements.requireUppercase) {
+    score++;
+  }
+
+  // Lowercase check
+  if (requirements.requireLowercase && !/[a-z]/.test(password)) {
+    feedback.push("Password must contain at least one lowercase letter");
+  } else if (requirements.requireLowercase) {
+    score++;
+  }
+
+  // Number check
+  if (requirements.requireNumbers && !/\d/.test(password)) {
+    feedback.push("Password must contain at least one number");
+  } else if (requirements.requireNumbers) {
+    score++;
+  }
+
+  // Special character check
+  if (
+    requirements.requireSpecialChars &&
+    !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password)
+  ) {
+    feedback.push("Password must contain at least one special character");
+  } else if (requirements.requireSpecialChars) {
+    score++;
+  }
+
+  // Check for common patterns
+  const commonPatterns = ["12345", "password", "qwerty", "abc123", "admin"];
+  if (
+    commonPatterns.some((pattern) => password.toLowerCase().includes(pattern))
+  ) {
+    feedback.push("Password contains common patterns and is easily guessable");
+    score = Math.max(0, score - 1);
+  }
+
+  return {
+    score,
+    feedback,
+    isValid: feedback.length === 0,
+  };
+}
+
+/**
+ * Hash password using bcrypt (to be implemented on backend)
+ * This is a placeholder - actual implementation should be on the backend
+ */
+export async function hashPassword(password: string): Promise<string> {
+  // This will be implemented on the backend with bcrypt
+  // Frontend should never hash passwords
+  throw new Error("Password hashing should be done on the backend");
+}
+
+/**
+ * Verify password (to be implemented on backend)
+ */
+export async function verifyPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
+  // This will be implemented on the backend
+  throw new Error("Password verification should be done on the backend");
+}
+
+// ============================================================================
+// SECURITY UTILITIES
+// ============================================================================
+
+/**
+ * Generate random session ID
+ */
+export function generateSessionId(): string {
+  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Generate backup codes for 2FA
+ */
+export function generateBackupCodes(count: number = 10): string[] {
+  const codes: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const code = Math.random().toString(36).substr(2, 8).toUpperCase();
+    codes.push(code);
+  }
+  return codes;
+}
+
+/**
+ * Sanitize email
+ */
+export function sanitizeEmail(email: string): string {
+  return email.toLowerCase().trim();
+}
+
+/**
+ * Validate email format
+ */
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
+ * Generate verification token
+ */
+export function generateVerificationToken(): string {
+  return Math.random().toString(36).substr(2) + Date.now().toString(36);
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
 // ============================================================================
 
 /**
  * Parse expiry string to seconds
  */
-function parseExpiryToSeconds(expiry: string): number {
+export function parseExpiryToSeconds(expiry: string): number {
   const match = expiry.match(/^(\d+)([smhd])$/);
   if (!match) return 900; // Default 15 minutes
 
@@ -271,7 +456,7 @@ function parseExpiryToSeconds(expiry: string): number {
  */
 export async function getCurrentUser(): Promise<JWTPayload | null> {
   try {
-    const token = await getAccessToken();
+    const token = getAccessToken(null);
     if (!token) return null;
 
     return await verifyAccessToken(token);
@@ -286,11 +471,4 @@ export async function getCurrentUser(): Promise<JWTPayload | null> {
 export async function isAuthenticated(): Promise<boolean> {
   const user = await getCurrentUser();
   return user !== null;
-}
-
-/**
- * Generate random session ID
- */
-export function generateSessionId(): string {
-  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }

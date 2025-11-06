@@ -9,7 +9,7 @@ export default function SettingsPage() {
     return (
         <ProtectedRoute
             requireAuth={true}
-            allowedRoles={[UserRole.TEACHER]}
+            allowedRoles={[UserRole.TEACHER_ASSISTANT]}
         >
             <Card>
                 <CardHeader>

@@ -9,7 +9,7 @@ export default function TasksPage() {
     return (
         <ProtectedRoute
             requireAuth={true}
-            allowedRoles={[UserRole.TEACHER]}
+            allowedRoles={[UserRole.TEACHER_ASSISTANT]}
         >
             <TaskList />
         </ProtectedRoute>

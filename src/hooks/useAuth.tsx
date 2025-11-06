@@ -1,4 +1,3 @@
-
 /**
  * useAuth Hook
  * React hook for authentication state management

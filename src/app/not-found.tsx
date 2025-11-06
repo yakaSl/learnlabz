@@ -1,8 +1,6 @@
 
-'use client';
 
-export const dynamicParams = true;
-export const dynamic = 'force-dynamic';
+'use client';
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -35,3 +33,4 @@ export default function NotFoundPage() {
     </Suspense>
   );
 }
+

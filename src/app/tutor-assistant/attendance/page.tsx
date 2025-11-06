@@ -9,7 +9,7 @@ export default function AttendancePage() {
     return (
         <ProtectedRoute
             requireAuth={true}
-            allowedRoles={[UserRole.TEACHER]}
+            allowedRoles={[UserRole.TEACHER_ASSISTANT]}
         >
             <AttendanceMarking />
         </ProtectedRoute>

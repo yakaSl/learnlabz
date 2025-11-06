@@ -1,5 +1,16 @@
+'use client';
+
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { UserRole } from '@/types/auth.types';
 import UserManagement from "@/components/super-admin/users/user-management";
 
 export default function SuperAdminStudentsPage() {
-  return <UserManagement roleFilter="Student" />;
+  return (
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={[UserRole.SUPER_ADMIN]}
+    >
+      <UserManagement roleFilter="Student" />
+    </ProtectedRoute>
+  );
 }

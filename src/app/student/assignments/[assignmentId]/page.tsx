@@ -1,11 +1,21 @@
+'use client';
 
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { UserRole } from '@/types/auth.types';
 import AssignmentView from '@/components/student/assignments/assignment-view';
 
-export default async function AssignmentDetailPage({
+export default function AssignmentDetailPage({
   params,
 }: {
-  params: Promise<{ assignmentId: string }>;
+  params: { assignmentId: string };
 }) {
-  const { assignmentId } = await params;
-  return <AssignmentView assignmentId={assignmentId} />;
+  const { assignmentId } = params;
+  return (
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={[UserRole.STUDENT]}
+    >
+      <AssignmentView assignmentId={assignmentId} />
+    </ProtectedRoute>
+  );
 }

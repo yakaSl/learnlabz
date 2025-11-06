@@ -507,5 +507,3 @@ export function useAuth(): AuthContextType {
 // ============================================================================
 
 export default useAuth;
-
-    

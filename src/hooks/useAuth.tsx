@@ -260,7 +260,7 @@ function AuthProviderContent({ children }: AuthProviderProps) {
    */
   const resetPassword = useCallback(async (email: string): Promise<void> => {
     try {
-      const response = await AuthService.resetPassword(email);
+      const response = await AuthService.forgotPassword(email);
 
       if (!response.success) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
@@ -276,7 +276,7 @@ function AuthProviderContent({ children }: AuthProviderProps) {
    */
   const confirmResetPassword = useCallback(async (data: ResetPasswordConfirmRequest): Promise<void> => {
     try {
-      const response = await AuthService.confirmResetPassword(data);
+      const response = await AuthService.resetPassword(data);
 
       if (!response.success) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));

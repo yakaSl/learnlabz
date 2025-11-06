@@ -15,6 +15,7 @@ import {
   PasswordRequirements,
   DEFAULT_PASSWORD_REQUIREMENTS,
 } from "@/types/auth.types";
+import { NextResponse } from "next/server";
 
 // ============================================================================
 // CONFIGURATION
@@ -151,7 +152,8 @@ export async function generate2FASessionToken(
 export async function verifyAccessToken(token: string): Promise<JWTPayload> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as JWTPayload;
+    // return payload as JWTPayload;
+    return payload as unknown as JWTPayload;
   } catch (error) {
     throw new Error("Invalid or expired access token");
   }
@@ -165,7 +167,8 @@ export async function verifyRefreshToken(
 ): Promise<{ userId: string; sessionId: string }> {
   try {
     const { payload } = await jwtVerify(token, JWT_REFRESH_SECRET);
-    return payload as { userId: string; sessionId: string };
+    // return payload as { userId: string; sessionId: string };s
+    return payload as unknown as { userId: string; sessionId: string };
   } catch (error) {
     throw new Error("Invalid or expired refresh token");
   }
@@ -197,46 +200,31 @@ export async function verify2FASessionToken(
 /**
  * Set authentication cookies
  */
-export function setAuthCookies(ctx: any, tokens: TokenPair) {
+export function setAuthCookies(response: NextResponse, tokens: TokenPair) {
   const accessTokenMaxAge = tokens.expiresIn;
   const refreshTokenMaxAge = parseExpiryToSeconds(
     AUTH_CONFIG.refreshTokenExpiry
   );
 
-  // setCookie(ctx, AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === "production",
-  //   sameSite: "lax",
-  //   maxAge: accessTokenMaxAge,
-  //   path: "/",
-  // });
+  const isDevelopment = process.env.NODE_ENV !== "production";
 
-  // setCookie(ctx, AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
-  //   httpOnly: true,
-  //   secure: process.env.NODE_ENV === "production",
-  //   sameSite: "lax",
-  //   maxAge: refreshTokenMaxAge,
-  //   path: "/",
-  // });
-  ctx.cookies.set({
-    name: AUTH_CONFIG.cookies.accessToken,
-    value: tokens.accessToken,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+  response.cookies.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, {
+    httpOnly: !isDevelopment,
+    secure: !isDevelopment,
     sameSite: "lax",
-    maxAge: 30 * 24 * 60 * 60, // 30 days or 1 day
+    maxAge: accessTokenMaxAge,
     path: "/",
   });
 
-  ctx.cookies.set({
-    name: AUTH_CONFIG.cookies.refreshToken,
-    value: tokens.refreshToken,
+  response.cookies.set(AUTH_CONFIG.cookies.refreshToken, tokens.refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: !isDevelopment,
     sameSite: "lax",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: refreshTokenMaxAge,
     path: "/",
   });
+
+  console.log("🍪 Cookies set successfully ✅");
 }
 
 /**

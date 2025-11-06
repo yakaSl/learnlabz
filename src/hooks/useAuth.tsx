@@ -1,24 +1,32 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { User, UserRole, Permission, LoginRequest, LoginResponse } from '@/types/auth.types';
-import { AuthService } from '@/services/auth.service';
-import { ROLE_PERMISSIONS } from '@/types/auth.types';
-import { AUTH_ROUTES, getDashboardRoute } from '@/config/routes.config';
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (credentials: LoginRequest) => Promise<LoginResponse>;
-  logout: () => Promise<void>;
-  refreshToken: () => Promise<void>;
-  hasRole: (role: UserRole) => boolean;
-  hasAnyRole: (roles: UserRole[]) => boolean;
-  hasPermission: (permission: Permission) => boolean;
-  hasAllPermissions: (permissions: Permission[]) => boolean;
-}
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { useRouter } from "next/navigation";
+import {
+  User,
+  UserRole,
+  Permission,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+  TwoFactorRequest,
+  TwoFactorSetupResponse,
+  ResetPasswordConfirmRequest,
+  ChangePasswordRequest,
+  Session,
+  AuthContextType,
+  ROLE_PERMISSIONS,
+} from "@/types/auth.types";
+import { AuthService } from "@/services/auth.service";
+import { getDashboardRoute } from "@/config/routes.config";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -26,163 +34,436 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  // Helper functions
-  const hasRole = useCallback((role: UserRole): boolean => {
-    return user?.role === role;
-  }, [user]);
+  // ============================================================================
+  // PERMISSION & ROLE HELPERS
+  // ============================================================================
 
-  const hasAnyRole = useCallback((roles: UserRole[]): boolean => {
-    return user ? roles.includes(user.role) : false;
-  }, [user]);
+  const hasRole = useCallback(
+    (role: UserRole): boolean => {
+      return user?.role === role;
+    },
+    [user]
+  );
 
-  const hasPermission = useCallback((permission: Permission): boolean => {
-    if (!user) return false;
-    const userPermissions = ROLE_PERMISSIONS[user.role] || [];
-    return userPermissions.includes(permission);
-  }, [user]);
+  const hasAnyRole = useCallback(
+    (roles: UserRole[]): boolean => {
+      return user ? roles.includes(user.role) : false;
+    },
+    [user]
+  );
 
-  const hasAllPermissions = useCallback((permissions: Permission[]): boolean => {
-    if (!user) return false;
-    const userPermissions = ROLE_PERMISSIONS[user.role] || [];
-    return permissions.every(permission => userPermissions.includes(permission));
-  }, [user]);
+  const hasPermission = useCallback(
+    (permission: Permission): boolean => {
+      if (!user) return false;
+      const userPermissions = ROLE_PERMISSIONS[user.role] || [];
+      return userPermissions.includes(permission);
+    },
+    [user]
+  );
 
-  const isAuthenticated = !!user;
+  const hasAnyPermission = useCallback(
+    (permissions: Permission[]): boolean => {
+      if (!user) return false;
+      const userPermissions = ROLE_PERMISSIONS[user.role] || [];
+      return permissions.some((permission) =>
+        userPermissions.includes(permission)
+      );
+    },
+    [user]
+  );
 
-  // Handle logout
-  const handleLogout = useCallback(async (redirect: boolean) => {
-    try {
-      await AuthService.logout();
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    } finally {
-      setUser(null);
-      AuthService.clearTokens();
-      if (redirect) {
-        window.location.href = AUTH_ROUTES.login;
-      }
-    }
-  }, []);
+  const hasAllPermissions = useCallback(
+    (permissions: Permission[]): boolean => {
+      if (!user) return false;
+      const userPermissions = ROLE_PERMISSIONS[user.role] || [];
+      return permissions.every((permission) =>
+        userPermissions.includes(permission)
+      );
+    },
+    [user]
+  );
 
-  // CRITICAL: Initialize auth state on mount
+  // ============================================================================
+  // INITIALIZE AUTH STATE ON MOUNT
+  // ============================================================================
+
   useEffect(() => {
     const initializeAuth = async () => {
-      console.log("Initializing auth...");
+      console.log("🔄 Initializing auth...");
+      console.log("AuthService.hasAuthToken()", AuthService.hasAuthToken());
       
       try {
-        // Check if we have a token
+        // Check if we have cookies
         if (!AuthService.hasAuthToken()) {
-          console.log("No auth token found");
+          console.log("❌ No auth token found");
           setIsLoading(false);
           return;
         }
 
-        console.log("Auth token found, fetching user...");
-        
-        // Fetch current user
+        console.log("✅ Auth token found, fetching user from /api/auth/me");
         const response = await AuthService.getCurrentUser();
-        
-        console.log("User fetch response:", response);
-        
+
+        console.log("📦 API Response:", response);
+
         if (response.success && response.data) {
-          console.log("User restored from token:", response.data.email);
+          console.log("✅ User restored:", response.data.email);
           setUser(response.data);
         } else {
-          console.log("Failed to restore user, clearing tokens");
-          await handleLogout(false);
+          console.log("❌ Failed to get user, clearing tokens");
+          AuthService.clearTokens();
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
-        await handleLogout(false);
+        console.error("❌ Auth initialization error:", error);
+        AuthService.clearTokens();
       } finally {
         setIsLoading(false);
       }
     };
 
     initializeAuth();
-  }, []); // Run only once on mount
+  }, []);
 
-  // Login function
-  const login = useCallback(async (credentials: LoginRequest): Promise<LoginResponse> => {
-    try {
-      const response = await AuthService.login(credentials);
+  // ============================================================================
+  // AUTH METHODS - LOGIN
+  // ============================================================================
 
-      if (!response.success || !response.data) {
-        throw new Error(response.error?.message || 'Login failed');
-      }
+  const login = useCallback(
+    async (credentials: LoginRequest): Promise<LoginResponse> => {
+      try {
+        const response = await AuthService.login(credentials);
 
-      const loginData = response.data;
+        if (!response.success || !response.data) {
+          throw new Error(response.error?.message || "Login failed");
+        }
 
-      // Check if 2FA is required
-      if (loginData.requiresTwoFactor) {
+        const loginData = response.data;
+
+        if (loginData.requiresTwoFactor) {
+          return loginData;
+        }
+
+        console.log("✅ Login successful, setting user:", loginData.user.email);
+        setUser(loginData.user);
+
+        // Redirect to dashboard
+        const dashboardUrl = getDashboardRoute(loginData.user.role);
+        console.log("🔀 Redirecting to:", dashboardUrl);
+        router.push(dashboardUrl);
+
         return loginData;
+      } catch (error) {
+        console.error("❌ Login error:", error);
+        throw error;
       }
+    },
+    [router]
+  );
 
-      // Set user state
-      console.log("Login successful, setting user:", loginData.user.email);
-      setUser(loginData.user);
-
-      // Redirect will happen in separate useEffect
-      return loginData;
+  const loginWithGoogle = useCallback(async () => {
+    try {
+      console.log("🔐 Google login requested");
+      await AuthService.loginWithGoogle();
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("❌ Google login error:", error);
       throw error;
     }
   }, []);
 
-  // Handle redirect after login (separate from initialization)
-  useEffect(() => {
-    // Don't redirect during initial load
-    if (isLoading) return;
-    
-    // Only redirect after explicit login (not on page load)
-    if (isAuthenticated && user) {
-      // Check if we're on a login page
-      const currentPath = window.location.pathname;
-      
-      if (currentPath === AUTH_ROUTES.login || currentPath === '/register') {
-        const redirectParam = searchParams.get('redirect');
-        
-        if (redirectParam && redirectParam !== AUTH_ROUTES.login) {
-          console.log("Redirecting to:", redirectParam);
-          router.push(redirectParam);
-        } else {
-          const dashboardUrl = getDashboardRoute(user.role);
-          console.log("Redirecting to dashboard:", dashboardUrl);
-          router.push(dashboardUrl);
-        }
-      }
+  const loginWithFacebook = useCallback(async () => {
+    try {
+      console.log("🔐 Facebook login requested");
+      await AuthService.loginWithFacebook();
+    } catch (error) {
+      console.error("❌ Facebook login error:", error);
+      throw error;
     }
-  }, [isAuthenticated, user, isLoading, searchParams, router]);
+  }, []);
 
-  // Logout
+  // ============================================================================
+  // AUTH METHODS - LOGOUT
+  // ============================================================================
+
   const logout = useCallback(async () => {
-    await handleLogout(true);
-  }, [handleLogout]);
+    try {
+      await AuthService.logout();
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+    } finally {
+      setUser(null);
+      AuthService.clearTokens();
+      window.location.href = "/login";
+    }
+  }, []);
 
-  // Refresh token
+  // ============================================================================
+  // AUTH METHODS - REGISTER
+  // ============================================================================
+
+  const register = useCallback(
+    async (data: RegisterRequest): Promise<RegisterResponse> => {
+      try {
+        const response = await AuthService.register(data);
+
+        if (!response.success || !response.data) {
+          throw new Error(response.error?.message || "Registration failed");
+        }
+
+        const registerData = response.data;
+        console.log("✅ Registration successful:", registerData.user.email);
+        setUser(registerData.user);
+
+        // Redirect to dashboard
+        const dashboardUrl = getDashboardRoute(registerData.user.role);
+        router.push(dashboardUrl);
+
+        return registerData;
+      } catch (error) {
+        console.error("❌ Registration error:", error);
+        throw error;
+      }
+    },
+    [router]
+  );
+
+  // ============================================================================
+  // AUTH METHODS - TWO FACTOR AUTHENTICATION
+  // ============================================================================
+
+  const verifyTwoFactor = useCallback(
+    async (data: TwoFactorRequest): Promise<LoginResponse> => {
+      try {
+        const response = await AuthService.verifyTwoFactor(data);
+
+        if (!response.success || !response.data) {
+          throw new Error(response.error?.message || "2FA verification failed");
+        }
+
+        const loginData = response.data;
+        console.log("✅ 2FA verified:", loginData.user.email);
+        setUser(loginData.user);
+
+        // Redirect to dashboard
+        const dashboardUrl = getDashboardRoute(loginData.user.role);
+        router.push(dashboardUrl);
+
+        return loginData;
+      } catch (error) {
+        console.error("❌ 2FA verification error:", error);
+        throw error;
+      }
+    },
+    [router]
+  );
+
+  const setup2FA = useCallback(async (): Promise<TwoFactorSetupResponse> => {
+    try {
+      const response = await AuthService.setup2FA();
+
+      if (!response.success || !response.data) {
+        throw new Error(response.error?.message || "2FA setup failed");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("❌ 2FA setup error:", error);
+      throw error;
+    }
+  }, []);
+
+  const disable2FA = useCallback(async () => {
+    try {
+      const response = await AuthService.disable2FA();
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "2FA disable failed");
+      }
+
+      console.log("✅ 2FA disabled");
+    } catch (error) {
+      console.error("❌ 2FA disable error:", error);
+      throw error;
+    }
+  }, []);
+
+  // ============================================================================
+  // AUTH METHODS - PASSWORD MANAGEMENT
+  // ============================================================================
+
+  const resetPassword = useCallback(async (email: string) => {
+    try {
+      const response = await AuthService.forgotPassword(email);
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "Password reset request failed");
+      }
+
+      console.log("✅ Password reset email sent");
+    } catch (error) {
+      console.error("❌ Password reset error:", error);
+      throw error;
+    }
+  }, []);
+
+  const confirmResetPassword = useCallback(
+    async (data: ResetPasswordConfirmRequest) => {
+      try {
+        const response = await AuthService.resetPassword(data);
+
+        if (!response.success) {
+          throw new Error(response.error?.message || "Password reset failed");
+        }
+
+        console.log("✅ Password reset successful");
+      } catch (error) {
+        console.error("❌ Password reset confirmation error:", error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  const changePassword = useCallback(async (data: ChangePasswordRequest) => {
+    try {
+      const response = await AuthService.changePassword(data);
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "Password change failed");
+      }
+
+      console.log("✅ Password changed successfully");
+    } catch (error) {
+      console.error("❌ Password change error:", error);
+      throw error;
+    }
+  }, []);
+
+  // ============================================================================
+  // AUTH METHODS - EMAIL VERIFICATION
+  // ============================================================================
+
+  const verifyEmail = useCallback(async (token: string) => {
+    try {
+      const response = await AuthService.verifyEmail(token);
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "Email verification failed");
+      }
+
+      console.log("✅ Email verified");
+    } catch (error) {
+      console.error("❌ Email verification error:", error);
+      throw error;
+    }
+  }, []);
+
+  const resendVerification = useCallback(async () => {
+    try {
+      const response = await AuthService.resendVerification();
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "Resend verification failed");
+      }
+
+      console.log("✅ Verification email resent");
+    } catch (error) {
+      console.error("❌ Resend verification error:", error);
+      throw error;
+    }
+  }, []);
+
+  // ============================================================================
+  // AUTH METHODS - TOKEN & SESSION MANAGEMENT
+  // ============================================================================
+
   const refreshToken = useCallback(async () => {
     try {
-      await AuthService.refreshToken();
+      const response = await AuthService.refreshToken();
+
+      if (!response.success) {
+        throw new Error("Token refresh failed");
+      }
+
+      console.log("✅ Token refreshed");
     } catch (error) {
-      console.error('Token refresh error:', error);
-      await handleLogout(true);
+      console.error("❌ Token refresh error:", error);
+      // If refresh fails, logout user
+      await logout();
+      throw error;
     }
-  }, [handleLogout]);
+  }, [logout]);
+
+  const getSessions = useCallback(async (): Promise<Session[]> => {
+    try {
+      const response = await AuthService.getSessions();
+
+      if (!response.success || !response.data) {
+        throw new Error(response.error?.message || "Failed to get sessions");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("❌ Get sessions error:", error);
+      throw error;
+    }
+  }, []);
+
+  const revokeSession = useCallback(async (sessionId: string) => {
+    try {
+      const response = await AuthService.revokeSession(sessionId);
+
+      if (!response.success) {
+        throw new Error(response.error?.message || "Failed to revoke session");
+      }
+
+      console.log("✅ Session revoked:", sessionId);
+    } catch (error) {
+      console.error("❌ Revoke session error:", error);
+      throw error;
+    }
+  }, []);
+
+  // ============================================================================
+  // CONTEXT VALUE - MATCHES AuthContextType INTERFACE EXACTLY
+  // ============================================================================
 
   const value: AuthContextType = {
+    // State
     user,
-    isAuthenticated,
-    isLoading,
+    isInitialized: !isLoading,
+    
+    // Auth methods
     login,
+    loginWithGoogle,
+    loginWithFacebook,
     logout,
+    register,
+    
+    // 2FA methods
+    verifyTwoFactor,
+    setup2FA,
+    disable2FA,
+    
+    // Password methods
+    resetPassword,
+    confirmResetPassword,
+    changePassword,
+    
+    // Email verification
+    verifyEmail,
+    resendVerification,
+    
+    // Token & Session management
     refreshToken,
+    getSessions,
+    revokeSession,
+    
+    // Permission checks
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
     hasRole,
     hasAnyRole,
-    hasPermission,
-    hasAllPermissions,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -190,10 +471,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  
+
   return context;
 }

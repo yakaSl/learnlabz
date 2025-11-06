@@ -135,10 +135,12 @@ export async function POST(request: NextRequest) {
         requiresTwoFactor: false,
       } as LoginResponse,
     });
-console.log("tokenPair",tokenPair);
+    console.log("🔑 Tokens generated");
 
-    // 10. Set auth cookies
+    // 11. Set cookies on the response
     setAuthCookies(response, tokenPair);
+
+    console.log("✅ Login successful, cookies set");
 
     return response;
   } catch (error) {

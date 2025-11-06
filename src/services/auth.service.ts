@@ -1,4 +1,3 @@
-
 /**
  * Authentication Service
  * Handles all authentication-related API calls
@@ -21,41 +20,40 @@ import {
   TokenPair,
   User,
   ApiResponse,
-} from '@/types/auth.types';
-import { AUTH_CONFIG } from '@/app/lib/auth';
-import { destroyCookie, parseCookies } from 'nookies';
+} from "@/types/auth.types";
+import { AUTH_CONFIG } from "@/app/lib/auth";
 
 // ============================================================================
 // API CONFIGURATION
 // ============================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const AUTH_ENDPOINTS = {
-  login: '/auth/login',
-  register: '/auth/register',
-  logout: '/auth/logout',
-  refreshToken: '/auth/refresh',
-  forgotPassword: '/auth/forgot-password',
-  resetPassword: '/auth/reset-password',
-  changePassword: '/auth/change-password',
-  verifyEmail: '/auth/verify-email',
-  resendVerification: '/auth/resend-verification',
-  
+  login: "/auth/login", // ✅ Add /api
+  register: "/auth/register", // ✅ Add /api
+  logout: "/auth/logout", // ✅ Add /api
+  refreshToken: "/auth/refresh", // ✅ Add /api
+  forgotPassword: "/auth/forgot-password", // ✅ Add /api
+  resetPassword: "/auth/reset-password", // ✅ Add /api
+  changePassword: "/auth/change-password", // ✅ Add /api
+  verifyEmail: "/auth/verify-email", // ✅ Add /api
+  resendVerification: "/auth/resend-verification", // ✅ Add /api
+
   // 2FA endpoints
-  setup2FA: '/auth/2fa/setup',
-  verify2FA: '/auth/2fa/verify',
-  disable2FA: '/auth/2fa/disable',
-  
+  setup2FA: "/auth/2fa/setup", // ✅ Add /api
+  verify2FA: "/auth/2fa/verify", // ✅ Add /api
+  disable2FA: "/auth/2fa/disable", // ✅ Add /api
+
   // Session management
-  sessions: '/auth/sessions',
-  revokeSession: '/auth/sessions/revoke',
-  
+  sessions: "/auth/sessions", // ✅ Add /api
+  revokeSession: "/auth/sessions/revoke", // ✅ Add /api
+
   // Social auth
-  googleLogin: '/auth/google',
-  facebookLogin: '/auth/facebook',
-  
+  googleLogin: "/auth/google", // ✅ Add /api
+  facebookLogin: "/auth/facebook", // ✅ Add /api
+
   // User info
-  me: '/auth/me',
+  me: "/auth/me", // ✅ Already correct
 };
 
 // ============================================================================
@@ -77,9 +75,9 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const defaultHeaders: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     const config: RequestInit = {
@@ -88,7 +86,7 @@ class ApiClient {
         ...defaultHeaders,
         ...options.headers,
       },
-      // credentials: 'include', // Next.js API routes automatically handle cookies
+      credentials: "include", // Next.js API routes automatically handle cookies
     };
 
     try {
@@ -99,8 +97,8 @@ class ApiClient {
         return {
           success: false,
           error: data.error || {
-            code: 'UNKNOWN_ERROR',
-            message: 'An unexpected error occurred',
+            code: "UNKNOWN_ERROR",
+            message: "An unexpected error occurred",
           },
         };
       }
@@ -110,12 +108,12 @@ class ApiClient {
         data: data.data || data,
       };
     } catch (error) {
-      console.error('API Request Error:', error);
+      console.error("API Request Error:", error);
       return {
         success: false,
         error: {
-          code: 'NETWORK_ERROR',
-          message: 'Failed to connect to the server',
+          code: "NETWORK_ERROR",
+          message: "Failed to connect to the server",
           details: { originalError: error },
         },
       };
@@ -125,9 +123,12 @@ class ApiClient {
   /**
    * GET request
    */
-  async get<T>(endpoint: string, headers?: HeadersInit): Promise<ApiResponse<T>> {
+  async get<T>(
+    endpoint: string,
+    headers?: HeadersInit
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'GET',
+      method: "GET",
       headers,
     });
   }
@@ -135,9 +136,13 @@ class ApiClient {
   /**
    * POST request
    */
-  async post<T>(endpoint: string, body?: unknown, headers?: HeadersInit): Promise<ApiResponse<T>> {
+  async post<T>(
+    endpoint: string,
+    body?: unknown,
+    headers?: HeadersInit
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: body ? JSON.stringify(body) : undefined,
     });
@@ -146,9 +151,13 @@ class ApiClient {
   /**
    * PUT request
    */
-  async put<T>(endpoint: string, body?: unknown, headers?: HeadersInit): Promise<ApiResponse<T>> {
+  async put<T>(
+    endpoint: string,
+    body?: unknown,
+    headers?: HeadersInit
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       headers,
       body: body ? JSON.stringify(body) : undefined,
     });
@@ -157,9 +166,12 @@ class ApiClient {
   /**
    * DELETE request
    */
-  async delete<T>(endpoint: string, headers?: HeadersInit): Promise<ApiResponse<T>> {
+  async delete<T>(
+    endpoint: string,
+    headers?: HeadersInit
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: 'DELETE',
+      method: "DELETE",
       headers,
     });
   }
@@ -175,7 +187,9 @@ export class AuthService {
   /**
    * Login with email and password
    */
-  static async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
+  static async login(
+    credentials: LoginRequest
+  ): Promise<ApiResponse<LoginResponse>> {
     return apiClient.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
   }
 
@@ -186,7 +200,7 @@ export class AuthService {
     // Redirect to Google OAuth endpoint
     // The backend will handle the OAuth flow and redirect back
     window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.googleLogin}`;
-    
+
     // Return a pending promise that will never resolve
     // The page will redirect before this matters
     return new Promise(() => {});
@@ -198,21 +212,25 @@ export class AuthService {
   static async loginWithFacebook(): Promise<ApiResponse<LoginResponse>> {
     // Redirect to Facebook OAuth endpoint
     window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.facebookLogin}`;
-    
+
     return new Promise(() => {});
   }
 
   /**
    * Verify 2FA code
    */
-  static async verifyTwoFactor(data: TwoFactorRequest): Promise<ApiResponse<LoginResponse>> {
+  static async verifyTwoFactor(
+    data: TwoFactorRequest
+  ): Promise<ApiResponse<LoginResponse>> {
     return apiClient.post<LoginResponse>(AUTH_ENDPOINTS.verify2FA, data);
   }
 
   /**
    * Register new user
    */
-  static async register(data: RegisterRequest): Promise<ApiResponse<RegisterResponse>> {
+  static async register(
+    data: RegisterRequest
+  ): Promise<ApiResponse<RegisterResponse>> {
     return apiClient.post<RegisterResponse>(AUTH_ENDPOINTS.register, data);
   }
 
@@ -240,14 +258,18 @@ export class AuthService {
   /**
    * Reset password with token
    */
-  static async resetPassword(data: ResetPasswordConfirmRequest): Promise<ApiResponse<void>> {
+  static async resetPassword(
+    data: ResetPasswordConfirmRequest
+  ): Promise<ApiResponse<void>> {
     return apiClient.post<void>(AUTH_ENDPOINTS.resetPassword, data);
   }
 
   /**
    * Change password (authenticated user)
    */
-  static async changePassword(data: ChangePasswordRequest): Promise<ApiResponse<void>> {
+  static async changePassword(
+    data: ChangePasswordRequest
+  ): Promise<ApiResponse<void>> {
     return apiClient.post<void>(AUTH_ENDPOINTS.changePassword, data);
   }
 
@@ -275,7 +297,9 @@ export class AuthService {
   /**
    * Verify 2FA setup with code
    */
-  static async verify2FASetup(data: TwoFactorVerifyRequest): Promise<ApiResponse<void>> {
+  static async verify2FASetup(
+    data: TwoFactorVerifyRequest
+  ): Promise<ApiResponse<void>> {
     return apiClient.post<void>(`${AUTH_ENDPOINTS.setup2FA}/verify`, data);
   }
 
@@ -304,21 +328,61 @@ export class AuthService {
    * Revoke a specific session
    */
   static async revokeSession(sessionId: string): Promise<ApiResponse<void>> {
-    return apiClient.delete<void>(`${AUTH_ENDPOINTS.revokeSession}/${sessionId}`);
+    return apiClient.delete<void>(
+      `${AUTH_ENDPOINTS.revokeSession}/${sessionId}`
+    );
+  }
+
+  /**
+   * Parse cookies from document.cookie (client-side only)
+   */
+  private static parseCookiesFromDocument(): Record<string, string> {
+    if (typeof window === "undefined") return {};
+
+    return document.cookie.split(";").reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split("=");
+      if (key && value) {
+        acc[key] = decodeURIComponent(value);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+
+  /**
+   * Get specific cookie value
+   */
+  private static getCookie(name: string): string | null {
+    const cookies = this.parseCookiesFromDocument();
+    return cookies[name] || null;
   }
 
   /**
    * Check if user is authenticated (client-side check)
    */
   static hasAuthToken(): boolean {
-    if (typeof window === 'undefined') return false;
-    const cookies = parseCookies();
-    return !!cookies[AUTH_CONFIG.cookies.accessToken];
+    if (typeof window === "undefined") return false;
+
+    const token = this.getCookie(AUTH_CONFIG.cookies.accessToken);
+
+    console.log("🔍 Checking auth token...");
+    console.log("🍪 All cookies:", this.parseCookiesFromDocument());
+    console.log("🔑 Looking for:", AUTH_CONFIG.cookies.accessToken);
+    console.log("✅ Has token:", !!token);
+
+    return !!token;
   }
-  
+
+  /**
+   * Clear authentication tokens
+   */
   static clearTokens(): void {
-    destroyCookie(null, AUTH_CONFIG.cookies.accessToken, { path: '/' });
-    destroyCookie(null, AUTH_CONFIG.cookies.refreshToken, { path: '/' });
+    if (typeof window === "undefined") return;
+
+    const expireDate = "Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = `${AUTH_CONFIG.cookies.accessToken}=; path=/; expires=${expireDate}; max-age=0`;
+    document.cookie = `${AUTH_CONFIG.cookies.refreshToken}=; path=/; expires=${expireDate}; max-age=0`;
+
+    console.log("🗑️ Auth tokens cleared");
   }
 }
 
@@ -328,17 +392,18 @@ export class AuthService {
 
 export function getAuthErrorMessage(errorCode: string): string {
   const errorMessages: Record<string, string> = {
-    INVALID_CREDENTIALS: 'Invalid email or password',
-    USER_NOT_FOUND: 'No account found with this email',
-    EMAIL_ALREADY_EXISTS: 'An account with this email already exists',
-    INVALID_TOKEN: 'Invalid or expired token',
-    INVALID_2FA_CODE: 'Invalid authentication code',
-    ACCOUNT_BLOCKED: 'Your account has been blocked. Please contact support.',
-    EMAIL_NOT_VERIFIED: 'Please verify your email address',
-    PASSWORD_TOO_WEAK: 'Password does not meet security requirements',
-    SESSION_EXPIRED: 'Your session has expired. Please login again.',
-    NETWORK_ERROR: 'Unable to connect to the server. Please check your internet connection.',
-    UNKNOWN_ERROR: 'An unexpected error occurred. Please try again.',
+    INVALID_CREDENTIALS: "Invalid email or password",
+    USER_NOT_FOUND: "No account found with this email",
+    EMAIL_ALREADY_EXISTS: "An account with this email already exists",
+    INVALID_TOKEN: "Invalid or expired token",
+    INVALID_2FA_CODE: "Invalid authentication code",
+    ACCOUNT_BLOCKED: "Your account has been blocked. Please contact support.",
+    EMAIL_NOT_VERIFIED: "Please verify your email address",
+    PASSWORD_TOO_WEAK: "Password does not meet security requirements",
+    SESSION_EXPIRED: "Your session has expired. Please login again.",
+    NETWORK_ERROR:
+      "Unable to connect to the server. Please check your internet connection.",
+    UNKNOWN_ERROR: "An unexpected error occurred. Please try again.",
   };
 
   return errorMessages[errorCode] || errorMessages.UNKNOWN_ERROR;

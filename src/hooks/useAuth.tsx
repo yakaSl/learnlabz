@@ -139,14 +139,7 @@ function AuthProviderContent({ children }: AuthProviderProps) {
    */
   const loginWithGoogle = useCallback(async (): Promise<void> => {
     try {
-      const response = await AuthService.loginWithGoogle();
-      
-      if (!response.success || !response.data) {
-        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
-      }
-
-      // Redirect to Google OAuth URL
-      window.location.href = response.data.url;
+      await AuthService.loginWithGoogle();
     } catch (error) {
       console.error('Google login error:', error);
       throw error;
@@ -158,14 +151,7 @@ function AuthProviderContent({ children }: AuthProviderProps) {
    */
   const loginWithFacebook = useCallback(async (): Promise<void> => {
     try {
-      const response = await AuthService.loginWithFacebook();
-      
-      if (!response.success || !response.data) {
-        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
-      }
-
-      // Redirect to Facebook OAuth URL
-      window.location.href = response.data.url;
+      await AuthService.loginWithFacebook();
     } catch (error) {
       console.error('Facebook login error:', error);
       throw error;

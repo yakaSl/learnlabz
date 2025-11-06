@@ -46,8 +46,12 @@ export function AuthGuard({
   fallback,
   redirectOnUnauthorized = ERROR_ROUTES.unauthorized,
 }: AuthGuardProps) {
-  const { user, isAuthenticated, isLoading, hasAnyRole } = useAuth();
+  const { user, isInitialized, hasAnyRole } = useAuth();
   const router = useRouter();
+
+  // isAuthenticated = !!user (user exists means authenticated)
+  const isAuthenticated = !!user;
+  const isLoading = !isInitialized;
 
   useEffect(() => {
     // Wait for auth to initialize
@@ -208,9 +212,9 @@ export function ShowForRoles({ roles, children, fallback }: ConditionalRenderPro
  * Show content only for authenticated users
  */
 export function ShowForAuth({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <>{fallback || null}</>;
   }
 
@@ -221,9 +225,9 @@ export function ShowForAuth({ children, fallback }: { children: ReactNode; fallb
  * Show content only for guests (non-authenticated users)
  */
 export function ShowForGuests({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
-  if (isAuthenticated) {
+  if (user) {
     return <>{fallback || null}</>;
   }
 

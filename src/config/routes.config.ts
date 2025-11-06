@@ -60,6 +60,7 @@ export const DASHBOARD_ROUTES: Record<UserRole, string> = {
   [UserRole.COORDINATOR]: '/coordinator',
   [UserRole.STUDENT]: '/student',
   [UserRole.PARENT]: '/parent',
+  [UserRole.TEACHER_ASSISTANT]: '/teacher-assistant'
 } as const;
 
 /**

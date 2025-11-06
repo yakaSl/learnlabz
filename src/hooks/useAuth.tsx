@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initializeAuth = async () => {
       console.log("🔄 Initializing auth...");
       console.log("AuthService.hasAuthToken()", AuthService.hasAuthToken());
-      
+
       try {
         // Check if we have cookies
         if (!AuthService.hasAuthToken()) {
@@ -295,7 +295,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await AuthService.forgotPassword(email);
 
       if (!response.success) {
-        throw new Error(response.error?.message || "Password reset request failed");
+        throw new Error(
+          response.error?.message || "Password reset request failed"
+        );
       }
 
       console.log("✅ Password reset email sent");
@@ -362,7 +364,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await AuthService.resendVerification();
 
       if (!response.success) {
-        throw new Error(response.error?.message || "Resend verification failed");
+        throw new Error(
+          response.error?.message || "Resend verification failed"
+        );
       }
 
       console.log("✅ Verification email resent");
@@ -431,33 +435,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // State
     user,
     isInitialized: !isLoading,
-    
+
     // Auth methods
     login,
     loginWithGoogle,
     loginWithFacebook,
     logout,
     register,
-    
+
     // 2FA methods
     verifyTwoFactor,
     setup2FA,
     disable2FA,
-    
+
     // Password methods
     resetPassword,
     confirmResetPassword,
     changePassword,
-    
+
     // Email verification
     verifyEmail,
     resendVerification,
-    
+
     // Token & Session management
     refreshToken,
     getSessions,
     revokeSession,
-    
+
     // Permission checks
     hasPermission,
     hasAnyPermission,

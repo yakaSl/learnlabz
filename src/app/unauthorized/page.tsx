@@ -3,24 +3,24 @@
  * Shown when users try to access routes they don't have permission for
  */
 
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { getDashboardRoute } from '@/config/routes.config';
-import { Button } from '@/components/ui/button';
-import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { getDashboardRoute } from "@/config/routes.config";
+import { Button } from "@/components/ui/button";
+import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
 
 export default function UnauthorizedPage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth(); // ✅ Removed isAuthenticated - use user instead
 
   const handleGoToDashboard = () => {
     if (user) {
       const dashboardUrl = getDashboardRoute(user.role);
       router.push(dashboardUrl);
     } else {
-      router.push('/');
+      router.push("/");
     }
   };
 
@@ -40,9 +40,7 @@ export default function UnauthorizedPage() {
 
         {/* Title */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Access Denied
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight">Access Denied</h1>
           <p className="text-lg text-muted-foreground">
             You don't have permission to access this page
           </p>
@@ -51,9 +49,9 @@ export default function UnauthorizedPage() {
         {/* Description */}
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            {isAuthenticated && user
+            {user
               ? `Your current role (${user.role}) doesn't have access to this resource. If you believe this is a mistake, please contact your administrator.`
-              : 'Please log in with an account that has the required permissions.'}
+              : "Please log in with an account that has the required permissions."}
           </p>
         </div>
 
@@ -67,18 +65,18 @@ export default function UnauthorizedPage() {
             <ArrowLeft className="h-4 w-4" />
             Go Back
           </Button>
-          
+
           <Button
             onClick={handleGoToDashboard}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
-            {isAuthenticated ? 'Go to Dashboard' : 'Go to Home'}
+            {user ? "Go to Dashboard" : "Go to Home"}
           </Button>
         </div>
 
         {/* Additional Info */}
-        {isAuthenticated && user && (
+        {user && (
           <div className="pt-8 border-t">
             <p className="text-xs text-muted-foreground">
               Logged in as: <span className="font-medium">{user.email}</span>

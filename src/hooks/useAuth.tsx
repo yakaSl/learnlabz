@@ -1,4 +1,3 @@
-
 /**
  * useAuth Hook
  * React hook for authentication state management
@@ -6,7 +5,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthService, { getAuthErrorMessage } from '@/services/auth.service';
 import {
@@ -78,7 +77,7 @@ const roleDashboardPaths: Record<UserRole, string> = {
     [UserRole.COORDINATOR]: '/coordinator',
 };
 
-export function AuthProvider({ children }: AuthProviderProps) {
+function AuthProviderContent({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
@@ -133,15 +132,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Login error:', error);
       throw error;
     }
-  }, [router, searchParams]);
+  }, [handleSuccessfulAuth]);
 
   /**
-   * Login with Google
+   * Login with Google OAuth
    */
-  const loginWithGoogle = useCallback(async () => {
+  const loginWithGoogle = useCallback(async (): Promise<void> => {
     try {
-      // AuthService.loginWithGoogle will redirect to OAuth flow
-      await AuthService.loginWithGoogle();
+      const response = await AuthService.loginWithGoogle();
+      
+      if (!response.success || !response.data) {
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
+      }
+
+      // Redirect to Google OAuth URL
+      window.location.href = response.data.url;
     } catch (error) {
       console.error('Google login error:', error);
       throw error;
@@ -149,11 +154,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   /**
-   * Login with Facebook
+   * Login with Facebook OAuth
    */
-  const loginWithFacebook = useCallback(async () => {
+  const loginWithFacebook = useCallback(async (): Promise<void> => {
     try {
-      await AuthService.loginWithFacebook();
+      const response = await AuthService.loginWithFacebook();
+      
+      if (!response.success || !response.data) {
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
+      }
+
+      // Redirect to Facebook OAuth URL
+      window.location.href = response.data.url;
     } catch (error) {
       console.error('Facebook login error:', error);
       throw error;
@@ -161,66 +173,62 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   /**
-   * Verify 2FA code
+   * Logout user
    */
-  const verifyTwoFactor = useCallback(async (data: TwoFactorRequest): Promise<LoginResponse> => {
+  const logout = useCallback(async (): Promise<void> => {
     try {
-      const response = await AuthService.verifyTwoFactor(data);
-
-      if (!response.success || !response.data) {
-        throw new Error(getAuthErrorMessage(response.error?.code || 'INVALID_2FA_CODE'));
-      }
-
-      const loginData = response.data;
-      const verifiedUser = loginData.user;
-      
-      handleSuccessfulAuth(verifiedUser);
-      
-      return loginData;
+      await AuthService.logout();
+      setUser(null);
+      router.push('/login');
     } catch (error) {
-      console.error('2FA verification error:', error);
-      throw error;
+      console.error('Logout error:', error);
+      // Even if API call fails, clear local state and redirect
+      setUser(null);
+      router.push('/login');
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   /**
    * Register new user
    */
-  const register = useCallback(async (data: RegisterRequest): Promise<RegisterResponse> => {
+  const register = useCallback(async (userData: RegisterRequest): Promise<RegisterResponse> => {
     try {
-      const response = await AuthService.register(data);
+      const response = await AuthService.register(userData);
 
       if (!response.success || !response.data) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
 
-      const registerData = response.data;
-      const newUser = registerData.user;
+      const registeredUser = response.data.user;
+      handleSuccessfulAuth(registeredUser);
 
-      handleSuccessfulAuth(newUser);
-
-      return registerData;
+      return response.data;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
     }
-  }, [router, searchParams]);
+  }, [handleSuccessfulAuth]);
 
   /**
-   * Logout user
+   * Verify 2FA code
    */
-  const logout = useCallback(async () => {
+  const verifyTwoFactor = useCallback(async (twoFactorData: TwoFactorRequest): Promise<LoginResponse> => {
     try {
-      setUser(null);
-      await AuthService.logout(); // Clear cookies on server
-      router.push('/login');
+      const response = await AuthService.verifyTwoFactor(twoFactorData);
+
+      if (!response.success || !response.data) {
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
+      }
+
+      const loggedInUser = response.data.user;
+      handleSuccessfulAuth(loggedInUser);
+
+      return response.data;
     } catch (error) {
-      console.error('Logout error:', error);
-      // Still logout locally even if API call fails
-       setUser(null);
-       router.push('/login');
+      console.error('2FA verification error:', error);
+      throw error;
     }
-  }, [router]);
+  }, [handleSuccessfulAuth]);
 
   /**
    * Setup 2FA
@@ -243,7 +251,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Disable 2FA
    */
-  const disable2FA = useCallback(async () => {
+  const disable2FA = useCallback(async (): Promise<void> => {
     try {
       const response = await AuthService.disable2FA();
 
@@ -251,7 +259,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
 
-      // Update user state
+      // Update user state to reflect 2FA disabled
       if (user) {
         setUser({ ...user, twoFactorEnabled: false });
       }
@@ -262,17 +270,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [user]);
 
   /**
-   * Reset password
+   * Request password reset
    */
-  const resetPassword = useCallback(async (email: string) => {
+  const resetPassword = useCallback(async (email: string): Promise<void> => {
     try {
-      const response = await AuthService.forgotPassword(email);
+      const response = await AuthService.resetPassword(email);
 
       if (!response.success) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
     } catch (error) {
-      console.error('Reset password error:', error);
+      console.error('Password reset request error:', error);
       throw error;
     }
   }, []);
@@ -280,25 +288,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Confirm password reset with token
    */
-  const confirmResetPassword = useCallback(async (data: ResetPasswordConfirmRequest) => {
+  const confirmResetPassword = useCallback(async (data: ResetPasswordConfirmRequest): Promise<void> => {
     try {
-      const response = await AuthService.resetPassword(data);
+      const response = await AuthService.confirmResetPassword(data);
 
       if (!response.success) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
-
-      router.push('/login');
     } catch (error) {
-      console.error('Confirm reset password error:', error);
+      console.error('Password reset confirmation error:', error);
       throw error;
     }
-  }, [router]);
+  }, []);
 
   /**
    * Change password
    */
-  const changePassword = useCallback(async (data: ChangePasswordRequest) => {
+  const changePassword = useCallback(async (data: ChangePasswordRequest): Promise<void> => {
     try {
       const response = await AuthService.changePassword(data);
 
@@ -306,15 +312,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
     } catch (error) {
-      console.error('Change password error:', error);
+      console.error('Password change error:', error);
       throw error;
     }
   }, []);
 
   /**
-   * Verify email
+   * Verify email with token
    */
-  const verifyEmail = useCallback(async (token: string) => {
+  const verifyEmail = useCallback(async (token: string): Promise<void> => {
     try {
       const response = await AuthService.verifyEmail(token);
 
@@ -322,7 +328,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
 
-      // Update user state
+      // Update user state to reflect verified email
       if (user) {
         setUser({ ...user, emailVerified: true });
       }
@@ -335,7 +341,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Resend verification email
    */
-  const resendVerification = useCallback(async () => {
+  const resendVerification = useCallback(async (): Promise<void> => {
     try {
       const response = await AuthService.resendVerification();
 
@@ -351,46 +357,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Refresh access token
    */
-  const refreshToken = useCallback(async () => {
+  const refreshToken = useCallback(async (): Promise<void> => {
     try {
       const response = await AuthService.refreshToken();
 
       if (!response.success) {
-        throw new Error('Failed to refresh token');
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
     } catch (error) {
       console.error('Token refresh error:', error);
-      await logout();
+      throw error;
     }
-  }, [logout]);
+  }, []);
 
   /**
-   * Get user sessions
+   * Get active sessions
    */
   const getSessions = useCallback(async (): Promise<Session[]> => {
     try {
       const response = await AuthService.getSessions();
 
       if (!response.success || !response.data) {
-        throw new Error('Failed to fetch sessions');
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
 
       return response.data;
     } catch (error) {
       console.error('Get sessions error:', error);
-      return [];
+      throw error;
     }
   }, []);
 
   /**
-   * Revoke a session
+   * Revoke a specific session
    */
-  const revokeSession = useCallback(async (sessionId: string) => {
+  const revokeSession = useCallback(async (sessionId: string): Promise<void> => {
     try {
       const response = await AuthService.revokeSession(sessionId);
 
       if (!response.success) {
-        throw new Error('Failed to revoke session');
+        throw new Error(getAuthErrorMessage(response.error?.code || 'UNKNOWN_ERROR'));
       }
     } catch (error) {
       console.error('Revoke session error:', error);
@@ -486,6 +492,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthProviderContent>{children}</AuthProviderContent>
+    </Suspense>
+  );
 }
 
 // ============================================================================

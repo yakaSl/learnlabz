@@ -9,6 +9,7 @@ import Testimonials from '@/components/landing/testimonials';
 import Footer from '@/components/landing/footer';
 import Pricing from '@/components/landing/pricing';
 import About from '@/components/landing/about';
+import Cta from '@/components/landing/cta';
 
 export default function LandingPage() {
   return (
@@ -20,6 +21,7 @@ export default function LandingPage() {
         <Testimonials />
         <Pricing />
         <About />
+        <Cta />
       </main>
       <Footer />
     </div>

@@ -2,27 +2,33 @@
   "placeholderImages": [
     {
       "id": "hero-teacher-students",
-      "description": "A teacher in a bright classroom environment, smiling and interacting with a small group of engaged students.",
-      "imageUrl": "https://images.unsplash.com/photo-1739249327281-e918124ac540?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0ZWFjaGVyJTIwc3R1ZGVudHN8ZW58MHx8fHwxNzYxMTQ4MjM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "A teacher smiling and interacting with a small group of engaged students in a bright classroom.",
+      "imageUrl": "https://picsum.photos/seed/nps-1/600/400",
       "imageHint": "teacher students"
     },
     {
       "id": "testimonial-1",
       "description": "Avatar for Sarah J.",
-      "imageUrl": "https://images.unsplash.com/photo-1689045246827-3b2a4ac9bfb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMHNtaWxpbmd8ZW58MHx8fHwxNzYxMTY3OTY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://picsum.photos/seed/nps-2/100/100",
       "imageHint": "portrait smiling"
     },
     {
       "id": "testimonial-2",
       "description": "Avatar for Michael B.",
-      "imageUrl": "https://images.unsplash.com/photo-1584940121819-1883a5d3b0bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJzb24lMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzYxMTMyMjA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://picsum.photos/seed/nps-3/100/100",
       "imageHint": "person professional"
     },
     {
       "id": "testimonial-3",
       "description": "Avatar for Emily R.",
-      "imageUrl": "https://images.unsplash.com/photo-1752652015997-760c7db923d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlZHVjYXRvciUyMHNtaWxpbmd8ZW58MHx8fHwxNzYxMjEzOTUyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://picsum.photos/seed/nps-4/100/100",
       "imageHint": "educator smiling"
+    },
+    {
+      "id": "cta-image",
+      "description": "A diverse group of students collaborating on a project.",
+      "imageUrl": "https://picsum.photos/seed/nps-5/600/400",
+      "imageHint": "students collaborating"
     }
   ]
 }

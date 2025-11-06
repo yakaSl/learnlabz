@@ -48,7 +48,7 @@ export default function Header() {
           <Button variant="ghost" asChild>
             <Link href="/login">Login</Link>
           </Button>
-          <Button variant="accent" asChild>
+          <Button asChild>
             <Link href="/register">Get Started</Link>
           </Button>
           <Sheet open={open} onOpenChange={setOpen}>

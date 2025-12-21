@@ -3,15 +3,15 @@
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
-import SettingsPage from "@/components/institute-admin/settings/settings-page";
+import BillingManagement from "@/components/institute-admin/billing/billing-management";
 
-export default function InstituteSettingsPage() {
+export default function BillingPage() {
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
-      <SettingsPage />
+      <BillingManagement />
     </ProtectedRoute>
   );
 }

@@ -3,7 +3,7 @@
  * Central export point for all mock data
  */
 
-export * from './users.mock';
+// export * from './users.mock';
 
 // Add other mock data exports here as needed:
 // export * from './institutes.mock';

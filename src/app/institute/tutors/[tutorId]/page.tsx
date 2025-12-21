@@ -10,7 +10,7 @@ export default function TutorDetailPage({ params }: { params: Promise<{ tutorId:
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
       <TutorProfilePage tutorId={tutorId} />
     </ProtectedRoute>

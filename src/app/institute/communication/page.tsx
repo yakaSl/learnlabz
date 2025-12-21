@@ -3,15 +3,15 @@
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
-import ReportsAndAnalytics from "@/components/institute-admin/reports/reports-analytics";
+import CommunicationHub from "@/components/institute-admin/communication/communication-hub";
 
-export default function ReportsPage() {
+export default function CommunicationPage() {
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
-      <ReportsAndAnalytics />
+      <CommunicationHub />
     </ProtectedRoute>
   );
 }

@@ -29,7 +29,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
 
-  const { register } = useAuth();
+  // const { register } = useAuth(); // Register functionality not implemented yet
   const router = useRouter();
 
   /**
@@ -75,8 +75,9 @@ export default function RegisterPage() {
     }
 
     try {
-      await register(formData);
+      // await register(formData); // Registration not implemented yet
       // Registration successful, redirect handled by useAuth
+      setError('Registration is not yet implemented. Please contact your administrator.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -145,7 +146,7 @@ export default function RegisterPage() {
                 <option value={UserRole.STUDENT}>Student</option>
                 <option value={UserRole.PARENT}>Parent</option>
                 <option value={UserRole.TEACHER}>Teacher/Tutor</option>
-                <option value={UserRole.INSTITUTE_ADMIN}>Institute Admin</option>
+                <option value={UserRole.INSTITUTE}>Institute Admin</option>
               </select>
             </div>
 

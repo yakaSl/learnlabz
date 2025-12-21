@@ -113,7 +113,7 @@ export function SuperAdminGuard({ children, fallback }: { children: ReactNode; f
  */
 export function InstituteAdminGuard({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
   return (
-    <AuthGuard allowedRoles={[UserRole.INSTITUTE_ADMIN]} fallback={fallback}>
+    <AuthGuard allowedRoles={[UserRole.INSTITUTE]} fallback={fallback}>
       {children}
     </AuthGuard>
   );
@@ -157,7 +157,7 @@ export function ParentGuard({ children, fallback }: { children: ReactNode; fallb
  */
 export function AdminGuard({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
   return (
-    <AuthGuard allowedRoles={[UserRole.SUPER_ADMIN, UserRole.INSTITUTE_ADMIN]} fallback={fallback}>
+    <AuthGuard allowedRoles={[UserRole.SUPER_ADMIN, UserRole.INSTITUTE]} fallback={fallback}>
       {children}
     </AuthGuard>
   );
@@ -171,12 +171,9 @@ export function StaffGuard({ children, fallback }: { children: ReactNode; fallba
     <AuthGuard
       allowedRoles={[
         UserRole.SUPER_ADMIN,
-        UserRole.INSTITUTE_ADMIN,
+        UserRole.INSTITUTE,
         UserRole.TEACHER,
-        UserRole.BRANCH_MANAGER,
-        UserRole.ACCOUNTANT,
-        UserRole.COORDINATOR,
-        // UserRole.TUTOR_ASSISTANT,
+        // Removed BRANCH_MANAGER, ACCOUNTANT, COORDINATOR - not in 5 main role categories
       ]}
       fallback={fallback}
     >

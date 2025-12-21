@@ -1,0 +1,75 @@
+# =============================================================================
+# LearnLabz Frontend - Docker Compose Configuration
+# =============================================================================
+version: '3.9'
+
+services:
+  # ===========================================================================
+  # Next.js Frontend Application
+  # ===========================================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: learnlabz-frontend
+    restart: unless-stopped
+    ports:
+      - "9002:9002"
+    environment:
+      # Application
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_NAME=LearnLabz
+      - NEXT_PUBLIC_APP_URL=http://localhost:9002
+
+      # API Configuration
+      - NEXT_PUBLIC_API_URL=https://api.learnlabz.com/api
+
+      # Authentication
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-key-in-production-min-32-chars}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-change-this-refresh-key-in-production-min-32}
+
+      # Keycloak
+      - NEXT_PUBLIC_KEYCLOAK_REALM=${KEYCLOAK_REALM:-learnlabz}
+      - NEXT_PUBLIC_KEYCLOAK_URL=${KEYCLOAK_URL:-http://keycloak:8080/auth}
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-user-service}
+
+      # Feature Flags
+      - NEXT_PUBLIC_ENABLE_2FA=true
+      - NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN=false
+      - NEXT_PUBLIC_ENABLE_AI_FEATURES=true
+
+      # Logging
+      - LOG_LEVEL=info
+      - NEXT_PUBLIC_LOG_LEVEL=warn
+
+      # Telemetry
+      - NEXT_TELEMETRY_DISABLED=1
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:9002', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - learnlabz-network
+
+    labels:
+      - "com.learnlabz.description=LearnLabz Frontend Application"
+      - "com.learnlabz.service=frontend"
+      - "com.learnlabz.version=1.0.0"
+
+networks:
+  learnlabz-network:
+    driver: bridge
+    name: learnlabz-network
+
+# =============================================================================
+# VOLUMES (for future use with databases, etc.)
+# =============================================================================
+volumes:
+  frontend-cache:
+    name: learnlabz-frontend-cache

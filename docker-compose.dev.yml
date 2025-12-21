@@ -1,0 +1,60 @@
+# =============================================================================
+# LearnLabz Frontend - Development Docker Compose
+# =============================================================================
+version: '3.9'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: learnlabz-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "9002:9002"
+    environment:
+      # Application
+      - NODE_ENV=development
+      - NEXT_PUBLIC_APP_NAME=LearnLabz
+      - NEXT_PUBLIC_APP_URL=http://localhost:9002
+
+      # API Configuration
+      - NEXT_PUBLIC_API_URL=https://api.learnlabz.com/api
+
+      # Authentication
+      - JWT_SECRET=dev-secret-key-change-in-production-minimum-32-characters-required
+      - JWT_REFRESH_SECRET=dev-refresh-secret-key-change-in-production-minimum-32-chars
+
+      # Keycloak
+      - NEXT_PUBLIC_KEYCLOAK_REALM=learnlabz
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://keycloak:8080/auth
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=user-service
+
+      # Feature Flags
+      - NEXT_PUBLIC_ENABLE_2FA=true
+      - NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN=false
+      - NEXT_PUBLIC_ENABLE_AI_FEATURES=true
+
+      # Logging
+      - LOG_LEVEL=debug
+      - NEXT_PUBLIC_LOG_LEVEL=debug
+      - DEBUG=true
+      - NEXT_PUBLIC_DEBUG=true
+
+      # Telemetry
+      - NEXT_TELEMETRY_DISABLED=1
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+    networks:
+      - learnlabz-network
+
+    command: npm run dev
+
+networks:
+  learnlabz-network:
+    driver: bridge
+    name: learnlabz-network

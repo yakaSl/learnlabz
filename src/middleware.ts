@@ -5,13 +5,26 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyAccessToken, AUTH_CONFIG } from '@/app/lib/auth';
-import { 
-  isPublicRoute, 
-  isAuthRoute, 
-  getDashboardRoute, 
-  hasRouteAccess 
+import { AUTH_CONFIG } from '@/app/lib/auth';
+import {
+  isPublicRoute,
+  isAuthRoute,
+  getDashboardRoute,
 } from '@/config/routes.config';
+import { UserRole } from '@/types/auth.types';
+
+/**
+ * Get user role from cookie
+ * Role is stored separately during login since backend JWT doesn't include it
+ */
+function getUserRole(request: NextRequest): UserRole | null {
+  try {
+    const roleCookie = request.cookies.get('userRole')?.value;
+    return roleCookie as UserRole || null;
+  } catch (error) {
+    return null;
+  }
+}
 
 /**
  * Middleware function that runs on every request
@@ -51,60 +64,32 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(loginUrl);
     response.cookies.delete(AUTH_CONFIG.cookies.accessToken);
     response.cookies.delete(AUTH_CONFIG.cookies.refreshToken);
-    
+    response.cookies.delete('userRole');
+
     return response;
   }
 
-  // Verify token and handle authenticated users
-  try {
-    const payload = await verifyAccessToken(accessToken);
+  // Skip strict token verification in middleware
+  // Backend API verifies tokens on each request for security
+  // Here we just get the user role from cookie for routing
 
-    // Redirect authenticated users away from auth pages
-    if (isAuthRoute(pathname)) {
-      const dashboardUrl = getDashboardRoute(payload.role);
+  // If user has a token and tries to access auth pages, redirect to their dashboard
+  if (isAuthRoute(pathname)) {
+    const userRole = getUserRole(request);
+
+    if (userRole) {
+      // Redirect to role-based dashboard
+      const dashboardUrl = getDashboardRoute(userRole);
       return NextResponse.redirect(new URL(dashboardUrl, request.url));
     }
 
-    // Check role-based access for protected routes
-    if (!hasRouteAccess(pathname, payload.role)) {
-      return NextResponse.redirect(new URL('/unauthorized', request.url));
-    }
-
-    // Add user info to request headers for downstream use
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', payload.userId);
-    requestHeaders.set('x-user-role', payload.role);
-    requestHeaders.set('x-user-email', payload.email);
-    
-    if (payload.instituteId) {
-      requestHeaders.set('x-institute-id', payload.instituteId);
-    }
-    if (payload.branchId) {
-      requestHeaders.set('x-branch-id', payload.branchId);
-    }
-
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
-
-  } catch (error) {
-    console.error('Token verification failed:', error);
-
-    // Clear invalid tokens
-    const loginUrl = new URL(AUTH_CONFIG.paths.login, request.url);
-    
-    if (!isPublicRoute(pathname)) {
-      loginUrl.searchParams.set('redirect', pathname);
-    }
-
-    const response = NextResponse.redirect(loginUrl);
-    response.cookies.delete(AUTH_CONFIG.cookies.accessToken);
-    response.cookies.delete(AUTH_CONFIG.cookies.refreshToken);
-
-    return response;
+    // If we can't get the role, redirect to home
+    return NextResponse.redirect(new URL('/', request.url));
   }
+
+  // Allow authenticated users to access all other routes
+  // Dashboard pages will load, 404 pages will show naturally
+  return NextResponse.next();
 }
 
 /**

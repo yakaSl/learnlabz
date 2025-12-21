@@ -10,14 +10,10 @@
 
 export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
-  INSTITUTE_ADMIN = 'INSTITUTE_ADMIN',
+  INSTITUTE = 'INSTITUTE',
   TEACHER = 'TEACHER',
-  TEACHER_ASSISTANT = 'TEACHER_ASSISTANT',
-  BRANCH_MANAGER = 'BRANCH_MANAGER',
-  ACCOUNTANT = 'ACCOUNTANT',
-  COORDINATOR = 'COORDINATOR',
-  STUDENT = 'STUDENT',
-  PARENT = 'PARENT'
+  PARENT = 'PARENT',
+  STUDENT = 'STUDENT'
 }
 
 // ============================================================================
@@ -76,11 +72,11 @@ export enum Permission {
   AI_USE = 'ai:use',
 }
 
-// Role-Permission Mapping
+// Role-Permission Mapping (5 Main Roles)
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   [UserRole.SUPER_ADMIN]: Object.values(Permission),
-  
-  [UserRole.INSTITUTE_ADMIN]: [
+
+  [UserRole.INSTITUTE]: [
     Permission.INSTITUTE_READ,
     Permission.INSTITUTE_UPDATE,
     Permission.USER_CREATE,
@@ -109,7 +105,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.AI_CONFIGURE,
     Permission.AI_USE,
   ],
-  
+
   [UserRole.TEACHER]: [
     Permission.CLASS_READ,
     Permission.CLASS_UPDATE,
@@ -121,49 +117,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     Permission.AI_USE,
   ],
 
-  [UserRole.TEACHER_ASSISTANT]: [
-    Permission.CLASS_READ,
-    Permission.USER_READ,
-    Permission.CONTENT_UPDATE, // For marking attendance
-  ],
-  
-  [UserRole.BRANCH_MANAGER]: [
-    Permission.CLASS_READ,
-    Permission.CLASS_CREATE,
-    Permission.CLASS_UPDATE,
-    Permission.USER_CREATE,
-    Permission.USER_READ,
-    Permission.USER_UPDATE,
-    Permission.ANALYTICS_VIEW,
-    Permission.REPORTS_GENERATE,
-    Permission.MESSAGE_SEND,
-    Permission.ANNOUNCEMENT_CREATE,
-  ],
-  
-  [UserRole.ACCOUNTANT]: [
-    Permission.PAYMENT_VIEW,
-    Permission.PAYMENT_PROCESS,
-    Permission.PAYMENT_REFUND,
-    Permission.INVOICE_GENERATE,
-    Permission.FINANCIAL_REPORTS,
-    Permission.USER_READ,
-  ],
-  
-  [UserRole.COORDINATOR]: [
-    Permission.CLASS_READ,
-    Permission.USER_READ,
-    Permission.MESSAGE_SEND,
-    Permission.ANNOUNCEMENT_CREATE,
-    Permission.ANALYTICS_VIEW,
-  ],
-  
   [UserRole.STUDENT]: [
     Permission.CLASS_READ,
     Permission.CONTENT_UPDATE,
     Permission.MESSAGE_SEND,
     Permission.AI_USE,
   ],
-  
+
   [UserRole.PARENT]: [
     Permission.USER_READ,
     Permission.CLASS_READ,
@@ -179,26 +139,49 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
 
 export interface User {
   id: string;
+  username: string;
+  personId: string;
   email: string;
   firstName: string;
   lastName: string;
+  middleName?: string;
   role: UserRole;
+
+  // Role & Access Information
+  primaryRole: {
+    categoryCode: UserRole;
+    categoryName: string;
+    isGlobal: boolean;
+  };
+  availableInstitutes?: Array<{
+    instituteId: string;
+    instituteName: string;
+    instituteCode: string;
+    roleCodes: string[];
+  }>;
+  hasGlobalAccess: boolean;
+
+  // Institute & Branch (for backward compatibility)
   instituteId?: string;
   branchId?: string;
+
+  // Profile
   avatar?: string;
   phone?: string;
-  
+
+  // Status
   emailVerified: boolean;
   twoFactorEnabled: boolean;
   twoFactorSecret?: string;
-  
   isActive: boolean;
   isBlocked: boolean;
   lastLogin?: Date;
-  
+
+  // Timestamps
   createdAt: Date;
   updatedAt: Date;
-  
+
+  // Additional fields
   globalStudentId?: string;
   childrenIds?: string[];
 }

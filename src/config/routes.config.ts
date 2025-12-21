@@ -49,31 +49,24 @@ export const AUTH_ROUTES = {
 // ============================================================================
 
 /**
- * Dashboard routes for each user role
+ * Dashboard routes for each user role (5 Main Categories)
  */
 export const DASHBOARD_ROUTES: Record<UserRole, string> = {
   [UserRole.SUPER_ADMIN]: '/super-admin',
-  [UserRole.INSTITUTE_ADMIN]: '/institute-admin',
-  [UserRole.TEACHER]: '/tutor',
-  [UserRole.BRANCH_MANAGER]: '/branch-manager',
-  [UserRole.ACCOUNTANT]: '/accountant',
-  [UserRole.COORDINATOR]: '/coordinator',
+  [UserRole.INSTITUTE]: '/institute',
+  [UserRole.TEACHER]: '/teacher',
   [UserRole.STUDENT]: '/student',
   [UserRole.PARENT]: '/parent',
-  [UserRole.TEACHER_ASSISTANT]: '/teacher-assistant'
 } as const;
 
 /**
- * Role-based route access control
+ * Role-based route access control (5 Main Categories)
  * Maps route patterns to allowed roles
  */
 export const ROLE_ROUTE_ACCESS: Record<string, UserRole[]> = {
   '/super-admin': [UserRole.SUPER_ADMIN],
-  '/institute-admin': [UserRole.INSTITUTE_ADMIN],
-  '/tutor': [UserRole.TEACHER],
-  '/branch-manager': [UserRole.BRANCH_MANAGER],
-  '/accountant': [UserRole.ACCOUNTANT],
-  '/coordinator': [UserRole.COORDINATOR],
+  '/institute': [UserRole.INSTITUTE],
+  '/teacher': [UserRole.TEACHER],
   '/student': [UserRole.STUDENT],
   '/parent': [UserRole.PARENT],
 } as const;

@@ -1,374 +1,389 @@
 /**
- * Authentication Service
- * Handles all authentication-related API calls
+ * Authentication Service (Real Backend Integration)
+ * Handles all authentication-related API calls with backend
  */
 
-import {
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  RegisterResponse,
-  ResetPasswordRequest,
-  ResetPasswordConfirmRequest,
-  ChangePasswordRequest,
-  RefreshTokenRequest,
-  VerifyEmailRequest,
-  TwoFactorRequest,
-  TwoFactorSetupResponse,
-  TwoFactorVerifyRequest,
-  Session,
-  TokenPair,
-  User,
+import { apiClient } from '@/lib/api-client';
+import { logger } from '@/lib/logger';
+import type {
+  BackendLoginRequest,
+  BackendLoginResponse,
+  BackendRefreshTokenRequest,
+  BackendRefreshTokenResponse,
+  BackendLogoutRequest,
   ApiResponse,
-} from "@/types/auth.types";
-import { AUTH_CONFIG } from "@/app/lib/auth";
+  isApiSuccess,
+} from '@/types/api.types';
+import type {
+  User,
+  TokenPair,
+  Session,
+} from '@/types/auth.types';
+import { AUTH_CONFIG } from '@/app/lib/auth';
 
-// ============================================================================
-// API CONFIGURATION
-// ============================================================================
+// =============================================================================
+// TYPE CONVERSIONS
+// =============================================================================
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+/**
+ * Convert backend login response to frontend user format
+ * Handles new backend structure with primary_role and available_institutes
+ */
+function convertBackendLoginToUser(loginResponse: BackendLoginResponse): User {
+  const { user, primary_role, available_institutes, has_global_access } = loginResponse;
+
+  // Map backend role to frontend UserRole
+  const role = primary_role.category_code as any;
+
+  // Get first institute ID if available
+  const instituteId = available_institutes?.[0]?.institute_id;
+
+  return {
+    id: user.id,
+    username: user.username,
+    personId: user.personId,
+    email: user.email || `${user.username}@learnlabz.com`,
+    firstName: user.first_name || '',
+    lastName: user.last_name || '',
+    middleName: user.middle_name || undefined,
+    role,
+
+    // Role & Access Information
+    primaryRole: {
+      categoryCode: role,
+      categoryName: primary_role.category_name,
+      isGlobal: primary_role.is_global,
+    },
+    availableInstitutes: available_institutes?.map((inst) => ({
+      instituteId: inst.institute_id,
+      instituteName: inst.institute_name,
+      instituteCode: inst.institute_code,
+      roleCodes: inst.role_codes,
+    })),
+    hasGlobalAccess: has_global_access,
+
+    // Institute & Branch
+    instituteId,
+    branchId: undefined,
+
+    // Profile
+    avatar: undefined,
+    phone: user.phone,
+
+    // Status
+    emailVerified: false,
+    twoFactorEnabled: false,
+    isActive: true,
+    isBlocked: false,
+    lastLogin: undefined,
+
+    // Timestamps
+    createdAt: new Date(),
+    updatedAt: new Date(),
+
+    // Additional
+    globalStudentId: undefined,
+    childrenIds: undefined,
+  };
+}
+
+/**
+ * Convert backend tokens to frontend token pair
+ */
+function convertBackendTokensToTokenPair(backendResponse: BackendLoginResponse): TokenPair {
+  return {
+    accessToken: backendResponse.access_token,
+    refreshToken: backendResponse.refresh_token,
+    expiresIn: backendResponse.expires_in,
+  };
+}
+
+// =============================================================================
+// API ENDPOINTS
+// =============================================================================
+
 const AUTH_ENDPOINTS = {
-  login: "/auth/login", // ✅ Add /api
-  register: "/auth/register", // ✅ Add /api
-  logout: "/auth/logout", // ✅ Add /api
-  refreshToken: "/auth/refresh", // ✅ Add /api
-  forgotPassword: "/auth/forgot-password", // ✅ Add /api
-  resetPassword: "/auth/reset-password", // ✅ Add /api
-  changePassword: "/auth/change-password", // ✅ Add /api
-  verifyEmail: "/auth/verify-email", // ✅ Add /api
-  resendVerification: "/auth/resend-verification", // ✅ Add /api
+  login: '/user/auth/login',
+  logout: '/user/auth/logout',
+  refreshToken: '/user/auth/refresh',
+  me: '/user/auth/me',
+  register: '/user/auth/register',
+  forgotPassword: '/user/auth/forgot-password',
+  resetPassword: '/user/auth/reset-password',
+  changePassword: '/user/auth/change-password',
+  verifyEmail: '/user/auth/verify-email',
+  resendVerification: '/user/auth/resend-verification',
 
   // 2FA endpoints
-  setup2FA: "/auth/2fa/setup", // ✅ Add /api
-  verify2FA: "/auth/2fa/verify", // ✅ Add /api
-  disable2FA: "/auth/2fa/disable", // ✅ Add /api
+  setup2FA: '/user/auth/2fa/setup',
+  verify2FA: '/user/auth/2fa/verify',
+  disable2FA: '/user/auth/2fa/disable',
 
   // Session management
-  sessions: "/auth/sessions", // ✅ Add /api
-  revokeSession: "/auth/sessions/revoke", // ✅ Add /api
-
-  // Social auth
-  googleLogin: "/auth/google", // ✅ Add /api
-  facebookLogin: "/auth/facebook", // ✅ Add /api
-
-  // User info
-  me: "/auth/me", // ✅ Already correct
+  sessions: '/user/auth/sessions',
+  revokeSession: '/user/auth/sessions/revoke',
 };
 
-// ============================================================================
-// API CLIENT
-// ============================================================================
+// =============================================================================
+// COOKIE MANAGEMENT
+// =============================================================================
 
-class ApiClient {
-  private baseURL: string;
+class CookieManager {
+  /**
+   * Set cookie
+   */
+  static set(name: string, value: string, maxAge: number) {
+    if (typeof window === 'undefined') return;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+    const expires = new Date(Date.now() + maxAge * 1000).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; expires=${expires}; SameSite=Lax`;
+
+    logger.debug(`Cookie set: ${name}`, { maxAge });
   }
 
   /**
-   * Make HTTP request
+   * Get cookie
    */
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
+  static get(name: string): string | null {
+    if (typeof window === 'undefined') return null;
 
-    const defaultHeaders: HeadersInit = {
-      "Content-Type": "application/json",
-    };
+    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      if (key && value) acc[key] = decodeURIComponent(value);
+      return acc;
+    }, {} as Record<string, string>);
 
-    const config: RequestInit = {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-      },
-      credentials: "include", // Next.js API routes automatically handle cookies
-    };
+    return cookies[name] || null;
+  }
 
+  /**
+   * Delete cookie
+   */
+  static delete(name: string) {
+    if (typeof window === 'undefined') return;
+
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0`;
+    logger.debug(`Cookie deleted: ${name}`);
+  }
+
+  /**
+   * Get all cookies
+   */
+  static getAll(): Record<string, string> {
+    if (typeof window === 'undefined') return {};
+
+    return document.cookie.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      if (key && value) acc[key] = decodeURIComponent(value);
+      return acc;
+    }, {} as Record<string, string>);
+  }
+}
+
+// =============================================================================
+// AUTHENTICATION SERVICE
+// =============================================================================
+
+export class AuthService {
+  /**
+   * Login with username/email and password
+   */
+  static async login(username: string, password: string): Promise<{
+    success: boolean;
+    user?: User;
+    tokens?: TokenPair;
+    error?: string;
+  }> {
     try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+      logger.auth('Login attempt', { username });
 
-      if (!response.ok) {
+      const requestBody: BackendLoginRequest = {
+        data: {
+          username,
+          password,
+        },
+      };
+
+      const response = await apiClient.post<BackendLoginResponse>(
+        AUTH_ENDPOINTS.login,
+        requestBody,
+        { skipAuth: true } // Don't include auth token for login
+      );
+
+      if (!response.success) {
+        logger.auth('Login failed', { error: response.error });
         return {
           success: false,
-          error: data.error || {
-            code: "UNKNOWN_ERROR",
-            message: "An unexpected error occurred",
-          },
+          error: response.error?.message || 'Login failed',
         };
       }
 
+      const loginData = response.data;
+
+      // Convert backend response to frontend user
+      const user = convertBackendLoginToUser(loginData);
+      const tokens = convertBackendTokensToTokenPair(loginData);
+
+      // Store tokens in cookies
+      CookieManager.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, tokens.expiresIn);
+      CookieManager.set(
+        AUTH_CONFIG.cookies.refreshToken,
+        tokens.refreshToken,
+        7 * 24 * 60 * 60 // 7 days
+      );
+
+      // Store user role in cookie for middleware routing
+      CookieManager.set('userRole', user.role, tokens.expiresIn);
+
+      logger.auth('Login successful', {
+        userId: user.id,
+        role: user.role,
+        primaryRole: user.primaryRole.categoryCode,
+        hasGlobalAccess: user.hasGlobalAccess,
+      });
+
       return {
         success: true,
-        data: data.data || data,
+        user,
+        tokens,
       };
     } catch (error) {
-      console.error("API Request Error:", error);
+      logger.error('Login error', { error });
       return {
         success: false,
-        error: {
-          code: "NETWORK_ERROR",
-          message: "Failed to connect to the server",
-          details: { originalError: error },
-        },
+        error: error instanceof Error ? error.message : 'Login failed',
       };
     }
   }
 
   /**
-   * GET request
-   */
-  async get<T>(
-    endpoint: string,
-    headers?: HeadersInit
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: "GET",
-      headers,
-    });
-  }
-
-  /**
-   * POST request
-   */
-  async post<T>(
-    endpoint: string,
-    body?: unknown,
-    headers?: HeadersInit
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: "POST",
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  }
-
-  /**
-   * PUT request
-   */
-  async put<T>(
-    endpoint: string,
-    body?: unknown,
-    headers?: HeadersInit
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: "PUT",
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  }
-
-  /**
-   * DELETE request
-   */
-  async delete<T>(
-    endpoint: string,
-    headers?: HeadersInit
-  ): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: "DELETE",
-      headers,
-    });
-  }
-}
-
-const apiClient = new ApiClient(API_BASE_URL);
-
-// ============================================================================
-// AUTHENTICATION SERVICE
-// ============================================================================
-
-export class AuthService {
-  /**
-   * Login with email and password
-   */
-  static async login(
-    credentials: LoginRequest
-  ): Promise<ApiResponse<LoginResponse>> {
-    return apiClient.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
-  }
-
-  /**
-   * Login with Google OAuth
-   */
-  static async loginWithGoogle(): Promise<ApiResponse<LoginResponse>> {
-    // Redirect to Google OAuth endpoint
-    // The backend will handle the OAuth flow and redirect back
-    window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.googleLogin}`;
-
-    // Return a pending promise that will never resolve
-    // The page will redirect before this matters
-    return new Promise(() => {});
-  }
-
-  /**
-   * Login with Facebook OAuth
-   */
-  static async loginWithFacebook(): Promise<ApiResponse<LoginResponse>> {
-    // Redirect to Facebook OAuth endpoint
-    window.location.href = `${API_BASE_URL}${AUTH_ENDPOINTS.facebookLogin}`;
-
-    return new Promise(() => {});
-  }
-
-  /**
-   * Verify 2FA code
-   */
-  static async verifyTwoFactor(
-    data: TwoFactorRequest
-  ): Promise<ApiResponse<LoginResponse>> {
-    return apiClient.post<LoginResponse>(AUTH_ENDPOINTS.verify2FA, data);
-  }
-
-  /**
-   * Register new user
-   */
-  static async register(
-    data: RegisterRequest
-  ): Promise<ApiResponse<RegisterResponse>> {
-    return apiClient.post<RegisterResponse>(AUTH_ENDPOINTS.register, data);
-  }
-
-  /**
    * Logout user
    */
-  static async logout(): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.logout);
+  static async logout(): Promise<void> {
+    try {
+      const refreshToken = CookieManager.get(AUTH_CONFIG.cookies.refreshToken);
+
+      if (refreshToken) {
+        const requestBody: BackendLogoutRequest = {
+          data: { refresh_token: refreshToken },
+        };
+
+        await apiClient.post(AUTH_ENDPOINTS.logout, requestBody);
+      }
+
+      this.clearTokens();
+      logger.auth('Logout successful');
+    } catch (error) {
+      logger.error('Logout error', { error });
+      this.clearTokens();
+    }
   }
 
   /**
-   * Refresh access token using refresh token
+   * Refresh access token
    */
-  static async refreshToken(): Promise<ApiResponse<TokenPair>> {
-    return apiClient.post<TokenPair>(AUTH_ENDPOINTS.refreshToken);
-  }
+  static async refreshToken(): Promise<{
+    success: boolean;
+    tokens?: TokenPair;
+    error?: string;
+  }> {
+    try {
+      const refreshToken = CookieManager.get(AUTH_CONFIG.cookies.refreshToken);
 
-  /**
-   * Request password reset
-   */
-  static async forgotPassword(email: string): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.forgotPassword, { email });
-  }
+      if (!refreshToken) {
+        return {
+          success: false,
+          error: 'No refresh token available',
+        };
+      }
 
-  /**
-   * Reset password with token
-   */
-  static async resetPassword(
-    data: ResetPasswordConfirmRequest
-  ): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.resetPassword, data);
-  }
+      const requestBody: BackendRefreshTokenRequest = {
+        data: { refresh_token: refreshToken },
+      };
 
-  /**
-   * Change password (authenticated user)
-   */
-  static async changePassword(
-    data: ChangePasswordRequest
-  ): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.changePassword, data);
-  }
+      const response = await apiClient.post<BackendRefreshTokenResponse>(
+        AUTH_ENDPOINTS.refreshToken,
+        requestBody,
+        { skipAuth: true }
+      );
 
-  /**
-   * Verify email with token
-   */
-  static async verifyEmail(token: string): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.verifyEmail, { token });
-  }
+      if (!response.success) {
+        return {
+          success: false,
+          error: response.error?.message || 'Token refresh failed',
+        };
+      }
 
-  /**
-   * Resend email verification
-   */
-  static async resendVerification(): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.resendVerification);
-  }
+      const tokens: TokenPair = {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        expiresIn: response.data.expires_in,
+      };
 
-  /**
-   * Setup 2FA for user account
-   */
-  static async setup2FA(): Promise<ApiResponse<TwoFactorSetupResponse>> {
-    return apiClient.post<TwoFactorSetupResponse>(AUTH_ENDPOINTS.setup2FA);
-  }
+      // Update cookies
+      CookieManager.set(AUTH_CONFIG.cookies.accessToken, tokens.accessToken, tokens.expiresIn);
+      CookieManager.set(
+        AUTH_CONFIG.cookies.refreshToken,
+        tokens.refreshToken,
+        7 * 24 * 60 * 60
+      );
 
-  /**
-   * Verify 2FA setup with code
-   */
-  static async verify2FASetup(
-    data: TwoFactorVerifyRequest
-  ): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(`${AUTH_ENDPOINTS.setup2FA}/verify`, data);
-  }
+      logger.auth('Token refreshed successfully');
 
-  /**
-   * Disable 2FA
-   */
-  static async disable2FA(): Promise<ApiResponse<void>> {
-    return apiClient.post<void>(AUTH_ENDPOINTS.disable2FA);
+      return {
+        success: true,
+        tokens,
+      };
+    } catch (error) {
+      logger.error('Token refresh error', { error });
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Token refresh failed',
+      };
+    }
   }
 
   /**
    * Get current user info
    */
-  static async getCurrentUser(): Promise<ApiResponse<User>> {
-    return apiClient.get<User>(AUTH_ENDPOINTS.me);
-  }
+  static async getCurrentUser(): Promise<{
+    success: boolean;
+    user?: User;
+    error?: string;
+  }> {
+    try {
+      const response = await apiClient.get<BackendLoginResponse>(AUTH_ENDPOINTS.me);
 
-  /**
-   * Get active sessions
-   */
-  static async getSessions(): Promise<ApiResponse<Session[]>> {
-    return apiClient.get<Session[]>(AUTH_ENDPOINTS.sessions);
-  }
-
-  /**
-   * Revoke a specific session
-   */
-  static async revokeSession(sessionId: string): Promise<ApiResponse<void>> {
-    return apiClient.delete<void>(
-      `${AUTH_ENDPOINTS.revokeSession}/${sessionId}`
-    );
-  }
-
-  /**
-   * Parse cookies from document.cookie (client-side only)
-   */
-  private static parseCookiesFromDocument(): Record<string, string> {
-    if (typeof window === "undefined") return {};
-
-    return document.cookie.split(";").reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split("=");
-      if (key && value) {
-        acc[key] = decodeURIComponent(value);
+      if (!response.success) {
+        return {
+          success: false,
+          error: response.error?.message || 'Failed to get user info',
+        };
       }
-      return acc;
-    }, {} as Record<string, string>);
+
+      // Assuming /me endpoint returns same structure as login
+      // If it returns different structure, we'll need to handle it accordingly
+      const user = convertBackendLoginToUser(response.data);
+
+      return {
+        success: true,
+        user,
+      };
+    } catch (error) {
+      logger.error('Get current user error', { error });
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get user info',
+      };
+    }
   }
 
   /**
-   * Get specific cookie value
-   */
-  private static getCookie(name: string): string | null {
-    const cookies = this.parseCookiesFromDocument();
-    return cookies[name] || null;
-  }
-
-  /**
-   * Check if user is authenticated (client-side check)
+   * Check if user has auth token
    */
   static hasAuthToken(): boolean {
-    if (typeof window === "undefined") return false;
-
-    const token = this.getCookie(AUTH_CONFIG.cookies.accessToken);
-
-    console.log("🔍 Checking auth token...");
-    console.log("🍪 All cookies:", this.parseCookiesFromDocument());
-    console.log("🔑 Looking for:", AUTH_CONFIG.cookies.accessToken);
-    console.log("✅ Has token:", !!token);
-
+    const token = CookieManager.get(AUTH_CONFIG.cookies.accessToken);
+    logger.debug('Checking auth token', { hasToken: !!token });
     return !!token;
   }
 
@@ -376,41 +391,29 @@ export class AuthService {
    * Clear authentication tokens
    */
   static clearTokens(): void {
-    if (typeof window === "undefined") return;
+    CookieManager.delete(AUTH_CONFIG.cookies.accessToken);
+    CookieManager.delete(AUTH_CONFIG.cookies.refreshToken);
+    CookieManager.delete('userRole');
+    logger.auth('Tokens cleared');
+  }
 
-    const expireDate = "Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = `${AUTH_CONFIG.cookies.accessToken}=; path=/; expires=${expireDate}; max-age=0`;
-    document.cookie = `${AUTH_CONFIG.cookies.refreshToken}=; path=/; expires=${expireDate}; max-age=0`;
+  /**
+   * Get access token
+   */
+  static getAccessToken(): string | null {
+    return CookieManager.get(AUTH_CONFIG.cookies.accessToken);
+  }
 
-    console.log("🗑️ Auth tokens cleared");
+  /**
+   * Get refresh token
+   */
+  static getRefreshToken(): string | null {
+    return CookieManager.get(AUTH_CONFIG.cookies.refreshToken);
   }
 }
 
-// ============================================================================
-// ERROR HANDLING HELPER
-// ============================================================================
-
-export function getAuthErrorMessage(errorCode: string): string {
-  const errorMessages: Record<string, string> = {
-    INVALID_CREDENTIALS: "Invalid email or password",
-    USER_NOT_FOUND: "No account found with this email",
-    EMAIL_ALREADY_EXISTS: "An account with this email already exists",
-    INVALID_TOKEN: "Invalid or expired token",
-    INVALID_2FA_CODE: "Invalid authentication code",
-    ACCOUNT_BLOCKED: "Your account has been blocked. Please contact support.",
-    EMAIL_NOT_VERIFIED: "Please verify your email address",
-    PASSWORD_TOO_WEAK: "Password does not meet security requirements",
-    SESSION_EXPIRED: "Your session has expired. Please login again.",
-    NETWORK_ERROR:
-      "Unable to connect to the server. Please check your internet connection.",
-    UNKNOWN_ERROR: "An unexpected error occurred. Please try again.",
-  };
-
-  return errorMessages[errorCode] || errorMessages.UNKNOWN_ERROR;
-}
-
-// ============================================================================
+// =============================================================================
 // EXPORT
-// ============================================================================
+// =============================================================================
 
 export default AuthService;

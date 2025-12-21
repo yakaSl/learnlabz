@@ -22,8 +22,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
 function LoginPage() {
-  const [formData, setFormData] = useState<LoginRequest>({
-    email: '',
+  const [formData, setFormData] = useState({
+    username: '',
     password: '',
     remember: false,
   });
@@ -34,7 +34,7 @@ function LoginPage() {
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [twoFactorSessionId, setTwoFactorSessionId] = useState<string | null>(null);
 
-  const { login, loginWithGoogle, loginWithFacebook, verifyTwoFactor } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -52,7 +52,7 @@ function LoginPage() {
   };
 
   /**
-   * Handle email/password login
+   * Handle username/password login
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,18 +60,12 @@ function LoginPage() {
     setError(null);
 
     try {
-      const response = await login(formData);
+      const response = await login(formData.username, formData.password);
 
-      // Check if 2FA is required
-      if (response.requiresTwoFactor && response.twoFactorSessionId) {
-        setShow2FA(true);
-        setTwoFactorSessionId(response.twoFactorSessionId);
-      } else {
-        // Login successful, redirect handled by useAuth
-        if (redirectTo !== '/') {
-          router.push(redirectTo);
-        }
+      if (!response.success) {
+        setError(response.error || 'Login failed');
       }
+      // Success redirect is handled by useAuth hook
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -79,123 +73,7 @@ function LoginPage() {
     }
   };
 
-  /**
-   * Handle 2FA verification
-   */
-  const handle2FASubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!twoFactorSessionId) {
-      setError('Invalid session. Please try logging in again.');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await verifyTwoFactor({
-        sessionId: twoFactorSessionId,
-        code: twoFactorCode,
-      });
-
-      // 2FA successful, redirect handled by useAuth
-      if (redirectTo !== '/') {
-        router.push(redirectTo);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '2FA verification failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handle Google login
-   */
-  const handleGoogleLogin = async () => {
-    try {
-      setIsLoading(true);
-      await loginWithGoogle();
-    } catch (err) {
-      setError('Google login failed');
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Handle Facebook login
-   */
-  const handleFacebookLogin = async () => {
-    try {
-      setIsLoading(true);
-      await loginWithFacebook();
-    } catch (err) {
-      setError('Facebook login failed');
-      setIsLoading(false);
-    }
-  };
-
-  /**
-   * Render 2FA form
-   */
-  if (show2FA) {
-    return (
-      <AuthLayout title="Two-Factor Authentication" description="Enter the 6-digit code from your authenticator app.">
-          <form className="space-y-6" onSubmit={handle2FASubmit}>
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div>
-              <Label htmlFor="twoFactorCode" className="sr-only">
-                2FA Code
-              </Label>
-              <Input
-                id="twoFactorCode"
-                name="twoFactorCode"
-                type="text"
-                maxLength={6}
-                required
-                value={twoFactorCode}
-                onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
-                placeholder="000000"
-                className="text-center text-2xl tracking-widest"
-              />
-            </div>
-
-            <div>
-              <Button
-                type="submit"
-                disabled={isLoading || twoFactorCode.length !== 6}
-                className="w-full"
-              >
-                {isLoading ? 'Verifying...' : 'Verify'}
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <Button
-                type="button"
-                variant="link"
-                onClick={() => {
-                  setShow2FA(false);
-                  setTwoFactorCode('');
-                  setTwoFactorSessionId(null);
-                  setError(null);
-                }}
-              >
-                Back to login
-              </Button>
-            </div>
-          </form>
-      </AuthLayout>
-    );
-  }
+  // Note: 2FA and social login will be implemented when backend supports them
 
   /**
    * Render login form
@@ -203,38 +81,7 @@ function LoginPage() {
   return (
     <AuthLayout title="Sign in to LearnLabz" description="Enter your credentials to access your account.">
       <div className="space-y-6">
-        {/* Social Login Buttons */}
-        <div className="grid grid-cols-2 gap-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleGoogleLogin}
-            disabled={isLoading}
-          >
-            <FcGoogle className="mr-2 h-5 w-5" />
-            Google
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleFacebookLogin}
-            disabled={isLoading}
-          >
-            <FaFacebook className="mr-2 h-5 w-5 text-blue-600" />
-            Facebook
-          </Button>
-        </div>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-
-        {/* Email/Password Form */}
+        {/* Username/Password Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
                <Alert variant="destructive">
@@ -245,16 +92,16 @@ function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="username">Username or Email</Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
                 required
-                value={formData.email}
+                value={formData.username}
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="johndoe or you@example.com"
               />
             </div>
 

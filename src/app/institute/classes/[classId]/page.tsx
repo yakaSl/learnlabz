@@ -10,7 +10,7 @@ export default function InstituteClassDetailPage({ params }: { params: Promise<{
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
       <ClassDetailView classId={classId} />
     </ProtectedRoute>

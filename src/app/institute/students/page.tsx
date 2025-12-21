@@ -3,15 +3,15 @@
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
-import ClassManagement from "@/components/institute-admin/classes/class-management";
+import StudentManagement from "@/components/institute-admin/students/student-management";
 
-export default function ClassesPage() {
+export default function StudentsPage() {
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
-      <ClassManagement />
+      <StudentManagement />
     </ProtectedRoute>
   );
 }

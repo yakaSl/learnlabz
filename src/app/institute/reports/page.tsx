@@ -3,15 +3,15 @@
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
-import TutorManagement from "@/components/institute-admin/tutors/tutor-management";
+import ReportsAndAnalytics from "@/components/institute-admin/reports/reports-analytics";
 
-export default function TutorsPage() {
+export default function ReportsPage() {
   return (
     <ProtectedRoute
       requireAuth={true}
-      allowedRoles={[UserRole.INSTITUTE_ADMIN]}
+      allowedRoles={[UserRole.INSTITUTE]}
     >
-      <TutorManagement />
+      <ReportsAndAnalytics />
     </ProtectedRoute>
   );
 }

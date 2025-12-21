@@ -16,6 +16,7 @@ import type {
 } from '@/types/api.types';
 import type {
   User,
+  UserRole,
   TokenPair,
   Session,
 } from '@/types/auth.types';
@@ -409,6 +410,14 @@ export class AuthService {
    */
   static getRefreshToken(): string | null {
     return CookieManager.get(AUTH_CONFIG.cookies.refreshToken);
+  }
+
+  /**
+   * Get user role from cookie
+   */
+  static getUserRole(): UserRole | null {
+    const role = CookieManager.get('userRole');
+    return role as UserRole || null;
   }
 }
 

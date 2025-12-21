@@ -86,10 +86,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(response.user);
         } else {
           logger.warn('Failed to restore user from /me endpoint', { error: response.error });
-          logger.warn('User will remain authenticated but user data unavailable');
-          // Don't clear tokens here - let middleware handle authentication
-          // The /me endpoint might not be available or might require specific setup
-          // User can still access protected routes via middleware
+          logger.warn('Creating minimal user object from cookies');
+
+          // Create minimal user object from cookies to allow dashboard access
+          const roleFromCookie = AuthService.getUserRole();
+          if (roleFromCookie) {
+            const minimalUser: User = {
+              id: 'temp-id',
+              username: 'user',
+              personId: 'temp-person-id',
+              email: 'user@learnlabz.com',
+              firstName: 'User',
+              lastName: '',
+              role: roleFromCookie,
+              primaryRole: {
+                categoryCode: roleFromCookie,
+                categoryName: roleFromCookie.replace('_', ' '),
+                isGlobal: false,
+              },
+              hasGlobalAccess: false,
+              isActive: true,
+              isBlocked: false,
+              emailVerified: false,
+              twoFactorEnabled: false,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            setUser(minimalUser);
+            logger.auth('Minimal user object created', { role: roleFromCookie });
+          }
         }
       } catch (error) {
         logger.error('Auth initialization error', { error });

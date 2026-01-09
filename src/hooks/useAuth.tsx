@@ -195,10 +195,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           setUser(response.user);
 
-          // Redirect to dashboard
+          // Redirect to dashboard (use replace to prevent back button to login)
           const dashboardUrl = getDashboardRoute(response.user.role);
           logger.auth('Redirecting to dashboard', { dashboardUrl });
-          router.push(dashboardUrl);
+          router.replace(dashboardUrl); // Replace instead of push to clear history
 
           return { success: true };
         } else {

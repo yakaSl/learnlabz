@@ -25,7 +25,7 @@ export default function TutorProfilePage({ tutorId }: { tutorId: string }) {
         <div className="space-y-6">
             <div>
                 <Button variant="ghost" asChild className="mb-4">
-                    <Link href="/institute-admin/tutors">
+                    <Link href="/institute/tutors">
                         <ArrowLeft className="mr-2" />
                         Back to All Tutors
                     </Link>

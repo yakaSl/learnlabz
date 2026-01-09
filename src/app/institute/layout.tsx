@@ -23,7 +23,7 @@ export default function InstituteAdminLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <Link href="/institute-admin" passHref>
+              <Link href="/institute" passHref>
                 <SidebarMenuButton tooltip="Dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
@@ -31,7 +31,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/institute-admin/tutors" passHref>
+              <Link href="/institute/tutors" passHref>
                 <SidebarMenuButton tooltip="Tutors">
                   <Users />
                   <span>Tutors</span>
@@ -39,7 +39,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <Link href="/institute-admin/students" passHref>
+              <Link href="/institute/students" passHref>
                 <SidebarMenuButton tooltip="Students">
                   <GraduationCap />
                   <span>Students</span>
@@ -47,7 +47,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/institute-admin/classes" passHref>
+              <Link href="/institute/classes" passHref>
                 <SidebarMenuButton tooltip="Classes">
                   <BookOpen />
                   <span>Classes</span>
@@ -55,7 +55,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <Link href="/institute-admin/billing" passHref>
+              <Link href="/institute/billing" passHref>
                 <SidebarMenuButton tooltip="Billing">
                   <CreditCard />
                   <span>Billing</span>
@@ -63,7 +63,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <Link href="/institute-admin/reports" passHref>
+              <Link href="/institute/reports" passHref>
                 <SidebarMenuButton tooltip="Reports">
                   <BarChart2 />
                   <span>Reports</span>
@@ -71,7 +71,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-               <Link href="/institute-admin/communication" passHref>
+               <Link href="/institute/communication" passHref>
                 <SidebarMenuButton tooltip="Communication">
                   <Megaphone />
                   <span>Communication</span>
@@ -79,7 +79,7 @@ export default function InstituteAdminLayout({
               </Link>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <Link href="/institute-admin/settings" passHref>
+              <Link href="/institute/settings" passHref>
                 <SidebarMenuButton tooltip="Settings">
                   <Settings />
                   <span>Settings</span>
@@ -99,13 +99,13 @@ export default function InstituteAdminLayout({
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link href="/institute-admin/notifications" passHref>
+            <Link href="/institute/notifications" passHref>
                 <Button variant="ghost" size="icon">
                     <Bell />
                     <span className="sr-only">Notifications</span>
                 </Button>
             </Link>
-             <Link href="/institute-admin/settings" passHref>
+             <Link href="/institute/settings" passHref>
                 <Button variant="ghost" size="icon">
                     <Settings />
                     <span className="sr-only">Settings</span>

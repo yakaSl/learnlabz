@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Avatar,
   AvatarFallback,
@@ -11,11 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function UserNav() {
+  const { logout, user } = useAuth();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,9 +32,11 @@ export default function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Super Admin</p>
+            <p className="text-sm font-medium leading-none">
+              {user?.firstName} {user?.lastName}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
-              admin@learnlabz.com
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -48,7 +53,7 @@ export default function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => logout()}>
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -163,7 +163,8 @@ class CookieManager {
   static delete(name: string) {
     if (typeof window === 'undefined') return;
 
-    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0`;
+    // Include SameSite attribute to match how cookie was set
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax`;
     logger.debug(`Cookie deleted: ${name}`);
   }
 

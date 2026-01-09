@@ -28,14 +28,14 @@ export default function UINavigator() {
   ];
 
   const instituteAdminPages = [
-    { href: "/institute-admin", name: "Dashboard" },
-    { href: "/institute-admin/tutors", name: "Tutor Management" },
-    { href: "/institute-admin/classes", name: "Class Management" },
-    { href: "/institute-admin/students", name: "Student Management" },
-    { href: "/institute-admin/billing", name: "Billing" },
-    { href: "/institute-admin/reports", name: "Reports" },
-    { href: "/institute-admin/communication", name: "Communication" },
-    { href: "/institute-admin/settings", name: "Settings" },
+    { href: "/institute", name: "Dashboard" },
+    { href: "/institute/tutors", name: "Tutor Management" },
+    { href: "/institute/classes", name: "Class Management" },
+    { href: "/institute/students", name: "Student Management" },
+    { href: "/institute/billing", name: "Billing" },
+    { href: "/institute/reports", name: "Reports" },
+    { href: "/institute/communication", name: "Communication" },
+    { href: "/institute/settings", name: "Settings" },
   ];
 
   const tutorPages = [

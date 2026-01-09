@@ -1,6 +1,7 @@
+'use client';
 
-import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter, SidebarSeparator } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck, GraduationCap } from "lucide-react";
+import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter, SidebarSeparator, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
+import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck, GraduationCap, Database, ChevronDown, BookOpen, Calendar, DollarSign, Globe, GraduationCap as GradeIcon, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import UserNav from "@/components/super-admin/user-nav";
@@ -8,12 +9,15 @@ import { SidebarLogo } from "@/components/ui/sidebar-logo";
 import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 export default function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [mastersOpen, setMastersOpen] = useState(false);
   return (
     <SidebarProvider>
       <Sidebar>
@@ -102,6 +106,72 @@ export default function SuperAdminLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
+
+            {/* Masters Section - Collapsible */}
+            <Collapsible open={mastersOpen} onOpenChange={setMastersOpen} className="group/collapsible">
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip="Masters">
+                    <Database />
+                    <span>Masters</span>
+                    <ChevronDown className={`ml-auto transition-transform ${mastersOpen ? 'rotate-180' : ''}`} />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/subjects">
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          <span>Subject Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/academic-years">
+                          <Calendar className="mr-2 h-4 w-4" />
+                          <span>Academic Year Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/currencies">
+                          <DollarSign className="mr-2 h-4 w-4" />
+                          <span>Currency Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/languages">
+                          <Globe className="mr-2 h-4 w-4" />
+                          <span>Language Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/grades">
+                          <GradeIcon className="mr-2 h-4 w-4" />
+                          <span>Grade Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton asChild>
+                        <Link href="/super-admin/masters/mediums">
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          <span>Medium Master</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+
              <SidebarSeparator />
              <SidebarMenuItem>
               <Link href="/super-admin/notifications" passHref>

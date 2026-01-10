@@ -9,8 +9,10 @@ import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ContextSwitcher } from "@/components/tutor/context-switcher";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppContext } from "@/hooks/use-context";
 import { MenuService } from "@/services/menu.service";
 import { MenuItem } from "@/types/menu.types";
 import { getIcon } from "@/utils/icon-mapper";
@@ -21,6 +23,7 @@ export default function SuperAdminLayout({
   children: React.ReactNode;
 }) {
   const { user } = useAuth();
+  const { selectedContext } = useAppContext();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [collapsibleState, setCollapsibleState] = useState<Record<string, boolean>>({});
@@ -33,12 +36,15 @@ export default function SuperAdminLayout({
         return;
       }
 
+      // Use selected institute from context, fallback to user's instituteId
+      const instituteId = selectedContext.type === 'institute'
+        ? selectedContext.instituteId
+        : user.instituteId;
+
       try {
-        const response = await MenuService.getMenu(user.id, user.instituteId);
-        console.log('Menu API Response:', response);
+        const response = await MenuService.getMenu(user.id, instituteId);
 
         if (response.success && response.data && Array.isArray(response.data)) {
-          console.log('Menu Items:', response.data);
           setMenuItems(response.data);
 
           // Initialize collapsible state for parent menus
@@ -49,8 +55,6 @@ export default function SuperAdminLayout({
             }
           });
           setCollapsibleState(initialState);
-        } else {
-          console.log('Menu fetch failed or no data:', response);
         }
       } catch (error) {
         console.error('Failed to fetch menu:', error);
@@ -60,7 +64,7 @@ export default function SuperAdminLayout({
     };
 
     fetchMenu();
-  }, [user?.id, user?.instituteId]);
+  }, [user?.id, user?.instituteId, selectedContext]);
 
   const toggleCollapsible = (menuCode: string) => {
     setCollapsibleState(prev => ({
@@ -70,7 +74,6 @@ export default function SuperAdminLayout({
   };
 
   const renderMenuItem = (item: MenuItem) => {
-    console.log('Rendering menu item:', item.menu_name, item);
     const Icon = getIcon(item.icon);
     const hasChildren = item.children.length > 0;
     const isOpen = collapsibleState[item.menu_code] || false;
@@ -125,8 +128,6 @@ export default function SuperAdminLayout({
     );
   };
 
-  console.log('Render - Loading:', loading, 'MenuItems count:', menuItems.length, 'MenuItems:', menuItems);
-
   return (
     <SidebarProvider>
       <Sidebar>
@@ -158,8 +159,11 @@ export default function SuperAdminLayout({
       <SidebarInset>
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
           <SidebarTrigger className="md:hidden"/>
-          <div className="flex-1">
-             <SearchBar />
+          <div className="flex-1 flex items-center gap-4">
+            <ContextSwitcher />
+          </div>
+          <div className="flex-1 hidden md:flex">
+            <SearchBar />
           </div>
           <div className="flex items-center gap-2">
              <ThemeToggle />

@@ -59,7 +59,7 @@ function PersonalPaymentsView() {
                 variant="link"
                 className="p-0 pl-2 h-auto text-destructive-foreground"
               >
-                <Link href="/tutor/settings">Update Settings Now</Link>
+                <Link href="/teacher/settings">Update Settings Now</Link>
               </Button>
             </AlertDescription>
           </Alert>

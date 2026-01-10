@@ -34,7 +34,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/classes" passHref>
+                <Link href="/teacher/classes" passHref>
                   <SidebarMenuButton tooltip="My Classes">
                     <BookOpen />
                     <span>My Classes</span>
@@ -42,7 +42,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/students" passHref>
+                <Link href="/teacher/students" passHref>
                   <SidebarMenuButton tooltip="Students">
                     <GraduationCap />
                     <span>Students</span>
@@ -50,7 +50,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/materials" passHref>
+                <Link href="/teacher/materials" passHref>
                   <SidebarMenuButton tooltip="Materials">
                     <Folder />
                     <span>Materials</span>
@@ -58,7 +58,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/payments" passHref>
+                <Link href="/teacher/payments" passHref>
                   <SidebarMenuButton tooltip="Payments">
                     <Wallet />
                     <span>Payments</span>
@@ -66,7 +66,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/communication" passHref>
+                <Link href="/teacher/communication" passHref>
                   <SidebarMenuButton tooltip="Communication">
                     <Megaphone />
                     <span>Communication</span>
@@ -74,7 +74,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/reports" passHref>
+                <Link href="/teacher/reports" passHref>
                   <SidebarMenuButton tooltip="Reports">
                     <BarChart2 />
                     <span>Reports</span>
@@ -82,7 +82,7 @@ export default function TutorLayout({
                 </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <Link href="/tutor/ai-assistant" passHref>
+                <Link href="/teacher/ai-assistant" passHref>
                   <SidebarMenuButton tooltip="AI Assistant">
                     <Bot />
                     <span>AI Assistant</span>
@@ -94,7 +94,7 @@ export default function TutorLayout({
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <Link href="/tutor/settings" passHref>
+                <Link href="/teacher/settings" passHref>
                   <SidebarMenuButton tooltip="Settings">
                     <Settings />
                     <span>Settings</span>
@@ -115,13 +115,13 @@ export default function TutorLayout({
             </div>
             <div className="flex items-center gap-2">
                <ThemeToggle />
-               <Link href="/tutor/notifications" passHref>
+               <Link href="/teacher/notifications" passHref>
                     <Button variant="ghost" size="icon">
                         <Bell />
                         <span className="sr-only">Notifications</span>
                     </Button>
                 </Link>
-                <Link href="/tutor/settings" passHref>
+                <Link href="/teacher/settings" passHref>
                     <Button variant="ghost" size="icon">
                         <Settings />
                         <span className="sr-only">Settings</span>

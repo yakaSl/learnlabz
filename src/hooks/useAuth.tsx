@@ -86,6 +86,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(response.user);
         } else {
           logger.warn('Failed to restore user from /me endpoint', { error: response.error });
+
+          // Try to restore from localStorage
+          if (typeof window !== 'undefined') {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              try {
+                const parsedUser = JSON.parse(storedUser);
+                logger.auth('User restored from localStorage', {
+                  userId: parsedUser.id,
+                  role: parsedUser.role,
+                });
+                setUser(parsedUser);
+                setIsInitialized(true);
+                return;
+              } catch (error) {
+                logger.error('Failed to parse stored user', { error });
+              }
+            }
+          }
+
           logger.warn('Creating minimal user object from cookies');
 
           // Create minimal user object from cookies to allow dashboard access
@@ -195,6 +215,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           setUser(response.user);
 
+          // Store user data in localStorage for retrieval
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(response.user));
+          }
+
           // Redirect to dashboard (use replace to prevent back button to login)
           const dashboardUrl = getDashboardRoute(response.user.role);
           logger.auth('Redirecting to dashboard', { dashboardUrl });
@@ -232,12 +257,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await AuthService.logout();
       setUser(null);
+
+      // Clear localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
+
       logger.auth('Logout successful');
       window.location.href = '/login';
     } catch (error) {
       logger.error('Logout error', { error });
       // Still clear user and redirect even if API call fails
       setUser(null);
+
+      // Clear localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
+
       window.location.href = '/login';
     } finally {
       setIsLoading(false);

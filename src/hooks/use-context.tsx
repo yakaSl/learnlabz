@@ -22,16 +22,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [selectedContext, setSelectedContext] = useState<Context>({
-    label: 'Personal Workspace',
+    label: 'Loading...',
     type: 'personal'
   });
-  const [availableContexts, setAvailableContexts] = useState<Context[]>([
-    { label: 'Personal Workspace', type: 'personal' }
-  ]);
+  const [availableContexts, setAvailableContexts] = useState<Context[]>([]);
 
   useEffect(() => {
     if (user?.availableInstitutes && user.availableInstitutes.length > 0) {
-      // Build contexts from user's available institutes
+      // Build contexts from user's available institutes (don't add extra Personal Workspace)
       const instituteContexts: Context[] = user.availableInstitutes.map(institute => ({
         label: institute.instituteName,
         type: 'institute' as const,
@@ -39,22 +37,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
         instituteCode: institute.instituteCode,
       }));
 
-      // Always include Personal Workspace first
-      const allContexts = [
-        { label: 'Personal Workspace', type: 'personal' as const },
-        ...instituteContexts
-      ];
+      setAvailableContexts(instituteContexts);
 
-      setAvailableContexts(allContexts);
-
-      // Auto-select first institute if user has one
+      // Auto-select current institute or first available
       if (user.instituteId) {
         const currentInstitute = instituteContexts.find(
           ctx => ctx.instituteId === user.instituteId
         );
         if (currentInstitute) {
           setSelectedContext(currentInstitute);
+        } else {
+          // Fallback to first institute if current not found
+          setSelectedContext(instituteContexts[0]);
         }
+      } else {
+        // No current institute, select first one
+        setSelectedContext(instituteContexts[0]);
       }
     }
   }, [user?.availableInstitutes, user?.instituteId]);

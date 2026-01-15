@@ -10,6 +10,20 @@ export interface ApiServiceResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
+  metadata?: {
+    requestId: string;
+    version: string;
+    processingTime: number;
+    pagination?: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+    totalCount?: number;
+  };
 }
 
 export class BaseApiService {
@@ -42,6 +56,7 @@ export class BaseApiService {
       return {
         success: true,
         data: response.data,
+        metadata: response.metadata,
       };
     } catch (error) {
       logger.error(`API GET error: ${endpoint}`, { error, context });

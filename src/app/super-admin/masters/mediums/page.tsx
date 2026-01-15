@@ -1,10 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -13,14 +14,52 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { MastersService } from '@/services/masters.service';
+import type { Medium, PaginationMeta } from '@/types/masters.types';
+import { convertPagination } from '@/types/masters.types';
 
 export default function MediumMasterPage() {
-  // Temporary mock data - replace with API call
-  const mediums = [
-    { id: 1, code: 'ENG', name: 'English Medium', description: 'Classes conducted in English', isActive: true },
-    { id: 2, code: 'SIN', name: 'Sinhala Medium', description: 'Classes conducted in Sinhala', isActive: true },
-    { id: 3, code: 'TAM', name: 'Tamil Medium', description: 'Classes conducted in Tamil', isActive: true },
-  ];
+  const [mediums, setMediums] = useState<Medium[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  useEffect(() => {
+    const fetchMediums = async () => {
+      try {
+        setLoading(true);
+        const response = await MastersService.getMediums({
+          page: currentPage,
+          limit: itemsPerPage,
+          sortOrder: 'ASC',
+        });
+
+        if (response.success && response.data) {
+          setMediums(response.data);
+          setPagination(convertPagination(response.metadata?.pagination));
+          setError(null);
+        } else {
+          setError(response.error || 'Failed to fetch mediums');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred');
+        console.error('Failed to fetch mediums:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMediums();
+  }, [currentPage, itemsPerPage]);
 
   return (
     <ProtectedRoute requireAuth allowedRoles={[UserRole.SUPER_ADMIN]}>
@@ -46,47 +85,93 @@ export default function MediumMasterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mediums.map((medium) => (
-                  <TableRow key={medium.id}>
-                    <TableCell className="font-medium">{medium.code}</TableCell>
-                    <TableCell>{medium.name}</TableCell>
-                    <TableCell>{medium.description}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          medium.isActive
-                            ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
-                            : 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20'
-                        }`}
-                      >
-                        {medium.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-sm text-destructive">{error}</p>
+              </div>
+            ) : mediums.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-sm text-muted-foreground">No mediums found</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {mediums.map((medium) => (
+                    <TableRow key={medium.id}>
+                      <TableCell className="font-medium">{medium.code}</TableCell>
+                      <TableCell>{medium.name}</TableCell>
+                      <TableCell>{medium.description}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                            medium.isActive
+                              ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
+                              : 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20'
+                          }`}
+                        >
+                          {medium.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="icon">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+            {!loading && !error && mediums.length > 0 && (
+              <div className="flex items-center justify-between px-2 py-4">
+                <div className="text-sm text-muted-foreground">
+                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{' '}
+                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} of{' '}
+                  {pagination.totalItems} results
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={!pagination.hasPreviousPage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  <div className="text-sm text-muted-foreground">
+                    Page {pagination.currentPage} of {pagination.totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                    disabled={!pagination.hasNextPage}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

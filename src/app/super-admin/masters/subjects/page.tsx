@@ -1,10 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { UserRole } from '@/types/auth.types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -13,14 +14,52 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { MastersService } from '@/services/masters.service';
+import type { Subject, PaginationMeta } from '@/types/masters.types';
+import { convertPagination } from '@/types/masters.types';
 
 export default function SubjectMasterPage() {
-  // Temporary mock data - replace with API call
-  const subjects = [
-    { id: 1, name: 'Mathematics', code: 'MATH', description: 'Mathematics and Calculus', isActive: true },
-    { id: 2, name: 'Science', code: 'SCI', description: 'General Science', isActive: true },
-    { id: 3, name: 'English', code: 'ENG', description: 'English Language & Literature', isActive: true },
-  ];
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        setLoading(true);
+        const response = await MastersService.getSubjects({
+          page: currentPage,
+          limit: itemsPerPage,
+          sortOrder: 'ASC',
+        });
+
+        if (response.success && response.data) {
+          setSubjects(response.data);
+          setPagination(convertPagination(response.metadata?.pagination));
+          setError(null);
+        } else {
+          setError(response.error || 'Failed to fetch subjects');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred');
+        console.error('Failed to fetch subjects:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubjects();
+  }, [currentPage, itemsPerPage]);
 
   return (
     <ProtectedRoute requireAuth allowedRoles={[UserRole.SUPER_ADMIN]}>
@@ -46,47 +85,95 @@ export default function SubjectMasterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {subjects.map((subject) => (
-                  <TableRow key={subject.id}>
-                    <TableCell className="font-medium">{subject.code}</TableCell>
-                    <TableCell>{subject.name}</TableCell>
-                    <TableCell>{subject.description}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          subject.isActive
-                            ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
-                            : 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20'
-                        }`}
-                      >
-                        {subject.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-sm text-destructive">{error}</p>
+              </div>
+            ) : subjects.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-sm text-muted-foreground">No subjects found</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {subjects.map((subject) => (
+                    <TableRow key={subject.id}>
+                      <TableCell className="font-medium">{subject.code}</TableCell>
+                      <TableCell>{subject.name}</TableCell>
+                      <TableCell>{subject.description}</TableCell>
+                      <TableCell>{subject.category || '-'}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                            subject.isActive
+                              ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
+                              : 'bg-gray-50 text-gray-700 ring-1 ring-gray-600/20'
+                          }`}
+                        >
+                          {subject.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="icon">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+            {!loading && !error && subjects.length > 0 && (
+              <div className="flex items-center justify-between px-2 py-4">
+                <div className="text-sm text-muted-foreground">
+                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{' '}
+                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} of{' '}
+                  {pagination.totalItems} results
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={!pagination.hasPreviousPage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  <div className="text-sm text-muted-foreground">
+                    Page {pagination.currentPage} of {pagination.totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                    disabled={!pagination.hasNextPage}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

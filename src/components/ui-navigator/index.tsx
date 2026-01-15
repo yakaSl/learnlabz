@@ -40,15 +40,15 @@ export default function UINavigator() {
 
   const tutorPages = [
     { href: "/tutor", name: "Tutor Dashboard" },
-    { href: "/tutor/classes", name: "Class Management" },
-    { href: "/tutor/classes/new", name: "Create Class"},
-    { href: "/tutor/students", name: "Student Management" },
-    { href: "/tutor/materials", name: "Materials" },
-    { href: "/tutor/payments", name: "Payments" },
-    { href: "/tutor/communication", name: "Communication" },
-    { href: "/tutor/reports", name: "Reports" },
-    { href: "/tutor/ai-assistant", name: "AI Assistant" },
-    { href: "/tutor/settings", name: "Settings" },
+    { href: "/teacher/classes", name: "Class Management" },
+    { href: "/teacher/classes/new", name: "Create Class"},
+    { href: "/teacher/students", name: "Student Management" },
+    { href: "/teacher/materials", name: "Materials" },
+    { href: "/teacher/payments", name: "Payments" },
+    { href: "/teacher/communication", name: "Communication" },
+    { href: "/teacher/reports", name: "Reports" },
+    { href: "/teacher/ai-assistant", name: "AI Assistant" },
+    { href: "/teacher/settings", name: "Settings" },
   ];
 
   const studentPages = [

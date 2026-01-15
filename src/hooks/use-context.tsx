@@ -1,17 +1,15 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useAuth } from './useAuth';
 
 export type Context = {
   label: string;
   type: 'personal' | 'institute';
+  instituteId?: string;
+  instituteCode?: string;
 };
-
-const contexts: Context[] = [
-  { label: 'Personal Workspace', type: 'personal' },
-  { label: 'Innovate Learning Co.', type: 'institute' },
-];
 
 interface AppContextType {
   selectedContext: Context;
@@ -22,10 +20,45 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [selectedContext, setSelectedContext] = useState<Context>(contexts[0]);
+  const { user } = useAuth();
+  const [selectedContext, setSelectedContext] = useState<Context>({
+    label: 'Loading...',
+    type: 'personal'
+  });
+  const [availableContexts, setAvailableContexts] = useState<Context[]>([]);
+
+  useEffect(() => {
+    if (user?.availableInstitutes && user.availableInstitutes.length > 0) {
+      // Build contexts from user's available institutes (don't add extra Personal Workspace)
+      const instituteContexts: Context[] = user.availableInstitutes.map(institute => ({
+        label: institute.instituteName,
+        type: 'institute' as const,
+        instituteId: institute.instituteId,
+        instituteCode: institute.instituteCode,
+      }));
+
+      setAvailableContexts(instituteContexts);
+
+      // Auto-select current institute or first available
+      if (user.instituteId) {
+        const currentInstitute = instituteContexts.find(
+          ctx => ctx.instituteId === user.instituteId
+        );
+        if (currentInstitute) {
+          setSelectedContext(currentInstitute);
+        } else {
+          // Fallback to first institute if current not found
+          setSelectedContext(instituteContexts[0]);
+        }
+      } else {
+        // No current institute, select first one
+        setSelectedContext(instituteContexts[0]);
+      }
+    }
+  }, [user?.availableInstitutes, user?.instituteId]);
 
   return (
-    <AppContext.Provider value={{ selectedContext, setSelectedContext, availableContexts: contexts }}>
+    <AppContext.Provider value={{ selectedContext, setSelectedContext, availableContexts }}>
       {children}
     </AppContext.Provider>
   );

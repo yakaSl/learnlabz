@@ -1,8 +1,7 @@
 'use client';
 
-import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter, SidebarSeparator, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Building, Settings, BarChart3, Bell, CreditCard, Languages, Trophy, ShieldCheck, GraduationCap, Database, ChevronDown, BookOpen, Calendar, DollarSign, Globe, GraduationCap as GradeIcon, MessageSquare } from "lucide-react";
-import Image from "next/image";
+import { SidebarProvider, Sidebar, SidebarHeader, SidebarTrigger, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarFooter, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
+import { ChevronDown, Settings, Bell } from "lucide-react";
 import Link from "next/link";
 import UserNav from "@/components/super-admin/user-nav";
 import { SidebarLogo } from "@/components/ui/sidebar-logo";
@@ -10,14 +9,125 @@ import { SearchBar } from "@/components/ui/search-bar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { ContextSwitcher } from "@/components/tutor/context-switcher";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useAppContext } from "@/hooks/use-context";
+import { MenuService } from "@/services/menu.service";
+import { MenuItem } from "@/types/menu.types";
+import { getIcon } from "@/utils/icon-mapper";
 
 export default function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [mastersOpen, setMastersOpen] = useState(false);
+  const { user } = useAuth();
+  const { selectedContext } = useAppContext();
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [collapsibleState, setCollapsibleState] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      // Don't fetch if no user or if user has temp ID
+      if (!user?.id || user.id === 'temp-id') {
+        setLoading(false);
+        return;
+      }
+
+      // Use selected institute from context, fallback to user's instituteId
+      const instituteId = selectedContext.type === 'institute'
+        ? selectedContext.instituteId
+        : user.instituteId;
+
+      try {
+        const response = await MenuService.getMenu(user.id, instituteId);
+
+        if (response.success && response.data && Array.isArray(response.data)) {
+          setMenuItems(response.data);
+
+          // Initialize collapsible state for parent menus
+          const initialState: Record<string, boolean> = {};
+          response.data.forEach(item => {
+            if (item.children.length > 0) {
+              initialState[item.menu_code] = false;
+            }
+          });
+          setCollapsibleState(initialState);
+        }
+      } catch (error) {
+        console.error('Failed to fetch menu:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenu();
+  }, [user?.id, user?.instituteId, selectedContext]);
+
+  const toggleCollapsible = (menuCode: string) => {
+    setCollapsibleState(prev => ({
+      ...prev,
+      [menuCode]: !prev[menuCode]
+    }));
+  };
+
+  const renderMenuItem = (item: MenuItem) => {
+    const Icon = getIcon(item.icon);
+    const hasChildren = item.children.length > 0;
+    const isOpen = collapsibleState[item.menu_code] || false;
+
+    if (hasChildren) {
+      return (
+        <Collapsible
+          key={item.menu_code}
+          open={isOpen}
+          onOpenChange={() => toggleCollapsible(item.menu_code)}
+          className="group/collapsible"
+        >
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton tooltip={item.menu_name}>
+                <Icon />
+                <span>{item.menu_name}</span>
+                <ChevronDown className={`ml-auto transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {item.children.map(child => {
+                  const ChildIcon = getIcon(child.icon);
+                  return (
+                    <SidebarMenuSubItem key={child.menu_code}>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={`/super-admin${child.path}`}>
+                          <ChildIcon className="mr-2 h-4 w-4" />
+                          <span>{child.menu_name}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  );
+                })}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      );
+    }
+
+    return (
+      <SidebarMenuItem key={item.menu_code}>
+        <Link href={`/super-admin${item.path}`} passHref>
+          <SidebarMenuButton tooltip={item.menu_name}>
+            <Icon />
+            <span>{item.menu_name}</span>
+          </SidebarMenuButton>
+        </Link>
+      </SidebarMenuItem>
+    );
+  };
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -26,169 +136,21 @@ export default function SuperAdminLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/super-admin" passHref>
-                <SidebarMenuButton tooltip="Dashboard">
-                  <LayoutDashboard />
-                  <span>Dashboard</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/super-admin/institutes" passHref>
-                <SidebarMenuButton tooltip="Institutes">
-                  <Building />
-                  <span>Institutes</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/super-admin/tutors" passHref>
-                <SidebarMenuButton tooltip="Tutors">
-                  <Users />
-                  <span>Tutors</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/super-admin/students" passHref>
-                <SidebarMenuButton tooltip="Students">
-                  <GraduationCap />
-                  <span>Students</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/super-admin/payments" passHref>
-                <SidebarMenuButton tooltip="Payments">
-                  <CreditCard />
-                  <span>Payments</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <Link href="/super-admin/analytics" passHref>
-                <SidebarMenuButton tooltip="Analytics">
-                  <BarChart3 />
-                  <span>Analytics</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-               <Link href="/super-admin/localization" passHref>
-                <SidebarMenuButton tooltip="Localization">
-                  <Languages />
-                  <span>Localization</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-               <Link href="/super-admin/gamification" passHref>
-                <SidebarMenuButton tooltip="Gamification">
-                  <Trophy />
-                  <span>Gamification</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-               <Link href="/super-admin/audit-logs" passHref>
-                <SidebarMenuButton tooltip="Audit Logs">
-                  <ShieldCheck />
-                  <span>Audit Logs</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <Link href="/super-admin/users" passHref>
-                <SidebarMenuButton tooltip="All Users">
-                  <Users />
-                  <span>All Users</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-
-            {/* Masters Section - Collapsible */}
-            <Collapsible open={mastersOpen} onOpenChange={setMastersOpen} className="group/collapsible">
+            {loading ? (
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip="Masters">
-                    <Database />
-                    <span>Masters</span>
-                    <ChevronDown className={`ml-auto transition-transform ${mastersOpen ? 'rotate-180' : ''}`} />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/subjects">
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          <span>Subject Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/academic-years">
-                          <Calendar className="mr-2 h-4 w-4" />
-                          <span>Academic Year Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/currencies">
-                          <DollarSign className="mr-2 h-4 w-4" />
-                          <span>Currency Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/languages">
-                          <Globe className="mr-2 h-4 w-4" />
-                          <span>Language Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/grades">
-                          <GradeIcon className="mr-2 h-4 w-4" />
-                          <span>Grade Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild>
-                        <Link href="/super-admin/masters/mediums">
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          <span>Medium Master</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
+                <SidebarMenuButton disabled>
+                  <span>Loading menu...</span>
+                </SidebarMenuButton>
               </SidebarMenuItem>
-            </Collapsible>
-
-             <SidebarSeparator />
-             <SidebarMenuItem>
-              <Link href="/super-admin/notifications" passHref>
-                <SidebarMenuButton tooltip="Notifications">
-                  <Bell />
-                  <span>Notifications</span>
+            ) : menuItems.length === 0 ? (
+              <SidebarMenuItem>
+                <SidebarMenuButton disabled>
+                  <span>No menu items</span>
                 </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/super-admin/settings" passHref>
-                <SidebarMenuButton tooltip="Settings">
-                  <Settings />
-                  <span>Settings</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+              </SidebarMenuItem>
+            ) : (
+              menuItems.map(item => renderMenuItem(item))
+            )}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -197,8 +159,11 @@ export default function SuperAdminLayout({
       <SidebarInset>
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
           <SidebarTrigger className="md:hidden"/>
-          <div className="flex-1">
-             <SearchBar />
+          <div className="flex-1 flex items-center gap-4">
+            <ContextSwitcher />
+          </div>
+          <div className="flex-1 hidden md:flex">
+            <SearchBar />
           </div>
           <div className="flex items-center gap-2">
              <ThemeToggle />

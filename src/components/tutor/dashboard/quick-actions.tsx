@@ -15,7 +15,7 @@ export function QuickActions() {
           Mark Attendance
         </Button>
         <Button variant="outline" asChild>
-          <Link href="/tutor/classes/new">
+          <Link href="/teacher/classes/new">
             <BookPlus className="mr-2 h-4 w-4" />
             Add Class
           </Link>

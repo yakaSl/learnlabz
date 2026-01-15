@@ -12,16 +12,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, User, Building, Check } from 'lucide-react';
-import { cn } from '@/app/lib/utils';
-import { useAppContext, type Context } from '@/hooks/use-context';
-
-const contexts: Context[] = [
-  { label: 'Personal Workspace', type: 'personal' },
-  { label: 'Innovate Learning Co.', type: 'institute' },
-];
+import { useAppContext } from '@/hooks/use-context';
 
 export function ContextSwitcher() {
-  const { selectedContext, setSelectedContext } = useAppContext();
+  const { selectedContext, setSelectedContext, availableContexts } = useAppContext();
+
+  // Don't show if only Personal Workspace is available
+  if (availableContexts.length <= 1) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -44,9 +43,9 @@ export function ContextSwitcher() {
       <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
         <DropdownMenuLabel>Switch Context</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {contexts.map((context) => (
+        {availableContexts.map((context) => (
           <DropdownMenuItem
-            key={context.label}
+            key={`${context.type}-${context.instituteId || 'personal'}`}
             onSelect={() => setSelectedContext(context)}
           >
             <div className="flex items-center justify-between w-full">
@@ -58,7 +57,9 @@ export function ContextSwitcher() {
                     )}
                     <span>{context.label}</span>
                 </div>
-                {selectedContext.label === context.label && <Check className="h-4 w-4" />}
+                {selectedContext.instituteId === context.instituteId &&
+                 selectedContext.type === context.type &&
+                 <Check className="h-4 w-4" />}
             </div>
           </DropdownMenuItem>
         ))}

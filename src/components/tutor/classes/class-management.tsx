@@ -40,7 +40,7 @@ export default function ClassManagement() {
             </div>
             <Button disabled={!isPersonalContext} asChild={isPersonalContext}>
               {isPersonalContext ? (
-                  <Link href="/tutor/classes/new">
+                  <Link href="/teacher/classes/new">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Create New Class
                   </Link>

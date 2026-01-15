@@ -12,6 +12,15 @@ export interface ApiResponseMetadata {
   version: string;
   processingTime: number;
   timestamp?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  totalCount?: number;
 }
 
 export interface ApiSuccessResponse<T> {

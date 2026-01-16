@@ -4,11 +4,19 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './useAuth';
 
+export type MetaInstituteType = {
+  id: string;
+  name: string;
+  code: 'INSTITUTE' | 'INDIVIDUAL';
+  description: string;
+};
+
 export type Context = {
   label: string;
   type: 'personal' | 'institute';
   instituteId?: string;
   instituteCode?: string;
+  metaInstituteType?: MetaInstituteType;
 };
 
 interface AppContextType {
@@ -32,9 +40,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Build contexts from user's available institutes (don't add extra Personal Workspace)
       const instituteContexts: Context[] = user.availableInstitutes.map(institute => ({
         label: institute.instituteName,
-        type: 'institute' as const,
+        type: institute.metaInstituteType.code === 'INDIVIDUAL' ? 'personal' : 'institute',
         instituteId: institute.instituteId,
         instituteCode: institute.instituteCode,
+        metaInstituteType: institute.metaInstituteType,
       }));
 
       setAvailableContexts(instituteContexts);

@@ -84,6 +84,16 @@ export interface PrimaryRole {
 }
 
 /**
+ * Institute Type Metadata
+ */
+export interface MetaInstituteType {
+  id: string;
+  name: string;
+  code: 'INSTITUTE' | 'INDIVIDUAL';
+  description: string;
+}
+
+/**
  * Available Institute Information
  */
 export interface AvailableInstitute {
@@ -91,6 +101,7 @@ export interface AvailableInstitute {
   institute_name: string;
   institute_code: string;
   role_codes: string[];
+  meta_institute_type: MetaInstituteType;
 }
 
 /**

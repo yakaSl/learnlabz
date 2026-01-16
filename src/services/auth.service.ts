@@ -60,6 +60,7 @@ function convertBackendLoginToUser(loginResponse: BackendLoginResponse): User {
       instituteName: inst.institute_name,
       instituteCode: inst.institute_code,
       roleCodes: inst.role_codes,
+      metaInstituteType: inst.meta_institute_type,
     })),
     hasGlobalAccess: has_global_access,
 

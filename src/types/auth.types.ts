@@ -158,6 +158,12 @@ export interface User {
     instituteName: string;
     instituteCode: string;
     roleCodes: string[];
+    metaInstituteType: {
+      id: string;
+      name: string;
+      code: 'INSTITUTE' | 'INDIVIDUAL';
+      description: string;
+    };
   }>;
   hasGlobalAccess: boolean;
 

@@ -16,6 +16,7 @@ import Link from 'next/link';
 export default function ClassManagement() {
   const [view, setView] = useState<'grid' | 'calendar'>('grid');
   const { selectedContext } = useAppContext();
+  // isPersonalContext is true for INDIVIDUAL institutes (personal) and false for INSTITUTE type
   const isPersonalContext = selectedContext.type === 'personal';
 
   const displayedClasses = isPersonalContext ? personalClasses : instituteClasses;

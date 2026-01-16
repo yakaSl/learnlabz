@@ -17,6 +17,8 @@ export default function ClassManagement() {
   const [view, setView] = useState<'grid' | 'calendar'>('grid');
   const { selectedContext } = useAppContext();
   const isPersonalContext = selectedContext.type === 'personal';
+  // Enable class creation for personal contexts or INDIVIDUAL type institutes
+  const canCreateClass = isPersonalContext || selectedContext.metaInstituteType?.code === 'INDIVIDUAL';
 
   const displayedClasses = isPersonalContext ? personalClasses : instituteClasses;
 
@@ -38,8 +40,8 @@ export default function ClassManagement() {
                     <CalendarIcon className="h-4 w-4" />
                 </Button>
             </div>
-            <Button disabled={!isPersonalContext} asChild={isPersonalContext}>
-              {isPersonalContext ? (
+            <Button disabled={!canCreateClass} asChild={canCreateClass}>
+              {canCreateClass ? (
                   <Link href="/teacher/classes/new">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Create New Class
